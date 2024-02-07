@@ -10982,3 +10982,13 @@ body.overlay::after {
     transform: rotate(0deg);
   }
 }
+.zoom-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.zoom-image {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-in-out;
+}

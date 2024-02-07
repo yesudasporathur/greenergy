@@ -72,9 +72,9 @@
           <div class="form-register">
               Please enter the OTP sent to your mail
             </div>
-          <form action="otp-submit">
+          <form action="otp" method="post">
             <div class="form-input">
-              <input type="text" placeholder="OTP" />
+              <input type="text" placeholder="OTP" name="userotp" />
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -155,6 +155,7 @@
                 </svg>
               </span>
             </div>
+            <p class="text-warning text-center">{{message}}</p>
             <div class="form-register" id="OTPtimer" >
               <span>Resend OTP in </span>
               <span id="timer"></span>
@@ -214,5 +215,6 @@
     // Start the timer with a duration of 5 minutes (300 seconds)
     startTimer(60);
   </script>
+  
   </body>
 </html>

@@ -19,9 +19,74 @@
     <link rel="stylesheet" href="src/lib/css/bvselect.css" />
     <link rel="stylesheet" href="src/lib/css/bootstrap.min.css" />
     <link rel="stylesheet" href="src/css/style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   </head>
 
   <body>
+    
+    <form id="myForm">
+        <input type="text" id="username" name="username">
+
+        <br>
+
+        <label for="email">Email:</label>
+
+        <br>
+
+        <label for="password">Password:</label>
+        
+
+        <br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    
+    <script>
+        $(document).ready(function () {
+            // Function to validate the username
+            function validateUsername() {
+                const username = $("#username").val();
+                if (username.length < 3) {
+                    $("#nameError").text("Username must be at least 3 characters");
+                    return false;
+                } else {
+                    $("#nameError").text("");
+                    return true;
+                }
+            }
+
+            // Function to validate the email
+            
+
+            // Function to validate the password
+            function validatePassword() {
+                const password = $("#password").val();
+                if (password.length < 6) {
+                    $("#passwordError").text("Password must be at least 6 characters");
+                    return false;
+                } else {
+                    $("#passwordError").text("");
+                    return true;
+                }
+            }
+
+            // Event handlers for instant validation
+            $("#username").on("blur", validateUsername);
+            $("#email").on("blur", validateEmail);
+            $("#password").on("blur", validatePassword);
+
+            // Form submission handler
+            $("#myForm").submit(function (event) {
+                if (!validateUsername() || !validateEmail() || !validatePassword()) {
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    document.getElementById("proceed").style.display = "";
+                }
+            });
+        });
+    </script>
+
+
     <div class="loader">
       <div class="loader-icon">
         <img src="src/images/loader.gif" alt="loader" />
@@ -69,9 +134,12 @@
       <div class="container">
         <div class="form-wrapper">
           <h6 class="font-title--sm">create account</h6>
-          <form action="/create-account" method="post">
+          <form id="loginform" action="/create-account" method="post">
             <div class="form-input">
-              <input type="email" placeholder="Email" name="email" />
+                      <span class="error-message" id="usernameError"></span>
+
+        <input type="email" id="email" name="email" placeholder="Email">
+              
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -152,8 +220,9 @@
                 </svg>
               </span>
             </div>
+            <span class="error-message" id="lnameError"></span>
             <div class="form-input">
-              <input type="text" placeholder="First Name" name="first_name"/>
+              <input type="text" placeholder="First Name" name="first_name" id="first_name"/>
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -234,8 +303,9 @@
                 </svg>
               </span>
             </div>
+            <span class="error-message" id="fnameError"></span>
             <div class="form-input">
-              <input type="text" placeholder="Last Name" name="last_name"/>
+              <input type="text" placeholder="Last Name"  name="last_name" id="last_name"/>
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -316,8 +386,10 @@
                 </svg>
               </span>
             </div>
+            <span class="error-message" id="lnameError"></span>
+            
             <div class="form-input">
-              <input type="text" placeholder="Phone Number" name="phone"/>
+              <input type="text" placeholder="Phone Number" name="phone" id="phone"/>
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -398,6 +470,7 @@
                 </svg>
               </span>
             </div>
+            <span class="error-message" id="phoneError"></span>
             <div class="form-input">
               <input type="password" placeholder="Password" name="password" id="password" />
               <button
@@ -623,6 +696,7 @@
                 </svg>
               </span>
             </div>
+            <span class="error-message" id="passwordError"></span>
             <div class="form-wrapper__content">
               <div class="form-check">
                 <input
@@ -637,7 +711,7 @@
               </div>
             </div>
             <p class="text-warning text-center">{{message}}</p>
-            <div class="form-button">
+            <div class="form-button" id="proceed" style="display: none;">
               <button type="submit" class="button button--md w-100">Proceed</button>
             </div>
             
@@ -652,6 +726,96 @@
 
     
 
+<script>
+        $(document).ready(function () {
+            // Function to validate the username
+            function validateFirstName() {
+                const name = $("#first_name").val();
+                if (username.length=0) {
+                    $("#fnameError").text("Name must be at least a characters");
+                    return false;
+                } else {
+                    $("#fnameError").text("");
+                    return true;
+                }
+            }
+            function validateLastName() {
+                const last_name = $("#last_name").val();
+                
+                if (last_name.length=0) {
+                    $("#lnameError").text("Name must be at least a characters");
+                    return false;
+                } else {
+                  console.log(last_name)
+                    $("#lnameError").text("");
+                    return true;
+                }
+            }
+
+            // Function to validate the email
+            
+            function validateEmail() {
+                const email = $("#email").val();
+                console.log(email)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    $("#emailError").text("Invalid email address");
+                    return false;
+                } else {
+                    $("#emailError").text("");
+                    return true;
+                }
+            }
+
+            // Function to validate the password
+            function validatePassword() {
+                const password = $("#password").val();
+                const confirmPassword=$('#confirmPassword').val();
+                if(password==confirmPassword){
+                  if (password.length < 3) {
+                    $("#passwordError").text("Password must be at least 6 characters");
+                    return false;
+                } else {
+                    $("#passwordError").text("");
+                    return true;
+                }
+
+                }
+                else{
+                  $("#passwordError").text("Both passwords should be same");
+
+                }
+                
+            }
+
+            function validatePhone() {
+                const number = $("#phone").val();
+                if (number>9999999999 || number<1000000000) {
+                    $("#phoneError").text("Enter a valid phone number");
+                    return false;
+                } else {
+                    $("#phoneError").text("");
+                    return true;
+                }
+            }
+
+            // Event handlers for instant validation
+            $("#email").on("blur", validateEmail);
+            $("#password").on("blur", validatePassword);
+            $('#first_name').on("blur", validateFirstName);
+            $('#last_name').on("blur", validateLastName);
+            $('#phone').on("blur", validatePhone);
+
+            // Form submission handler
+            $("#loginform").submit(function (event) {
+                if (!validateName() || !validateEmail() || !validatePassword() || !validatePhone()) {
+                    event.preventDefault(); // Prevent form submission if validation fails
+                    document.getElementById("proceed").style.display = "none";
+                }
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="src/lib/js/jquery.min.js"></script>
     <script src="src/lib/js/swiper-bundle.min.js"></script>
     <script src="src/lib/js/bvselect.js"></script>

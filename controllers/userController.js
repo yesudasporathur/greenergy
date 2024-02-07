@@ -3,7 +3,22 @@ const User = require("../models/user");
 const otpGenerator = require('otp-generator');
 const sendOTP=require('../public/modules/sendOTP')
 
-const home_get=(req,res)=>{ 
+const crypto = require('crypto');
+const salt = 'uniqueSalt';
+function hashPassword(password, salt) {
+    // Create a hash object
+    const hash = crypto.createHash('sha256');
+
+    // Update the hash object with the password and salt
+    hash.update(password + salt);
+
+    // Get the hexadecimal representation of the hash
+    const hashedPassword = hash.digest('hex');
+
+    return hashedPassword;
+}
+
+const home_get=(req,res)=>{
   res.render('home-03', { title: 'Greenergy' });
   setTimeout(() => {
     console.log("Login rendered")
@@ -28,6 +43,11 @@ const shop_get=(req,res)=>{
     }, 100);
   }
 const sign_in_get=(req, res, next) =>{
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma' : 'no-cache',
+    'Expires' : '0',
+})
     res.render('sign-in', { title: 'Sign-in' });
     setTimeout(() => {
       console.log("Sign-in rendered")
@@ -35,7 +55,7 @@ const sign_in_get=(req, res, next) =>{
   }
 
 const create_account_get=(req, res, next) =>{
-    res.render('create-account', { title: 'Create-Account' });
+    res.render('create-account', { title: 'Create-Account' ,message:''});
     setTimeout(() => {
       console.log("Create-Account rendered")
     }, 200);
@@ -45,7 +65,8 @@ const create_account_post =  async (req, res) =>{
 
    if(req.body.password===req.body.confirmpassword){
     console.log(data)
-    const user=await User.create({data})
+    req.session.data=data
+    //const user=await User.create({data})
     setTimeout(() => {
       console.log("Create-Account done")
     }, 100);
@@ -67,12 +88,48 @@ mail_id='dasporathur@gmail.com'
 // Generate a 6-digit OTP
 const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 sendOTP(otp,mail_id)
+req.session.otp=otp
 console.log('Generated OTP:', otp);
     res.render('otp', { title: 'OTP Verification' });
         setTimeout(() => {
       console.log("OTP Verification rendered")
+      //console.log(req.session.data)
     }, 200);
   }
+
+  const otp_post=async(req, res, next)=> {
+    let otp='ooo'
+    
+    if(req.body.userotp===otp){
+      res.redirect('otp-success');
+
+        // Hash the password along with the salt
+        const hashedPassword = hashPassword(req.session.data.password, salt);
+        req.session.data.password=hashedPassword
+        console.log("password:  ",req.session.data.password)
+      const user=await User.create({
+        email:req.session.data.password,
+        first_name: req.session.data.first_name,
+        last_name: req.session.data.last_name,
+        phone: req.session.data.phone,
+        passowrd: req.session.data.password,
+        block: 0,
+        isAdmin: 0,
+      })
+      
+    }
+  
+     
+     else{
+      res.render('otp', { message: 'OTP invalid' });
+      
+     }
+    }
+
+const otp_success=(req,res)=>{
+  res.render('otp-success', { message: 'Your account have been created. Please proceed to login.' });
+}
+  
 
   
 const search_get=(req, res, next)=> {
@@ -81,6 +138,15 @@ const search_get=(req, res, next)=> {
       console.log("Search rendered")
     }, 100);
   }
+
+const page_not_found=(req,res)=>{
+  res.status(404).render('404', { title: 'Search' ,layout:false});
+    setTimeout(() => {
+      console.log("404 rendered")
+    }, 100);
+  }
+
+
 module.exports={
     home_get,
     home_post,
@@ -89,5 +155,8 @@ module.exports={
     create_account_get,
     create_account_post,
     otp_get,
-    search_get
+    otp_post,
+    otp_success,
+    search_get,
+    page_not_found
 }

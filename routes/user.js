@@ -10,7 +10,10 @@ router.get('/sign-in', userController.sign_in_get);
 router.get('/create-account', userController.create_account_get);
 router.post('/create-account', userController.create_account_post);
 router.get('/otp', userController.otp_get);
-router.get('/search', userController.search_get);
+router.post('/otp',userController.otp_post);
+router.get('/otp-success',userController.otp_success)
+//router.get('/*',userController.page_not_found)
+//router.get('/search', userController.search_get);
 
 
 module.exports = router;

@@ -597,9 +597,8 @@
                                 </div>
                             </div>
 
-                            <div class="gallery-main-image products__gallery-img--lg">
-                                <img class="product-main-image" src="src/images/product-details/img-01.png" alt="Slide 01" />
-                            </div>
+                            <div class="gallery-main-image products__gallery-img--lg zoom-container" id="zoomContainer">
+                                <img class="product-main-image zoom-image" src="src/images/product-details/img-01.png" alt="Slide 01" id="zoomImage"/>                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -2543,6 +2542,26 @@
                 </div>
             </div>
         </div>
+        <script>
+            const zoomContainer = document.getElementById('zoomContainer');
+            const zoomImage = document.getElementById('zoomImage');
+          
+            zoomContainer.addEventListener('mousemove', (event) => {
+              const { left, top, width, height } = zoomContainer.getBoundingClientRect();
+              const mouseX = event.clientX - left;
+              const mouseY = event.clientY - top;
+          
+              const zoomX = (mouseX / width) * 30;
+              const zoomY = (mouseY / height) * 30;
+          
+              zoomImage.style.transform = `scale(1.2) translate(-${zoomX}%, -${zoomY}%)`; // Adjust the scale factor as needed
+            });
+          
+            zoomContainer.addEventListener('mouseleave', () => {
+              zoomImage.style.transform = 'scale(1) translate(0%, 0%)';
+            });
+          </script>
+          
 
         <script src="src/lib/js/jquery.min.js"></script>
         <script src="src/lib/js/swiper-bundle.min.js"></script>
