@@ -77,7 +77,7 @@
             $("#password").on("blur", validatePassword);
 
             // Form submission handler
-            $("#myForm").submit(function (event) {
+            $("#loginform").submit(function (event) {
                 if (!validateUsername() || !validateEmail() || !validatePassword()) {
                     event.preventDefault(); // Prevent form submission if validation fails
                     document.getElementById("proceed").style.display = "";

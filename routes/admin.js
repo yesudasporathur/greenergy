@@ -18,18 +18,26 @@ const storage = multer.diskStorage({
 
 router.get('/', adminController.login_get);
 router.post('/', adminController.login_post);
+router.get('/logout',adminController.admin_logout)
+
 
 router.get('/dashboard', adminController.dashboard_get);
 router.get('/users',adminController.user_list_get)
 router.get('/user-details',adminController.user_details_get)
 router.post('/user-details',adminController.user_details_post)
 
-router.get('/logout',adminController.admin_logout)
 router.get('/products',adminController.products_get)
 router.get('/product-add',adminController.product_add_get)
 router.get('/product-edit',adminController.product_edit_get)
 router.post('/product-edit',upload.array('images', 10),adminController.product_edit_post)
 router.post('/product-add',upload.array('images', 10),adminController.product_add_post)
+router.get('/categories',adminController.categories_get)
+router.get('/category-add',adminController.category_add_get)
+router.post('/category-add',adminController.category_add_post)
+router.get('/category-edit',adminController.category_edit_get)
+router.post('/category-edit',adminController.category_edit_post)
+
+
 
 
 

@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Product=require("../models/product")
+const Category=require("../models/category");
 
 
   
@@ -18,9 +19,9 @@ const login_post=(req,res)=>{
     const Password = 'admin';
     const { username, password } = req.body;
     if (username === Username && password === Password) {
-      //req.session.admin = username;
-      //res.render('admin-dashboard', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
+      req.session.admin = username;
       res.redirect('/admin/users')
+      //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
       console.log('logged in')
     }
     else
@@ -86,14 +87,9 @@ const user_details_get=async(req,res)=>{
 
 const user_details_post=async(req,res)=>{
   const {_id,first_name,last_name,email,phone,block}=req.body
-  res.redirect('/admin/users')
   await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block})
+  res.redirect('users')
 
-  setTimeout(() => {
-    console.log(_id,first_name,last_name,email,phone,block)
-
-    
-  }, 2000);
 }
 
 
@@ -144,6 +140,7 @@ const product_edit_post=async(req,res)=>{
       delete: true
     });
   }
+  res.redirect('products')
 }
 
 const product_add_get=(req,res)=>{
@@ -169,7 +166,44 @@ const product_add_post=async (req,res, next) => {
   })
   await products.save();
   console.log(products)
+  res.redirect('products')
 
+
+}
+
+const categories_get=async(req,res)=>{
+  const categories=await Category.find({delete:false})
+  res.render('categories',{categories, layout: 'layout2'})
+}
+
+const category_add_get=async(req,res)=>{
+  res.render('category-add',{layout: 'layout2'})
+}
+
+const category_add_post=async(req,res)=>{
+  const name=req.body.name
+  await Category.create({name,delete:false})  
+  res.redirect('categories')
+}
+
+const category_edit_get=async(req,res)=>{
+  const _id=req.query.id
+  const categories=await Category.find({_id:_id})
+  res.render('category-edit',{categories, layout: 'layout2'})
+}
+
+const category_edit_post=async(req,res)=>{
+    const _id=req.query.id
+    const name=req.body.name
+    if(req.body.softdel=== '1'){
+      await Category.findByIdAndUpdate({_id:_id},{
+        delete: true
+      });
+    }
+    await Category.findByIdAndUpdate({_id:_id},{
+      name: name,
+    })
+    res.redirect('categories')
 }
 
   
@@ -180,8 +214,12 @@ const admin_logout=(req,res)=>{
     if (err) {
       console.error(err);
     }
-    res.redirect('/admin', { message: '' });
-    console.log("Redirect")
+    res.redirect('/admin/')
+    setTimeout(() => {
+      console.log("Redirect")
+
+      
+    }, 2200);
  });
 }
 
@@ -199,7 +237,12 @@ module.exports={
   blockUser,
   unblockUser,
   product_edit_get,
-  product_edit_post
+  product_edit_post,
+  categories_get,
+  category_add_get,
+  category_add_post,
+  category_edit_get,
+  category_edit_post
 
   
 }
