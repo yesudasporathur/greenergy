@@ -52,11 +52,46 @@ const sign_in_get=(req, res, next) =>{
     'Pragma' : 'no-cache',
     'Expires' : '0',
 })
-    res.render('sign-in', { title: 'Sign-in' });
+    res.render('sign-in', { message:'',title: 'Sign-in' });
     setTimeout(() => {
       console.log("Sign-in rendered")
     }, 100);
   }
+  const sign_in_post=async(req, res, next) =>{
+    const { email, password } = req.body;
+
+    try {
+        // Find the user by email
+        const user = await User.findOne({ email});
+
+        // If user not found, return error
+        if (!user) {
+            return res.status(400).render('sign-in',{ message: 'User not found' });
+        }
+
+        // Check if password matches
+        const data = await User.findOne({email:email});       
+
+        // If password does not match, return error
+        if (data.password!==hashPassword(password, salt)) {
+            return res.status(400).render('sign-in',{ error: 'Invalid credentials' });
+        }
+        
+          res.redirect('/shop'); 
+
+
+        
+
+        // If user is valid, render the home page
+        // Assuming you have a home template
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('sign-in',{message: 'Server error' });
+    }
+;
+
+    }
 
 const create_account_get=(req, res, next) =>{
     res.render('create-account', { title: 'Create-Account' ,message:''});
@@ -88,7 +123,7 @@ const create_account_post =  async (req, res) =>{
   }
 
 const otp_get=(req, res, next)=> {
-mail_id='dasporathur@gmail.com'
+mail_id=req.session.data.email
 // Generate a 6-digit OTP
 const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 sendOTP(otp,mail_id)
@@ -102,21 +137,20 @@ console.log('Generated OTP:', otp);
   }
 
   const otp_post=async(req, res, next)=> {
-    let otp='ooo'
+    let otp=req.session.otp
     
     if(req.body.userotp===otp){
       res.redirect('otp-success');
 
         // Hash the password along with the salt
         const hashedPassword = hashPassword(req.session.data.password, salt);
-        req.session.data.password=hashedPassword
-        console.log("password:  ",req.session.data.password)
-      const user=await User.create({
-        email:req.session.data.password,
+        console.log("password:  ",hashedPassword)
+      await User.create({
+        email:req.session.data.email,
         first_name: req.session.data.first_name,
         last_name: req.session.data.last_name,
         phone: req.session.data.phone,
-        passowrd: req.session.data.password,
+        password: hashedPassword,
         block: 0,
         isAdmin: 0,
       })
@@ -170,6 +204,7 @@ module.exports={
     home_post,
     shop_get,
     sign_in_get,
+    sign_in_post,
     create_account_get,
     create_account_post,
     otp_get,

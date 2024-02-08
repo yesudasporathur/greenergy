@@ -62,9 +62,9 @@
       <div class="container">
         <div class="form-wrapper">
           <h6 class="font-title--sm">Sign in</h6>
-          <form action="#">
+          <form action="/sign-in" method="post">
             <div class="form-input">
-              <input type="email" placeholder="Email" />
+              <input type="email" name="email" id="email" placeholder="Email" />
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -146,7 +146,7 @@
               </span>
             </div>
             <div class="form-input">
-              <input type="password" placeholder="Password" id="password" />
+              <input type="password" placeholder="Password" id="password" name="password" />
               <button
                 type="button"
                 class="icon icon-eye"
@@ -256,9 +256,11 @@
               <a href="#">Forget Password </a>
             </div>
             <div class="form-button">
-              <button class="button button--md w-100">Login</button>
+              <button class="button button--md w-100" type="submit">Login</button>
+
             </div>
             <div class="form-register">
+              <p class="text-danger text-center">{{message}}</p>
               Don't have account ? <a href="create-account">Register</a>
             </div>
           </form>

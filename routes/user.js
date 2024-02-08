@@ -8,6 +8,7 @@ router.post('/', userController.home_post)
 router.get('/shop', userController.shop_get);
 router.get('/product',userController.product)
 router.get('/sign-in', userController.sign_in_get);
+router.post('/sign-in',userController.sign_in_post)
 router.get('/create-account', userController.create_account_get);
 router.post('/create-account', userController.create_account_post);
 router.get('/otp', userController.otp_get);

@@ -23,68 +23,6 @@
   </head>
 
   <body>
-    
-    <form id="myForm">
-        <input type="text" id="username" name="username">
-
-        <br>
-
-        <label for="email">Email:</label>
-
-        <br>
-
-        <label for="password">Password:</label>
-        
-
-        <br>
-
-        <input type="submit" value="Submit">
-    </form>
-
-    
-    <script>
-        $(document).ready(function () {
-            // Function to validate the username
-            function validateUsername() {
-                const username = $("#username").val();
-                if (username.length < 3) {
-                    $("#nameError").text("Username must be at least 3 characters");
-                    return false;
-                } else {
-                    $("#nameError").text("");
-                    return true;
-                }
-            }
-
-            // Function to validate the email
-            
-
-            // Function to validate the password
-            function validatePassword() {
-                const password = $("#password").val();
-                if (password.length < 6) {
-                    $("#passwordError").text("Password must be at least 6 characters");
-                    return false;
-                } else {
-                    $("#passwordError").text("");
-                    return true;
-                }
-            }
-
-            // Event handlers for instant validation
-            $("#username").on("blur", validateUsername);
-            $("#email").on("blur", validateEmail);
-            $("#password").on("blur", validatePassword);
-
-            // Form submission handler
-            $("#loginform").submit(function (event) {
-                if (!validateUsername() || !validateEmail() || !validatePassword()) {
-                    event.preventDefault(); // Prevent form submission if validation fails
-                    document.getElementById("proceed").style.display = "";
-                }
-            });
-        });
-    </script>
 
 
     <div class="loader">
@@ -220,7 +158,7 @@
                 </svg>
               </span>
             </div>
-            <span class="error-message" id="lnameError"></span>
+            <span class="error-message" id="emailError"></span>
             <div class="form-input">
               <input type="text" placeholder="First Name" name="first_name" id="first_name"/>
               <span class="icon icon-warning">
@@ -699,19 +637,13 @@
             <span class="error-message" id="passwordError"></span>
             <div class="form-wrapper__content">
               <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="remember"
-                />
-                <label class="form-check-label" for="remember">
-                  Accept all terms & Conditions
-                </label>
-              </div>
+                <input type="checkbox" id="terms" name="terms" class="form-check-input">
+                <label class="form-check-label" for="terms">I accept the terms and conditions</label>
+                <div id="termsError" class="error"></div>
+                </div>
             </div>
             <p class="text-warning text-center">{{message}}</p>
-            <div class="form-button" id="proceed" style="display: none;">
+            <div class="form-button" id="proceed" >
               <button type="submit" class="button button--md w-100">Proceed</button>
             </div>
             
@@ -727,93 +659,118 @@
     
 
 <script>
-        $(document).ready(function () {
-            // Function to validate the username
-            function validateFirstName() {
-                const name = $("#first_name").val();
-                if (username.length=0) {
-                    $("#fnameError").text("Name must be at least a characters");
-                    return false;
-                } else {
-                    $("#fnameError").text("");
-                    return true;
-                }
-            }
-            function validateLastName() {
-                const last_name = $("#last_name").val();
-                
-                if (last_name.length=0) {
-                    $("#lnameError").text("Name must be at least a characters");
-                    return false;
-                } else {
-                  console.log(last_name)
-                    $("#lnameError").text("");
-                    return true;
-                }
-            }
 
-            // Function to validate the email
-            
-            function validateEmail() {
-                const email = $("#email").val();
-                console.log(email)
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    $("#emailError").text("Invalid email address");
-                    return false;
-                } else {
-                    $("#emailError").text("");
-                    return true;
-                }
-            }
+  $(document).ready(function () {
 
-            // Function to validate the password
-            function validatePassword() {
-                const password = $("#password").val();
-                const confirmPassword=$('#confirmPassword').val();
-                if(password==confirmPassword){
-                  if (password.length < 3) {
-                    $("#passwordError").text("Password must be at least 6 characters");
-                    return false;
-                } else {
-                    $("#passwordError").text("");
-                    return true;
-                }
+    // Function to validate the last name
+    function validateLastName() {
+        const lastName = $("#last_name").val();
+        if (lastName.length === 0) {
+            $("#lnameError").text("Name must be at least 1 character");
+            return false;
+        } else {
+            $("#lnameError").text("");
+            return true;
+        }
+    }
 
-                }
-                else{
-                  $("#passwordError").text("Both passwords should be same");
+    // Function to validate the first name
+    function validateFirstName() {
+        const firstName = $("#first_name").val();
+        if (firstName.length === 0) {
+            $("#fnameError").text("Name must be at least 1 character");
+            return false;
+        } else {
+            $("#fnameError").text("");
+            return true;
+        }
+    }
 
-                }
-                
-            }
+    // Function to validate the email
+    function validateEmail() {
+        const email = $("#email").val();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            $("#emailError").text("Enter a valid email address");
+            return false;
+        } else {
+            $("#emailError").text("");
+            return true;
+        }
+    }
 
-            function validatePhone() {
-                const number = $("#phone").val();
-                if (number>9999999999 || number<1000000000) {
-                    $("#phoneError").text("Enter a valid phone number");
-                    return false;
-                } else {
-                    $("#phoneError").text("");
-                    return true;
-                }
-            }
+    // Function to validate the password
+    function validatePassword() {
+        const password = $("#password").val();
+        const confirmPassword = $('#confirmPassword').val();
+        if (password !== confirmPassword) {
+            $("#passwordError").text("Both passwords should be the same");
+            return false;
+        } else if (password.length < 6) {
+            $("#passwordError").text("Password must be at least 6 characters");
+            return false;
+        } else {
+            $("#passwordError").text("");
+            return true;
+        }
+    }
 
-            // Event handlers for instant validation
-            $("#email").on("blur", validateEmail);
-            $("#password").on("blur", validatePassword);
-            $('#first_name').on("blur", validateFirstName);
-            $('#last_name').on("blur", validateLastName);
-            $('#phone').on("blur", validatePhone);
+    // Function to validate the phone number
+    function validatePhone() {
+        const phone = $("#phone").val();
+        if (phone.length !== 10 || isNaN(phone)) {
+            $("#phoneError").text("Enter a valid 10-digit phone number");
+            return false;
+        } else {
+            $("#phoneError").text("");
+            return true;
+        }
+    }
 
-            // Form submission handler
-            $("#loginform").submit(function (event) {
-                if (!validateName() || !validateEmail() || !validatePassword() || !validatePhone()) {
-                    event.preventDefault(); // Prevent form submission if validation fails
-                    document.getElementById("proceed").style.display = "none";
-                }
-            });
-        });
+    // Function to validate terms acceptance
+    function validateTerms() {
+        const termsAccepted = $("#terms").prop("checked");
+        if (!termsAccepted) {
+            $("#termsError").text("Please accept terms and conditions");
+            return false;
+        } else {
+            $("#termsError").text("");
+            return true;
+        }
+    }
+
+    // Initialize termsError text to empty string
+    $("#termsError").text("");
+
+    // Function to check form validity and enable/disable proceed button
+    function checkFormValidity() {
+        const isValid = validateTerms() && validateEmail() && validateLastName() && validateFirstName() && validatePassword() && validatePhone();
+        $("#proceed").prop("disabled", !isValid);
+    }
+
+    // Call checkFormValidity initially
+    checkFormValidity();
+
+    // Event handlers for instant validation
+    $("#last_name").on("blur", validateLastName);
+    $("#first_name").on("blur", validateFirstName);
+    $("#email").on("blur", validateEmail);
+    $("#password").on("blur", validatePassword);
+    $("#confirmPassword").on("blur", validatePassword);
+    $("#phone").on("blur", validatePhone);
+    $("#terms").on("change", validateTerms);
+
+    // Form submission handler
+    $("#loginform").submit(function (event) {
+        // Prevent form submission if validation fails
+        if (!validateEmail() || !validateFirstName() || !validateLastName() || !validatePhone() || !validatePassword() || !validateTerms()) {
+            event.preventDefault();
+        }
+    });
+});
+
+
+
     </script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="src/lib/js/jquery.min.js"></script>
