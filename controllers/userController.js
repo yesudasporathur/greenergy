@@ -1,5 +1,8 @@
 
 const User = require("../models/user");
+const Product=require("../models/product")
+const Category=require("../models/category")
+
 const otpGenerator = require('otp-generator');
 const sendOTP=require('../public/modules/sendOTP')
 
@@ -36,8 +39,9 @@ const home_post=(req,res)=>{
       }
     })
   }
-const shop_get=(req,res)=>{
-    res.render('shop-02', { title: 'Shop' });
+const shop_get=async (req,res)=>{
+  const products=await Product.find({delete:false})
+    res.render('shop-02', {products, title: 'Shop' });
     setTimeout(() => {
       console.log("Shop rendered")
     }, 100);
@@ -129,6 +133,20 @@ console.log('Generated OTP:', otp);
 const otp_success=(req,res)=>{
   res.render('otp-success', { message: 'Your account have been created. Please proceed to login.' });
 }
+
+const product=async (req,res)=>{
+  const id=req.query.id
+  
+  const details=await Product.find({ _id: id });
+setTimeout(() => {
+  console.log(details)
+
+  
+}, 5000);
+
+  res.render('product-details', {details})
+  console.log("Product details rendered")
+}
   
 
   
@@ -158,5 +176,6 @@ module.exports={
     otp_post,
     otp_success,
     search_get,
-    page_not_found
+    page_not_found,
+    product
 }

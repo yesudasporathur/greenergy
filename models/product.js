@@ -4,10 +4,18 @@ const Schema=mongoose.Schema;
 
 const productSchema=new Schema({
     name: String,
-    price: String,
+    sp: String,
+    mrp: String,
     description: String, 
     brand: String,
-    category: String
+    category: String,
+    images: [
+        {
+        type: String
+        }
+    ],
+    delete: Boolean
+    
 })
 
 module.exports=mongoose.model("product",productSchema)

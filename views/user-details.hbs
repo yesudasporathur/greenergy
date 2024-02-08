@@ -1,0 +1,82 @@
+<form action="user-details" method="post">
+{{#each users}}
+<section class="content-main">
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">User Details</h2>
+                        <div>
+                            <!--<button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>-->
+                            <button class="btn btn-md rounded font-sm hover-up" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="hidden" name="_id" value="{{this._id}}">
+                                    <h6>1. General info</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" name="first_name" value="{{this.first_name}}" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text"  name="last_name" value="{{this.last_name}}" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Email</label>
+                                        <input type="text" name="email"  value="{{this.email}}" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Phone</label>
+                                        <input type="text" name="phone"  value="{{this.phone}}" class="form-control">
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <hr class="mb-4 mt-0">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>2. Status</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        {{#if this.block}}
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                            <input class="form-check-input" name="block" value="false" type="radio" >
+                                            <span class="form-check-label"> Active </span>
+                                        </label>
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;" >
+                                            <input class="form-check-input" name="block" value="true" type="radio" checked="">
+                                            <span class="form-check-label"> Blocked </span>
+                                        </label>
+                                        {{else}}
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                            <input class="form-check-input" name="block" value="false" type="radio" checked="">
+                                            <span class="form-check-label"> Active </span>
+                                        </label>
+                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;" >
+                                            <input class="form-check-input" name="block" value="true" type="radio" >
+                                            <span class="form-check-label"> Blocked </span>
+                                        </label>
+                                        {{/if}}
+                                        
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <hr class="mb-4 mt-0">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section> <!-- content-main end// -->
+        {{/each}}
+        </form>

@@ -6,6 +6,7 @@ var MongoClient=require('mongodb').MongoClient
 router.get('/', userController.home_get);
 router.post('/', userController.home_post)
 router.get('/shop', userController.shop_get);
+router.get('/product',userController.product)
 router.get('/sign-in', userController.sign_in_get);
 router.get('/create-account', userController.create_account_get);
 router.post('/create-account', userController.create_account_post);
