@@ -86,8 +86,8 @@ const user_details_get=async(req,res)=>{
 
 
 const user_details_post=async(req,res)=>{
-  const {_id,first_name,last_name,email,phone,block}=req.body
-  await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block})
+  const {_id,first_name,last_name,email,phone,block,password}=req.body
+  await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block,password})
   res.redirect('users')
 
 }

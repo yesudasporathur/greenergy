@@ -22,7 +22,8 @@ function hashPassword(password, salt) {
 }
 
 const home_get=(req,res)=>{
-  res.render('home-03', { title: 'Greenergy' });
+  res.redirect('sign-in')
+  //res.render('home-03', { title: 'Greenergy' });
   setTimeout(() => {
     console.log("Login rendered")
   }, 100);
@@ -64,8 +65,12 @@ const sign_in_get=(req, res, next) =>{
         // Find the user by email
         const user = await User.findOne({ email});
 
+        if (user.block) {
+          return res.status(400).render('sign-in',{ message: 'User is blocked' });
+      }
+
         // If user not found, return error
-        if (!user) {
+        if (!user || user.block) {
             return res.status(400).render('sign-in',{ message: 'User not found' });
         }
 
