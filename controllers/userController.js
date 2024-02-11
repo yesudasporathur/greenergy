@@ -106,8 +106,17 @@ const create_account_get=(req, res, next) =>{
   }
 const create_account_post =  async (req, res) =>{
   var data={first_name,last_name,email,phone,password}=req.body
+  const userExist=await User.exists({email})
+  if(userExist){
 
-   if(req.body.password===req.body.confirmpassword){
+    res.render('sign-in', { message: 'Email already registered. Please Login' });
+    setTimeout(() => {
+      console.log("User exist")
+      
+    }, 2000);
+    
+  }
+  else if(req.body.password===req.body.confirmpassword){
     console.log(data)
     req.session.data=data
     //const user=await User.create({data})
