@@ -7,8 +7,14 @@ const productSchema=new Schema({
     sp: String,
     mrp: String,
     description: String, 
-    brand: String,
-    category: String,
+    brand: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'brand'
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'category'
+    },
     images: [
         {
         type: String

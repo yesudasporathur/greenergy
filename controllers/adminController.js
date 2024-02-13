@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const Product=require("../models/product")
 const Category=require("../models/category");
+const Brand=require("../models/brand");
+
 
 
   
@@ -83,7 +85,41 @@ const user_details_get=async(req,res)=>{
   res.render('user-details',{users, layout:'layout2'})
 }
 
+const brands_get=async(req,res)=>{
+  const brands=await Brand.find()
+  res.render('page-brands',{brands, layout: 'layout2'})
+}
+const brand_add_get=async(req,res)=>{
+  res.render('brand-add',{layout:'layout2'})
+}
 
+const brand_add_post=async (req,res, next) => {
+  const name=req.body.name
+  const image = req.file.filename
+  const brands=new Brand({
+    name: name,
+    image: image,
+  })
+  await brands.save();
+  console.log(brands)
+  res.redirect('brands')
+
+
+}
+
+const brand_edit_get=async(req,res)=>{
+  const _id=req.query.id
+  const brands=await Brand.find({_id:_id})
+  res.render('brand-edit',{brands, layout: 'layout2'})
+}
+const brand_edit_post=async(req,res)=>{
+  const _id=req.query.id
+  const name=req.body.name
+  await Brand.findByIdAndUpdate({_id:_id},{
+    name: name,
+  });
+  res.redirect('brands')
+}
 
 const user_details_post=async(req,res)=>{
   const {_id,first_name,last_name,email,phone,block,password}=req.body
@@ -143,8 +179,9 @@ const product_edit_post=async(req,res)=>{
   res.redirect('products')
 }
 
-const product_add_get=(req,res)=>{
-  res.render('page-form-product-2',{layout: 'layout2'})
+const product_add_get=async (req,res)=>{
+  const categories=await Category.find()
+  res.render('page-form-product-2',{categories,layout: 'layout2'})
 }
 const product_add_post=async (req,res, next) => {
   const name=req.body.name
@@ -242,7 +279,12 @@ module.exports={
   category_add_get,
   category_add_post,
   category_edit_get,
-  category_edit_post
+  category_edit_post,
+  brands_get,
+  brand_add_get,
+  brand_add_post,
+  brand_edit_get,
+  brand_edit_post
 
   
 }

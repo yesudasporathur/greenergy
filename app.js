@@ -42,11 +42,10 @@ function requireLogin(req, res, next) {
 }
 
 
-
+app.use('/admin',adminRouter);
 //app.use('/', indexRouter);
 //app.use('/user', userRouter);
 app.use('/', userRouter);
-app.use('/admin',adminRouter);
 //app.use('/product', productRouter);
 
 

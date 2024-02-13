@@ -35,9 +35,9 @@
                                     <div class="mb-4">
                                         <label class="form-label">Brand name</label>
                                         <select class="form-select" name="brand">
-                                            <option> Luminous </option>
-                                            <option> Microtek </option>
-                                            <option> UTL </option>
+                                            {{#each brand}}
+                                            <option value="">{{this.name}}</option>
+                                            {{/each}}
                                         </select>
                                     </div>
                                 </div> <!-- col.// -->
@@ -67,9 +67,10 @@
                                     <div class="mb-4" name="category">
                                         <label class="form-label">Category</label>
                                         <select class="form-select" name="category">
-                                            <option> Panels </option>
-                                            <option> Inverters </option>
-                                            <option> Batteries </option>
+                                            {{#each categories}}
+                                            <option value=""></option>
+
+                                            {{/each}}
                                         </select>
                                     </div>
                                 </div> <!-- col.// -->

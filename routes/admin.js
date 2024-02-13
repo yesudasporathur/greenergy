@@ -36,6 +36,13 @@ router.get('/category-add',adminController.category_add_get)
 router.post('/category-add',adminController.category_add_post)
 router.get('/category-edit',adminController.category_edit_get)
 router.post('/category-edit',adminController.category_edit_post)
+router.get('/brands',adminController.brands_get)
+router.get('/brand-add',adminController.brand_add_get)
+router.post('/brand-add',upload.single('image'),adminController.brand_add_post)
+router.get('/brand-edit',adminController.brand_edit_get)
+router.post('/brand-edit',upload.single('image'),adminController.brand_edit_post)
+
+
 
 
 
