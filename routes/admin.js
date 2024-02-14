@@ -16,31 +16,44 @@ const storage = multer.diskStorage({
   })
   const upload = multer({ storage: storage });
 
+
+
+
+
+  function requireLogin(req, res, next) {
+    if (!req.session.admin) {
+      return res.redirect('/admin');
+    }
+    next();
+  }
+
+  
+//router.use(requireLogin)
 router.get('/', adminController.login_get);
 router.post('/', adminController.login_post);
 router.get('/logout',adminController.admin_logout)
 
 
-router.get('/dashboard', adminController.dashboard_get);
-router.get('/users',adminController.user_list_get)
-router.get('/user-details',adminController.user_details_get)
-router.post('/user-details',adminController.user_details_post)
+router.get('/dashboard', requireLogin, adminController.dashboard_get);
+router.get('/users', requireLogin, adminController.user_list_get)
+router.get('/user-details', requireLogin, adminController.user_details_get)
+router.post('/user-details', requireLogin, adminController.user_details_post)
 
-router.get('/products',adminController.products_get)
-router.get('/product-add',adminController.product_add_get)
-router.get('/product-edit',adminController.product_edit_get)
-router.post('/product-edit',upload.array('images', 10),adminController.product_edit_post)
-router.post('/product-add',upload.array('images', 10),adminController.product_add_post)
-router.get('/categories',adminController.categories_get)
-router.get('/category-add',adminController.category_add_get)
-router.post('/category-add',adminController.category_add_post)
-router.get('/category-edit',adminController.category_edit_get)
-router.post('/category-edit',adminController.category_edit_post)
-router.get('/brands',adminController.brands_get)
-router.get('/brand-add',adminController.brand_add_get)
-router.post('/brand-add',upload.single('image'),adminController.brand_add_post)
-router.get('/brand-edit',adminController.brand_edit_get)
-router.post('/brand-edit',upload.single('image'),adminController.brand_edit_post)
+router.get('/products', requireLogin, adminController.products_get)
+router.get('/product-add', requireLogin, adminController.product_add_get)
+router.get('/product-edit', requireLogin, adminController.product_edit_get)
+router.post('/product-edit', requireLogin, upload.array('images', 10),adminController.product_edit_post)
+router.post('/product-add', requireLogin, upload.array('images', 10),adminController.product_add_post)
+router.get('/categories', requireLogin, adminController.categories_get)
+router.get('/category-add', requireLogin, adminController.category_add_get)
+router.post('/category-add', requireLogin, adminController.category_add_post)
+router.get('/category-edit', requireLogin, adminController.category_edit_get)
+router.post('/category-edit', requireLogin, adminController.category_edit_post)
+router.get('/brands', requireLogin, adminController.brands_get)
+router.get('/brand-add', requireLogin, adminController.brand_add_get)
+router.post('/brand-add', requireLogin, upload.single('image'),adminController.brand_add_post)
+router.get('/brand-edit', requireLogin, adminController.brand_edit_get)
+router.post('/brand-edit', requireLogin, upload.single('image'),adminController.brand_edit_post)
 
 
 

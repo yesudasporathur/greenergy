@@ -11,20 +11,29 @@ let userdetails,userexist=false;
 
 
 const login_get=(req,res)=>{
+  if(req.session.admin){
+    res.redirect('/admin/users')
+
+  }
+  else
   {
     res.render('admin-login', { message: '' ,layout:false});
     console.log('login rendered')
   };
 }
 const login_post=(req,res)=>{
-    const Username = 'admin';
-    const Password = 'admin';
+    let Username = 'admin';
+    let Password = 'admin';
     const { username, password } = req.body;
+    
+    
+
     if (username === Username && password === Password) {
       req.session.admin = username;
       res.redirect('/admin/users')
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
-      console.log('logged in')
+      console.log('logged in'+req.session.admin)
+
     }
     else
     {

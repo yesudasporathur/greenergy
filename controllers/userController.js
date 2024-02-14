@@ -92,7 +92,7 @@ const sign_in_get=(req, res, next) =>{
 
     } catch (error) {
         console.error(error);
-        res.status(500).render('sign-in',{message: 'Server error' });
+        res.status(500).render('sign-in', {message: 'Server error' });
     }
 ;
 
@@ -117,7 +117,6 @@ const create_account_post =  async (req, res) =>{
     
   }
   else if(req.body.password===req.body.confirmpassword){
-    console.log(data)
     req.session.data=data
     //const user=await User.create({data})
     setTimeout(() => {
@@ -207,9 +206,6 @@ const search_get=(req, res, next)=> {
 
 const page_not_found=(req,res)=>{
   res.status(404).render('404', { title: 'Search' ,layout:false});
-    setTimeout(() => {
-      console.log("404 rendered")
-    }, 100);
   }
 
 

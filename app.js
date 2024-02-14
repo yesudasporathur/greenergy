@@ -1,19 +1,21 @@
-var createError = require('http-errors');
-var express = require('express');
+const express = require('express');
+const app = express();
 const session = require('express-session');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const createError = require('http-errors');
 const mongoose = require("mongoose");
+
+
+require('dotenv').config();
 mongoose.connect('mongodb://127.0.0.1:27017/greenergy');
 
-var indexRouter = require('./routes/index');
-var userRouter = require('./routes/user');
-var adminRouter=require('./routes/admin')
-var productRouter=require('./routes/product')
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user');
+const adminRouter=require('./routes/admin')
+const productRouter=require('./routes/product')
 
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,12 +36,6 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }));
-function requireLogin(req, res, next) {
-  if (!req.session.user) {
-    return res.redirect('/sign-in');
-  }
-  next();
-}
 
 
 app.use('/admin',adminRouter);
