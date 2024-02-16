@@ -9,23 +9,30 @@ router.get('/', userController.home_get);
 router.post('/', userController.home_post)
 router.get('/sign-in', userController.sign_in_get);
 router.post('/sign-in',userController.sign_in_post)
-router.get('/shop', requireLogin, userController.shop_get);
-router.get('/product',  requireLogin, userController.product)
+router.get('/shop', userController.shop_get);
+router.get('/product', userController.product)
 router.get('/create-account', userController.create_account_get);
 router.post('/create-account', userController.create_account_post);
 router.get('/otp', userController.otp_get);
 router.post('/otp',userController.otp_post);
 router.get('/otp-success',userController.otp_success)
 router.get('/*',userController.page_not_found)
+router.get('/logout', userController.user_logout)
 //router.get('/search', userController.search_get);
 
 
 module.exports = router;
 
 
-function requireLogin(req, res, next) {
+async function requireLogin(req, res, next) {
+
     if (!req.session.user) {
+      
       return res.redirect('/sign-in');
     }
+    //if(await User.findOne({email:req.session.user, block :true})){
+    //  res.redirect('/logout')
+    //}
     next();
   }
+

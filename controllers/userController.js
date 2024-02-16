@@ -5,21 +5,9 @@ const Category=require("../models/category")
 
 const otpGenerator = require('otp-generator');
 const sendOTP=require('../public/modules/sendOTP')
+const crypt=require('../public/modules/crypt')
 
-const crypto = require('crypto');
-const salt = 'uniqueSalt';
-function hashPassword(password, salt) {
-    // Create a hash object
-    const hash = crypto.createHash('sha256');
 
-    // Update the hash object with the password and salt
-    hash.update(password + salt);
-
-    // Get the hexadecimal representation of the hash
-    const hashedPassword = hash.digest('hex');
-
-    return hashedPassword;
-}
 
 const home_get=(req,res)=>{
   res.redirect('sign-in')
@@ -65,25 +53,30 @@ const sign_in_get=(req, res, next) =>{
         // Find the user by email
         const user = await User.findOne({ email});
 
+        
+
+        // If user not found, return error
+        if (!user ) {
+            return res.status(400).render('sign-in',{ message: 'User not found' });
+        }
+
         if (user.block) {
           return res.status(400).render('sign-in',{ message: 'User is blocked' });
       }
 
-        // If user not found, return error
-        if (!user || user.block) {
-            return res.status(400).render('sign-in',{ message: 'User not found' });
-        }
 
         // Check if password matches
         const data = await User.findOne({email:email});       
-
-        // If password does not match, return error
-        if (data.password!==hashPassword(password, salt)) {
-            return res.status(400).render('sign-in',{ error: 'Invalid credentials' });
-        }
+        const val = await crypt.cmpPassword(data.password,password);
         
+        // If password does not match, return error
+        if (val==false) {
+          return res.status(400).render('sign-in',{ message: 'Invalid credentials' });
+        }
+        else{
+          
           res.redirect('/shop'); 
-
+        }
 
         
 
@@ -156,7 +149,7 @@ console.log('Generated OTP:', otp);
       res.redirect('otp-success');
 
         // Hash the password along with the salt
-        const hashedPassword = hashPassword(req.session.data.password, salt);
+         const hashedPassword = await crypt.hashPassword(req.session.data.password);
         console.log("password:  ",hashedPassword)
       await User.create({
         email:req.session.data.email,
@@ -166,8 +159,7 @@ console.log('Generated OTP:', otp);
         password: hashedPassword,
         block: 0,
         isAdmin: 0,
-      })
-      
+      })      
     }
   
      
@@ -209,6 +201,21 @@ const page_not_found=(req,res)=>{
   }
 
 
+  const user_logout=(req,res)=>{
+  
+    req.session.destroy(err => {
+      if (err) {
+        console.error(err);
+      }
+      res.redirect('/sign-in')
+      setTimeout(() => {
+        console.log("Redirect")
+  
+        
+      }, 2200);
+   });
+  }
+
 module.exports={
     home_get,
     home_post,
@@ -222,5 +229,6 @@ module.exports={
     otp_success,
     search_get,
     page_not_found,
-    product
+    product,
+    user_logout
 }

@@ -16,10 +16,6 @@ const storage = multer.diskStorage({
   })
   const upload = multer({ storage: storage });
 
-
-
-
-
   function requireLogin(req, res, next) {
     if (!req.session.admin) {
       return res.redirect('/admin');
@@ -27,7 +23,6 @@ const storage = multer.diskStorage({
     next();
   }
 
-  
 //router.use(requireLogin)
 router.get('/', adminController.login_get);
 router.post('/', adminController.login_post);

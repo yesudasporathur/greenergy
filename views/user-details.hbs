@@ -17,9 +17,11 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="row">
+                                <h6 class="text-error " style="padding-bottom: 20px;">{{message}}</h6>
                                 <div class="col-md-3">
                                     <input type="hidden" name="_id" value="{{this._id}}">
                                     <input type="hidden" name="password" value="{{this.password}}">
+                                    <input type="hidden" name="isAdmin" value="{{this.isAdmin}}">
                                     <h6>1. General info</h6>
                                 </div>
                                 <div class="col-md-9">

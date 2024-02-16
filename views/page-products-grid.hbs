@@ -37,7 +37,7 @@
                 <div class="card-body">
                     <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5">
                         {{#each products}}
-                        <div class="col" >
+                        <div class="col" onclick="window.location.href='product-edit?id={{this._id}}';" style="cursor: pointer;">
                             <div  class="card card-product-grid">
                                 <a href="product-edit?id={{this._id}}" class="img-wrap"> <img src="/images/{{this.images.[0]}}" alt="Product"> </a>
                                 <div class="info-wrap">

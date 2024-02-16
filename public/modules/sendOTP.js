@@ -1,12 +1,10 @@
-const gmailPass = 'stqu ljoj aifa rezm';
-//const otp=35435
-
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 const send_otp = (otp,mail_id)=>{
 
     // Replace these with your Gmail credentials
-    const gmailUser = 'yesudasporathur@gmail.com';
-    const gmailPass = 'stqu ljoj aifa rezm';
+    const gmailUser = process.env.GMAILID;
+    const gmailPass = process.env.GMAILPASSWORD;
   
     // Create a nodemailer transporter
     const transporter = nodemailer.createTransport({

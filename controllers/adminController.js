@@ -1,3 +1,4 @@
+const crypt=require('../public/modules/crypt')
 const User = require("../models/user");
 const Product=require("../models/product")
 const Category=require("../models/category");
@@ -21,27 +22,52 @@ const login_get=(req,res)=>{
     console.log('login rendered')
   };
 }
-const login_post=(req,res)=>{
-    let Username = 'admin';
-    let Password = 'admin';
+const login_post=async(req,res)=>{
     const { username, password } = req.body;
     
-    
+    try {
+      // Find the user by email
+      const user = await User.findOne({ email:username, isAdmin:true});
+      
 
-    if (username === Username && password === Password) {
+      
+
+      // If user not found, return error
+      if (!user ) {
+          return res.status(400).render('admin-login',{ message: 'Unauthorised access' ,layout:false});
+      }
+      
+
+      // Check if password matches
+      const data = await User.findOne({email:username});       
+
+      // If password does not match, return error
+      const val = await crypt.cmpPassword(data.password,password);
+        
+        // If password does not match, return error
+        if (val==false) {
+          return res.status(400).render('admin-login',{ message: 'Invalid credentials' ,layout:false});
+      }
       req.session.admin = username;
       res.redirect('/admin/users')
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
       console.log('logged in'+req.session.admin)
+      
 
-    }
-    else
-    {
-      res.render('admin-login', { layout:false, message: 'Incorrect username or password' });
-      console.log('login failed')
 
-    }
-}
+      
+
+      // If user is valid, render the home page
+      // Assuming you have a home template
+
+  } catch (error) {
+      console.error(error);
+      res.status(500, '/', {message: 'Server error' ,layout:false});
+  }
+;
+
+  }
+
 const dashboard_get=(req,res)=>{ 
   res.render('admin-dashboard', { message: '' ,layout:'layout2'});
   console.log('login rendered')  
@@ -131,9 +157,20 @@ const brand_edit_post=async(req,res)=>{
 }
 
 const user_details_post=async(req,res)=>{
-  const {_id,first_name,last_name,email,phone,block,password}=req.body
-  await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block,password})
+  const {_id,first_name,last_name,email,phone,block,password,isAdmin}=req.body
+  if(req.session.admin==email && block==true){
+  const id=req.query.id
+  const users = await User.find({_id:id});
+  setTimeout(() => {
+    console.log("Invalid operation")
+    
+  }, 2000);
+  res.render('user-details',{users,message:"Invalid operation", layout:'layout2'})
+  }
+  else{
+  await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block,password,isAdmin})
   res.redirect('users')
+  }
 
 }
 
@@ -142,7 +179,8 @@ const user_details_post=async(req,res)=>{
 const products_get = async(req,res)=>{
   try {
     // Retrieve products from MongoDB
-    const products = await Product.find({delete: false});
+    const products = await Product.find({delete: false}).populate('category');
+    console.log(products);
     res.render('page-products-grid',{products, layout:'layout2'})
   }
   catch(error){

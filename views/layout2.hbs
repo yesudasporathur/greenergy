@@ -14,7 +14,7 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/imgs/theme/favicon.svg">
+    <link rel="shortcut icon" type="image/x-icon" href="/src/images/favicon/favicon-32x32.png">
     <!-- Template CSS -->
     <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
 </head>
@@ -24,11 +24,13 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="/admin" class="brand-wrap">
-                <img src="assets/imgs/theme/logo.svg" class="logo" alt="Greenergy">
+                <h4>Greenergy</h4> 
             </a>
+            <!--
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
             </div>
+            -->
         </div>
         <nav>
             <ul class="menu-aside">
@@ -37,7 +39,7 @@
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="menu-item has-submenu">
+                <li class="menu-item ">
                     <a class="menu-link" href="/admin/products"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
@@ -48,6 +50,27 @@
                         <a href="page-categories.html">Categories</a>
                     </div>
                 </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Account</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-account-login.html">User login</a>
+                        <a href="page-account-register.html">User registration</a>
+                        <a href="page-error-404.html">Error 404</a>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/brands"> <i class="icon material-icons md-stars"></i>
+                        <span class="text">Brands</span> </a>
+                </li>
+                
+                <li class="menu-item">
+                    <a class="menu-link" href="/admin/categories"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <!--
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
@@ -88,31 +111,13 @@
                         <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
                 </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="/admin/users"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Account</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-account-login.html">User login</a>
-                        <a href="page-account-register.html">User registration</a>
-                        <a href="page-error-404.html">Error 404</a>
-                    </div>
-                </li>
+                
                 <li class="menu-item">
                     <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
                         <span class="text">Reviews</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/brands"> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
-                </li>
                 
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/categories"> <i class="icon material-icons md-local_offer"></i>
-                        <span class="text">Categories</span>
-                    </a>
-                </li>
                 <li class="menu-item">
                     <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
                         <span class="text">Statistics</span>
@@ -131,6 +136,7 @@
                     </div>
                 </li>
             </ul>
+            -->
             <br>
             <br>
         </nav>
