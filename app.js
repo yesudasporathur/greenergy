@@ -35,7 +35,6 @@ app.use(session({
 app.use('/admin',adminRouter);
 app.use('/', userRouter);
 
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -44,8 +43,6 @@ app.use(function(req, res, next) {
 app.listen(3000,()=>{
   console.log("Server running in http://localhost:3000")
 })
-
-
 
 module.exports = app;
 
