@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views/assets')));
 
 app.use(session({
-  secret: 'your-secret-key',
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
