@@ -8,6 +8,7 @@ const logger = require('morgan');
 const createError = require('http-errors');
 const mongoose = require("mongoose");
 
+const PORT=process.env.PORT
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
 
@@ -17,13 +18,15 @@ mongoose.connect(process.env.MONGODB_URI);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'views/assets')));
+app.use(express.static(path.join(__dirname, 'views/admin')));
+app.use(express.static(path.join(__dirname, 'views/user')));
+
 
 app.use(session({
   secret: process.env.SECRET,
@@ -40,11 +43,36 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-app.listen(3000,()=>{
-  console.log("Server running in http://localhost:3000")
+app.listen(PORT,()=>{
+  console.log(`Server running in http://localhost:${PORT}`)
 })
 
 module.exports = app;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -11,10 +11,8 @@ const crypt=require('../public/modules/crypt')
 
 const home_get=(req,res)=>{
   res.redirect('sign-in')
-  //res.render('home-03', { title: 'Greenergy' });
-  setTimeout(() => {
-    console.log("Login rendered")
-  }, 100);
+  //res.render('user/home-03', { title: 'Greenergy' });
+  console.log("Login rendered")
 }
 const home_post=(req,res)=>{
     console.log(req.body)
@@ -30,10 +28,8 @@ const home_post=(req,res)=>{
   }
 const shop_get=async (req,res)=>{
   const products=await Product.find({delete:false})
-    res.render('shop-02', {products, title: 'Shop' });
-    setTimeout(() => {
-      console.log("Shop rendered")
-    }, 100);
+    res.render('user/shop-02', {products, title: 'Shop' });
+    console.log("Shop rendered")
   }
 const sign_in_get=(req, res, next) =>{
   res.set({
@@ -41,10 +37,8 @@ const sign_in_get=(req, res, next) =>{
     'Pragma' : 'no-cache',
     'Expires' : '0',
 })
-    res.render('sign-in', { message:'',title: 'Sign-in' });
-    setTimeout(() => {
-      console.log("Sign-in rendered")
-    }, 100);
+    res.render('user/sign-in', { message:'',title: 'Sign-in' });
+    console.log("Sign-in rendered")
   }
   const sign_in_post=async(req, res, next) =>{
     const { email, password } = req.body;
@@ -92,39 +86,32 @@ const sign_in_get=(req, res, next) =>{
     }
 
 const create_account_get=(req, res, next) =>{
-    res.render('create-account', { title: 'Create-Account' ,message:''});
-    setTimeout(() => {
-      console.log("Create-Account rendered")
-    }, 200);
+    res.render('user/create-account', { title: 'Create-Account' ,message:''});
+    console.log("Create-Account rendered")
   }
 const create_account_post =  async (req, res) =>{
   var data={first_name,last_name,email,phone,password}=req.body
   const userExist=await User.exists({email})
   if(userExist){
 
-    res.render('sign-in', { message: 'Email already registered. Please Login' });
-    setTimeout(() => {
-      console.log("User exist")
-      
-    }, 2000);
+    res.render('user/sign-in', { message: 'Email already registered. Please Login' });
+    console.log("User exist")
     
   }
   else if(req.body.password===req.body.confirmpassword){
     req.session.data=data
     //const user=await User.create({data})
-    setTimeout(() => {
-      console.log("Create-Account done")
-    }, 100);
+    console.log("Create-Account done")
     res.redirect('/otp')
 
    }
    else{
-    res.render('create-account', { message: 'Password not matching' });
+    res.render('user/create-account', { message: 'Password not matching' });
     
    }
 
    //console.log(user)
-    //res.render('create-account', { title: 'Create-Account' });
+    //res.render('user/create-account', { title: 'Create-Account' });
     
   }
 
@@ -135,11 +122,9 @@ const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase
 sendOTP(otp,mail_id)
 req.session.otp=otp
 console.log('Generated OTP:', otp);
-    res.render('otp', { title: 'OTP Verification' });
-        setTimeout(() => {
-      console.log("OTP Verification rendered")
+    res.render('user/otp', { title: 'OTP Verification' });
+    console.log("OTP Verification rendered")
       //console.log(req.session.data)
-    }, 200);
   }
 
   const otp_post=async(req, res, next)=> {
@@ -164,40 +149,34 @@ console.log('Generated OTP:', otp);
   
      
      else{
-      res.render('otp', { message: 'OTP invalid' });
+      res.render('user/otp', { message: 'OTP invalid' });
       
      }
     }
 
 const otp_success=(req,res)=>{
-  res.render('otp-success', { message: 'Your account have been created. Please proceed to login.' });
+  res.render('user/otp-success', { message: 'Your account have been created. Please proceed to login.' });
 }
 
 const product=async (req,res)=>{
   const id=req.query.id
   
   const details=await Product.find({ _id: id });
-setTimeout(() => {
   console.log(details)
 
-  
-}, 5000);
-
-  res.render('product-details', {details})
+  res.render('user/product-details', {details})
   console.log("Product details rendered")
 }
   
 
   
 const search_get=(req, res, next)=> {
-    res.render('!search!not!defined!', { title: 'Search' });
-    setTimeout(() => {
-      console.log("Search rendered")
-    }, 100);
+    res.render('user/!search!not!defined!', { title: 'Search' });
+    console.log("Search rendered")
   }
 
 const page_not_found=(req,res)=>{
-  res.status(404).render('404', { title: 'Search' ,layout:false});
+  res.status(404).render('user/404', { title: 'Search' , layout:false});
   }
 
 
@@ -208,11 +187,7 @@ const page_not_found=(req,res)=>{
         console.error(err);
       }
       res.redirect('/sign-in')
-      setTimeout(() => {
-        console.log("Redirect")
-  
-        
-      }, 2200);
+      console.log("Redirect")
    });
   }
 

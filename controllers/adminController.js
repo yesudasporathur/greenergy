@@ -18,8 +18,8 @@ const login_get=(req,res)=>{
   }
   else
   {
-    res.render('admin-login', { message: '' ,layout:false});
-    console.log('login rendered')
+    res.render('admin/admin-login', { message: '' ,layout:false});
+    console.log('Admin Login rendered')
   };
 }
 const login_post=async(req,res)=>{
@@ -34,7 +34,7 @@ const login_post=async(req,res)=>{
 
       // If user not found, return error
       if (!user ) {
-          return res.status(400).render('admin-login',{ message: 'Unauthorised access' ,layout:false});
+          return res.status(400).render('admin/admin-login',{ message: 'Unauthorised access' ,layout:false});
       }
       
 
@@ -51,7 +51,7 @@ const login_post=async(req,res)=>{
       req.session.admin = username;
       res.redirect('/admin/users')
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
-      console.log('logged in'+req.session.admin)
+      console.log('Logged in as '+req.session.admin)
       
 
 
@@ -69,11 +69,9 @@ const login_post=async(req,res)=>{
   }
 
 const dashboard_get=(req,res)=>{ 
-  res.render('admin-dashboard', { message: '' ,layout:'layout2'});
-  console.log('login rendered')  
-  setTimeout(() => {
-    console.log("Admin Dash rendered")
-  }, 1000);
+  res.render('admin-dashboard', { message: '' ,layout:'admin/layout'});
+  console.log("Admin Dashboard rendered")  
+  
 }
 
 const user_list_get=async (req,res)=>{
@@ -82,7 +80,7 @@ const user_list_get=async (req,res)=>{
   try {
     // Retrieve products from MongoDB
     const users = await User.find();
-    res.render('userlist',{users,layout:'layout2'})
+    res.render('admin/userlist',{users,layout:'admin/layout'})
   }
   catch (error) {
     console.error(error);
@@ -113,19 +111,16 @@ const unblockUser = async (req, res) => {
 const user_details_get=async(req,res)=>{
   const id=req.query.id
   const users = await User.find({_id:id});
-  setTimeout(() => {
-    console.log(users)
-    
-  }, 2000);
-  res.render('user-details',{users, layout:'layout2'})
+  console.log(users+"\nUser details loaded")
+  res.render('admin/user-details',{users, layout:'admin/layout'})
 }
 
 const brands_get=async(req,res)=>{
   const brands=await Brand.find()
-  res.render('page-brands',{brands, layout: 'layout2'})
+  res.render('admin/page-brands',{brands, layout: 'admin/layout'})
 }
 const brand_add_get=async(req,res)=>{
-  res.render('brand-add',{layout:'layout2'})
+  res.render('brand-add',{layout:'admin/layout'})
 }
 
 const brand_add_post=async (req,res, next) => {
@@ -136,7 +131,7 @@ const brand_add_post=async (req,res, next) => {
     image: image,
   })
   await brands.save();
-  console.log(brands)
+  console.log(req.file)
   res.redirect('brands')
 
 
@@ -145,7 +140,7 @@ const brand_add_post=async (req,res, next) => {
 const brand_edit_get=async(req,res)=>{
   const _id=req.query.id
   const brands=await Brand.find({_id:_id})
-  res.render('brand-edit',{brands, layout: 'layout2'})
+  res.render('brand-edit',{brands, layout: 'admin/layout'})
 }
 const brand_edit_post=async(req,res)=>{
   const _id=req.query.id
@@ -161,11 +156,8 @@ const user_details_post=async(req,res)=>{
   if(req.session.admin==email && block==true){
   const id=req.query.id
   const users = await User.find({_id:id});
-  setTimeout(() => {
-    console.log("Invalid operation")
-    
-  }, 2000);
-  res.render('user-details',{users,message:"Invalid operation", layout:'layout2'})
+  console.log("Invalid operation")
+  res.render('user-details',{users,message:"Invalid operation", layout:'admin/layout'})
   }
   else{
   await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block,password,isAdmin})
@@ -179,9 +171,9 @@ const user_details_post=async(req,res)=>{
 const products_get = async(req,res)=>{
   try {
     // Retrieve products from MongoDB
-    const products = await Product.find({delete: false}).populate('category');
-    console.log(products);
-    res.render('page-products-grid',{products, layout:'layout2'})
+    const products = await Product.find().populate('category');
+    console.log("Products list loaded");
+    res.render('page-products-list',{products, layout:'admin/layout'})
   }
   catch(error){
     console.error(error)
@@ -191,8 +183,13 @@ const products_get = async(req,res)=>{
 
 const product_edit_get=async(req,res)=>{
   const _id=req.query.id
-  const products=await Product.find({_id:_id})
-  res.render('product-edit',{products, layout: 'layout2'})
+  const products = await Product.find({ _id: _id }).populate(['brand', 'category']);
+  const brands=await Brand.find()
+  const categories=await Category.find()
+
+
+  console.log("Product details loaded:\n"+products)
+  res.render('product-edit',{products,categories,brands, layout: 'admin/layout'})
 }
 
 const product_edit_post=async(req,res)=>{
@@ -203,7 +200,7 @@ const product_edit_post=async(req,res)=>{
   const mrp=req.body.mrp
   const sp=req.body.sp
   const category=req.body.category
-  await Product.findByIdAndUpdate({_id:_id},{
+  const update=await Product.findByIdAndUpdate({_id:_id},{
     name: name,
     sp: sp,
     mrp: mrp,
@@ -211,27 +208,36 @@ const product_edit_post=async(req,res)=>{
     brand: brand,
     category: category,
   });
+  console.log(update)
   if(req.body.imgUpdate=== '1'){
     const images = req.files.map(file =>   file.filename );
     await Product.findByIdAndUpdate({_id:_id},{
       images: images
     });
   }
-  if(req.body.softdel=== '1'){
-    const images = req.files.map(file =>   file.filename );
+  if(req.body.softdel){
     await Product.findByIdAndUpdate({_id:_id},{
       delete: true
+    });
+  }
+  else {
+    await Product.findByIdAndUpdate({ _id: _id }, {
+        delete: false
     });
   }
   res.redirect('products')
 }
 
 const product_add_get=async (req,res)=>{
+  const message = req.query.message;
+
   const categories=await Category.find()
-  res.render('page-form-product-2',{categories,layout: 'layout2'})
+  const brands=await Brand.find()
+  res.render('page-form-product-2',{categories,brands,message: message, layout: 'admin/layout'})
 }
 const product_add_post=async (req,res, next) => {
-  const name=req.body.name
+  try{
+    const name=req.body.name
   const images = req.files.map(file=>file.filename );
   const description=req.body.description
   const brand=req.body.brand
@@ -249,19 +255,25 @@ const product_add_post=async (req,res, next) => {
     delete: false
   })
   await products.save();
-  console.log(products)
+  console.log("New product: "+products)
   res.redirect('products')
+  }
+  catch{
+    console.log("Product adding failed")
+    res.redirect('/admin/product-add?message=Product+registration+failed!+Try+Again');
+
+  }
 
 
 }
 
 const categories_get=async(req,res)=>{
   const categories=await Category.find({delete:false})
-  res.render('categories',{categories, layout: 'layout2'})
+  res.render('categories',{categories, layout: 'admin/layout'})
 }
 
 const category_add_get=async(req,res)=>{
-  res.render('category-add',{layout: 'layout2'})
+  res.render('category-add',{layout: 'admin/layout'})
 }
 
 const category_add_post=async(req,res)=>{
@@ -273,7 +285,7 @@ const category_add_post=async(req,res)=>{
 const category_edit_get=async(req,res)=>{
   const _id=req.query.id
   const categories=await Category.find({_id:_id})
-  res.render('category-edit',{categories, layout: 'layout2'})
+  res.render('category-edit',{categories, layout: 'admin/layout'})
 }
 
 const category_edit_post=async(req,res)=>{
@@ -299,11 +311,7 @@ const admin_logout=(req,res)=>{
       console.error(err);
     }
     res.redirect('/admin/')
-    setTimeout(() => {
-      console.log("Redirect")
-
-      
-    }, 2200);
+    console.log("Redirected to Admin Login")
  });
 }
 
