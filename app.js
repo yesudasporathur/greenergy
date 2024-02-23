@@ -4,8 +4,8 @@ const app = express();
 const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const createError = require('http-errors');
+//const logger = require('morgan');
+//const createError = require('http-errors');
 const mongoose = require("mongoose");
 
 const PORT=process.env.PORT
@@ -27,7 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views/admin')));
 app.use(express.static(path.join(__dirname, 'views/user')));
 
-
 app.use(session({
   secret: process.env.SECRET,
   resave: false,
@@ -37,11 +36,6 @@ app.use(session({
 
 app.use('/admin',adminRouter);
 app.use('/', userRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
 
 app.listen(PORT,()=>{
   console.log(`Server running in http://localhost:${PORT}`)
@@ -93,7 +87,10 @@ module.exports = app;
 
 
 
-
+// catch 404 and forward to error handler
+//  app.use(function(req, res, next) {
+//    next(createError(404));
+//  });
 
 
 /*

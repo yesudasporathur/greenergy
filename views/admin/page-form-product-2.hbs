@@ -15,8 +15,8 @@
                         
                     </div>
                     <div  class=" text-danger">
-                                    <h4 class=" text-danger">{{message}}</h4>
-                                </div>
+                        <h4 class=" text-danger">{{message}}</h4>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -41,7 +41,7 @@
                                         <label class="form-label">Brand name</label>
                                         <select class="form-select" name="brand">
                                             {{#each brands}}
-                                            <option value="">{{this.name}}</option>
+                                            <option value="{{this._id}}">{{this.name}}</option>
                                             {{/each}}
                                         </select>
                                     </div>
@@ -73,7 +73,7 @@
                                         <label class="form-label">Category</label>
                                         <select class="form-select" name="category">
                                             {{#each categories}}
-                                            <option value="">{{this.name}}</option>
+                                            <option value="{{this._id}}">{{this.name}}</option>
 
                                             {{/each}}
                                         </select>

@@ -126,7 +126,7 @@ if (document.getElementById('category')) {
     selector: '#category',
     searchbox: false,
     offset: false,
-    placeholder: 'Select Catecory',
+    placeholder: 'Select Category',
   });
 }
 

@@ -3,36 +3,45 @@ var router = express.Router();
 var userController=require('../controllers/userController')
 var MongoClient=require('mongodb').MongoClient
 
+router.get('/shop', requireLogin,setNoCache,userController.shop_get);
+router.get('/product', requireLogin,setNoCache,userController.product)
+router.get('/sign-in',isLoggedIn, setNoCache, userController.sign_in_get);
+router.post('/sign-in', setNoCache, userController.sign_in_post)
+router.get('/create-account',  setNoCache, userController.create_account_get);
+router.post('/create-account',  setNoCache, userController.create_account_post);
+router.get('/otp', setNoCache,  userController.otp_get);
+router.post('/otp', setNoCache, userController.otp_post);
+router.get('/otp-success', setNoCache, userController.otp_success)
+router.get('/search', setNoCache, userController.search_get);
+router.get('/logout', requireLogin, setNoCache, userController.user_logout)
+router.get('/',  setNoCache, userController.home_get);
+router.post('/',  setNoCache, userController.home_post)
+router.get('/*', setNoCache, userController.page_not_found)
+
+async function requireLogin(req, res, next) {
+  console.log(req.session.user)
+    if (!req.session.user) {
+      return res.redirect('/sign-in');
+    }
+    next();
+}
+async function isLoggedIn(req, res, next) {
+    if (req.session.user) {
+      return res.redirect('/shop');
+    }
+    next();
+}
+function setNoCache(req, res, next) {
+  res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+  });
+  next();
+}
 
 
-router.get('/', userController.home_get);
-router.post('/', userController.home_post)
-router.get('/sign-in', userController.sign_in_get);
-router.post('/sign-in',userController.sign_in_post)
-router.get('/shop', userController.shop_get);
-router.get('/product', userController.product)
-router.get('/create-account', userController.create_account_get);
-router.post('/create-account', userController.create_account_post);
-router.get('/otp', userController.otp_get);
-router.post('/otp',userController.otp_post);
-router.get('/otp-success',userController.otp_success)
-router.get('/*',userController.page_not_found)
-router.get('/logout', userController.user_logout)
-//router.get('/search', userController.search_get);
+
 
 
 module.exports = router;
-
-
-async function requireLogin(req, res, next) {
-
-    if (!req.session.user) {
-      
-      return res.redirect('/sign-in');
-    }
-    //if(await User.findOne({email:req.session.user, block :true})){
-    //  res.redirect('/logout')
-    //}
-    next();
-  }
-

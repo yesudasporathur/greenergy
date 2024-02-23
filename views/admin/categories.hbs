@@ -37,9 +37,10 @@
                             <thead>
                                 <tr>
                                     <th>Names</th>
+                                    <th>Status</th>
                                     <!--
                                     <th>Email</th>
-                                    <th>Status</th>
+                                    
                                     
 
                                     <th></th>
@@ -62,19 +63,23 @@
                                                 <a href="category-edit?id={{this._id}}" class="mb-0 title">{{this.name}}</a>
                                                 <small class="text-muted"></small>
                                             </div>
+
                                         </a>
                                     </td>
-                                    <!--
-                                    <td><template class="__cf_email__" data-cfemail="d1bca3bbbeb9bf91b4a9b0bca1bdb4ffb2bebc">[email&#160;protected]knkj lknk</template>{{this.email}}</td>
+                                    
                                     <td>
 
-                                        {{#if block}}
-                                        <span class="badge rounded-pill alert-danger">Blocked</span>
-                                        {{else}}
-                                        <span class="badge rounded-pill alert-success">Active</span>
-                                        {{/if}}
+                                        {{#if delete}}
+                            <div class="col-lg-2 col-sm-2 col-4 col-status">
+                                <span class="badge rounded-pill alert-danger">Disabled</span>
+                            </div>
+                            {{else}}
+                            <div class="col-lg-2 col-sm-2 col-4 col-status">
+                                <span class="badge rounded-pill alert-success">Active</span>
+                            </div>
+                            {{/if}}
                                     </td>
-                                    -->
+                                    
 
                                     
                                     

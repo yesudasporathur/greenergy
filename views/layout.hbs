@@ -47,12 +47,19 @@
                                 </select>
                             </div>
                             -->
+                            {{#if user}}
+                            <div class="header__in">
+                                <a href="logout">Logout</a>
+                            </div>
+                            {{else}}
+
                             <div class="header__in">
                                 <a href="sign-in">Sign in </a>
                                 <span>/</span>
                                 <a href="create-account">Sign up</a>
                             </div>
-                        </div>
+                            {{/if}}
+                            </div>
                     </div>
                 </div>
             </div>
@@ -181,6 +188,7 @@
                                 </ul>
                                 -->
                             </li>
+                            <!--
                             <li class="header__navigation-menu-link">
                                 <a href="#">
                                     Pages
@@ -253,6 +261,7 @@
                             <li class="header__navigation-menu-link">
                                 <a href="contact.html">Contact us</a>
                             </li>
+                            -->
                         </ul>
 
                         <a href="#" class="header__telephone-number">
@@ -350,6 +359,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            <!--
                             <li class="header__mobile-menu-item">
                                 <a href="#" class="header__mobile-menu-item-link">
                                     Pages
@@ -422,6 +432,7 @@
                             <li class="header__mobile-menu-item">
                                 <a href="contact.html" class="header__mobile-menu-item-link">Contacts</a>
                             </li>
+                            -->
                         </ul>
                     </div>
                     <div class="header__mobile-bottom">
@@ -696,7 +707,7 @@
                                             <del class="font-body--xxl-400">$48.00</del>
                                             $17.28
                                         </h2>
-                                        <span class="label sale-off"> 64% off </span>
+                                        <span class="label sale-off"> {{this.discount}}% off </span>
                                     </div>
                                 </div>
                                 <!-- brand  -->
@@ -880,7 +891,7 @@
                                 <div class="footer__brand-info-contact">
                                     <a href="#"> <span>(91) 701 224 9965</span></a>
                                     or
-                                    <a href="#"><span>Proxy@gmail.com</span></a>
+                                    <a href="#"><span>dasporathur@gmail.com</span></a>
                                 </div>
                             </div>
                         </div>
@@ -1029,7 +1040,7 @@
                     </ul>
 
                     <p class="footer__copyright-text">
-                        eCommerce © 2024
+                         Copyright © 2024
                     </p>
                     <div class="footer__partner d-flex">
                         <a href="#" class="footer__partner-item">

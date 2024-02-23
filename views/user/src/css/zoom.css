@@ -1,0 +1,13 @@
+.image-container {
+    overflow: hidden;
+    position: relative;
+}
+
+#zoomedImage {
+    transition: transform 0.3s;
+    transform-origin: 50% 50%;
+}
+
+.zoomedImage-zoomed {
+    transform: scale(2); /* Adjust the zoom level as needed */
+}

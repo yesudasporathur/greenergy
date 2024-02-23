@@ -1,14 +1,16 @@
         {{#each categories}}
         <section class="content-main">
             <form action="/admin/category-edit?id={{this._id}}" method="post">
+        {{/each}}
+
 
             <div class="row">
                 <div class="col-6">
                     <div class="content-header">
                         <h2 class="content-title">Edit Category</h2>
                         <h3>
-                        <input type="checkbox" name="softdel" class="text-danger form-check-input" value="1" >
-                        <span class="form-check-label text-danger">Delete</span>
+                        <span class="form-check-label text-danger">Delete: </span>
+                        <input type="checkbox" name="softdel" class="form-check-input text-danger " {{#if delete}} checked {{/if}} >
                         </h3>
                         
                         <div>
@@ -19,8 +21,13 @@
                             
                         </div>
                     </div>
+                    <div  class=" text-danger">
+                        <h4 class=" text-danger">{{message}}</h4>
+                    </div>  
                 </div>
             </div>
+            {{#each categories}}
+
             
 
             <div class="row">

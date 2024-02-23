@@ -9,14 +9,14 @@ const crypt=require('../public/modules/crypt')
 
 
 
+
 const home_get=(req,res)=>{
-  res.redirect('sign-in')
+  res.redirect('/sign-in')
   //res.render('user/home-03', { title: 'Greenergy' });
   console.log("Login rendered")
 }
 const home_post=(req,res)=>{
-    console.log(req.body)
-    MongoClient.connect('mongodb://localhost:27017',function(err,client){
+    MongoClient.connect(process.env.MONGODB_URI,function(err,client){
       if(err){
         console.log('error')
       }
@@ -27,18 +27,16 @@ const home_post=(req,res)=>{
     })
   }
 const shop_get=async (req,res)=>{
-  const products=await Product.find({delete:false})
-    res.render('user/shop-02', {products, title: 'Shop' });
-    console.log("Shop rendered")
+  const products=await Product.find({delete:false}).populate('category')
+    res.render('user/shop-02', {user: req.session.user, products:products, title: 'Shop' });
+    console.log("shop_get rendered")
   }
 const sign_in_get=(req, res, next) =>{
-  res.set({
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma' : 'no-cache',
-    'Expires' : '0',
-})
-    res.render('user/sign-in', { message:'',title: 'Sign-in' });
-    console.log("Sign-in rendered")
+  
+
+    res.render('user/sign-in', { user: req.session.user,message:'',title: 'Sign-in' });
+
+    console.log("sign_in_get rendered")
   }
   const sign_in_post=async(req, res, next) =>{
     const { email, password } = req.body;
@@ -46,16 +44,13 @@ const sign_in_get=(req, res, next) =>{
     try {
         // Find the user by email
         const user = await User.findOne({ email});
-
-        
-
         // If user not found, return error
         if (!user ) {
-            return res.status(400).render('sign-in',{ message: 'User not found' });
+            return res.status(400).render('user/sign-in',{ message: 'User not found' });
         }
 
         if (user.block) {
-          return res.status(400).render('sign-in',{ message: 'User is blocked' });
+          return res.status(400).render('user/sign-in',{ message: 'User is blocked' });
       }
 
 
@@ -65,10 +60,10 @@ const sign_in_get=(req, res, next) =>{
         
         // If password does not match, return error
         if (val==false) {
-          return res.status(400).render('sign-in',{ message: 'Invalid credentials' });
+          return res.status(400).render('user/sign-in',{ message: 'Invalid credentials' });
         }
         else{
-          
+          req.session.user=email
           res.redirect('/shop'); 
         }
 
@@ -79,14 +74,14 @@ const sign_in_get=(req, res, next) =>{
 
     } catch (error) {
         console.error(error);
-        res.status(500).render('sign-in', {message: 'Server error' });
+        res.status(500).render('user/sign-in', {message: 'Server error' });
     }
 ;
 
     }
 
 const create_account_get=(req, res, next) =>{
-    res.render('user/create-account', { title: 'Create-Account' ,message:''});
+    res.render('user/create-account', {user: req.session.user, title: 'Create-Account' ,message:''});
     console.log("Create-Account rendered")
   }
 const create_account_post =  async (req, res) =>{
@@ -94,7 +89,7 @@ const create_account_post =  async (req, res) =>{
   const userExist=await User.exists({email})
   if(userExist){
 
-    res.render('user/sign-in', { message: 'Email already registered. Please Login' });
+    res.render('user/sign-in', {user: req.session.user, message: 'Email already registered. Please Login' });
     console.log("User exist")
     
   }
@@ -106,12 +101,12 @@ const create_account_post =  async (req, res) =>{
 
    }
    else{
-    res.render('user/create-account', { message: 'Password not matching' });
+    res.render('user/create-account', { user: req.session.user,message: 'Password not matching' });
     
    }
 
    //console.log(user)
-    //res.render('user/create-account', { title: 'Create-Account' });
+    //res.render('user/create-account', {user: req.session.user, title: 'Create-Account' });
     
   }
 
@@ -122,7 +117,7 @@ const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase
 sendOTP(otp,mail_id)
 req.session.otp=otp
 console.log('Generated OTP:', otp);
-    res.render('user/otp', { title: 'OTP Verification' });
+    res.render('user/otp', { user: req.session.user,title: 'OTP Verification' });
     console.log("OTP Verification rendered")
       //console.log(req.session.data)
   }
@@ -149,29 +144,29 @@ console.log('Generated OTP:', otp);
   
      
      else{
-      res.render('user/otp', { message: 'OTP invalid' });
+      res.render('user/otp', { user: req.session.user,message: 'OTP invalid' });
       
      }
     }
 
 const otp_success=(req,res)=>{
-  res.render('user/otp-success', { message: 'Your account have been created. Please proceed to login.' });
+  res.render('user/otp-success', { user: req.session.user,message: 'Your account have been created. Please proceed to login.' });
 }
 
 const product=async (req,res)=>{
   const id=req.query.id
   
-  const details=await Product.find({ _id: id });
+  const details=await Product.find({ _id: id }).populate(['brand','category']);
   console.log(details)
 
-  res.render('user/product-details', {details})
+  res.render('user/product-details', {user: req.session.user,details})
   console.log("Product details rendered")
 }
   
 
   
 const search_get=(req, res, next)=> {
-    res.render('user/!search!not!defined!', { title: 'Search' });
+    res.render('user/!search!not!defined!', {user: req.session.user, title: 'Search' });
     console.log("Search rendered")
   }
 

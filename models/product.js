@@ -4,8 +4,9 @@ const Schema=mongoose.Schema;
 
 const productSchema=new Schema({
     name: String,
-    sp: String,
-    mrp: String,
+    sp: Number,
+    mrp: Number,
+    discount: Number,
     description: String, 
     brand: {
         type: mongoose.Schema.Types.ObjectId,

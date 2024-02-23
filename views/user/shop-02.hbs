@@ -41,7 +41,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="faq.html">
+                        <a href="#">
                             Categories
                             <span> ></span>
                         </a>
@@ -100,17 +100,16 @@
                         <div class="filter-box__top-left">
                             <div class="select-box--item">
                                 <select id="category" class="filter__dropdown-menu">
-                                    <option value="01">wing Chair</option>
-                                    <option value="02">Vegetables</option>
-                                    <option value="03">Health & Beatuties</option>
-                                    <option value="04">Medicine</option>
+                                    {{#each products}}
+                                    <option value="{{this.category._id}}">{{this.category.name}}</option>
+                                    {{/each}}
                                 </select>
                             </div>
                             <div class="select-box--item">
                                 <select id="price" class="filter__dropdown-menu">
-                                    <option value="01">Min $15 - max $300</option>
-                                    <option value="02">Min $30 - max $600</option>
-                                    <option value="02">Min $60 - max $1200</option>
+                                    <option value="01">Min Rs. 1000 - max Rs. 5000</option>
+                                    <option value="02">Min Rs. 5000 - max Rs. 10000</option>
+                                    <option value="02">Min Rs. 10000 - max Rs. 50000</option>
                                 </select>
                             </div>
                             <div class="select-box--item">
@@ -173,7 +172,7 @@
                                 </div>
                             </div>
                             <div class="filter__result">
-                                <p><span class="number">2,547</span> Results found.</p>
+                                <p><span class="number" id="index"></span> <!--result found--></p>
                             </div>
                         </div>
                     </div>
@@ -190,6 +189,7 @@
                         <!-- Desktop Version  -->
                         <div class="row shop__product-items">
                             {{#each products}}
+                            
                             <div class="col-lg-3 col-md-6">
                                 <div class="cards-md cards-md--four w-100" style="height: 500px;">
                                     <div class="cards-md__img-wrapper">
@@ -691,6 +691,7 @@
         <script src="src/lib/js/bootstrap.bundle.min.js"></script>
         <script src="src/lib/js/jquery.syotimer.min.js"></script>
         <script src="src/js/main.js"></script>
+        
         
     </body>
 </html>

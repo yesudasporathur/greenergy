@@ -3,18 +3,9 @@ const User = require("../models/user");
 const Product=require("../models/product")
 const Category=require("../models/category");
 const Brand=require("../models/brand");
-
-
-
-  
-
-let userdetails,userexist=false;
-
-
 const login_get=(req,res)=>{
   if(req.session.admin){
     res.redirect('/admin/users')
-
   }
   else
   {
@@ -52,14 +43,8 @@ const login_post=async(req,res)=>{
       res.redirect('/admin/users')
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
       console.log('Logged in as '+req.session.admin)
-      
-
-
-      
-
       // If user is valid, render the home page
       // Assuming you have a home template
-
   } catch (error) {
       console.error(error);
       res.status(500, '/', {message: 'Server error' ,layout:false});
@@ -120,35 +105,76 @@ const brands_get=async(req,res)=>{
   res.render('admin/page-brands',{brands, layout: 'admin/layout'})
 }
 const brand_add_get=async(req,res)=>{
-  res.render('brand-add',{layout:'admin/layout'})
+  const message = req.query.message;
+  res.render('admin/brand-add',{message, layout:'admin/layout'})
 }
 
 const brand_add_post=async (req,res, next) => {
   const name=req.body.name
-  const image = req.file.filename
+  const isDuplicate=await Brand.findOne({name:name})
+  if(isDuplicate){
+    console.log("Duplicate brand name")
+    res.redirect('/admin/brand-add?message=Duplicate+brand+name+found!+Try+Again');
+    
+  }
+  else{
+    const image = req.file.filename
   const brands=new Brand({
     name: name,
     image: image,
+    delete: false
   })
   await brands.save();
-  console.log(req.file)
+  console.log(brands)
   res.redirect('brands')
 
+  }
 
 }
 
 const brand_edit_get=async(req,res)=>{
   const _id=req.query.id
+  const message=req.query.message
   const brands=await Brand.find({_id:_id})
-  res.render('brand-edit',{brands, layout: 'admin/layout'})
+  res.render('admin/brand-edit',{message,brands, layout: 'admin/layout'})
 }
 const brand_edit_post=async(req,res)=>{
-  const _id=req.query.id
-  const name=req.body.name
-  await Brand.findByIdAndUpdate({_id:_id},{
-    name: name,
-  });
-  res.redirect('brands')
+    const _id=req.query.id
+    const name=req.body.name
+    
+    const isDuplicate=await Brand.findOne({_id:{$ne:_id},name:name})
+      if(isDuplicate){
+    console.log("Duplicate brand name")
+    res.redirect(`/admin/brand-edit?message=Duplicate+brand+name+found!+Try+Again&id=${_id}`);
+  }
+    else{
+      await Brand.findByIdAndUpdate({_id:_id},{
+        name: name,
+      });
+      if(req.body.imgUpdate=== '1'){
+        try{
+          image = req.file.filename
+        await Brand.findByIdAndUpdate({_id:_id},{
+          image: image
+        });
+        }
+        catch{
+          return res.redirect('brands')
+        }
+      }
+      if(req.body.softdel){
+        await Brand.findByIdAndUpdate({_id:_id},{
+          delete: true
+        });
+      }
+      else {
+        await Brand.findByIdAndUpdate({ _id: _id }, {
+            delete: false
+        });
+      }
+    
+    res.redirect('brands')
+    }
 }
 
 const user_details_post=async(req,res)=>{
@@ -173,7 +199,7 @@ const products_get = async(req,res)=>{
     // Retrieve products from MongoDB
     const products = await Product.find().populate('category');
     console.log("Products list loaded");
-    res.render('page-products-list',{products, layout:'admin/layout'})
+    res.render('admin/page-products-list',{products, layout:'admin/layout'})
   }
   catch(error){
     console.error(error)
@@ -189,7 +215,7 @@ const product_edit_get=async(req,res)=>{
 
 
   console.log("Product details loaded:\n"+products)
-  res.render('product-edit',{products,categories,brands, layout: 'admin/layout'})
+  res.render('admin/product-edit',{products,categories,brands, layout: 'admin/layout'})
 }
 
 const product_edit_post=async(req,res)=>{
@@ -199,11 +225,13 @@ const product_edit_post=async(req,res)=>{
   const brand=req.body.brand
   const mrp=req.body.mrp
   const sp=req.body.sp
+  const discount=Math.ceil(100-(sp/mrp)*100)
   const category=req.body.category
   const update=await Product.findByIdAndUpdate({_id:_id},{
     name: name,
     sp: sp,
     mrp: mrp,
+    discount: discount,
     description: description,
     brand: brand,
     category: category,
@@ -233,27 +261,30 @@ const product_add_get=async (req,res)=>{
 
   const categories=await Category.find()
   const brands=await Brand.find()
-  res.render('page-form-product-2',{categories,brands,message: message, layout: 'admin/layout'})
+  res.render('admin/page-form-product-2',{categories,brands,message: message, layout: 'admin/layout'})
 }
 const product_add_post=async (req,res, next) => {
   try{
     const name=req.body.name
-  const images = req.files.map(file=>file.filename );
-  const description=req.body.description
+    const images = req.files.map(file=>file.filename )
+    const description=req.body.description
   const brand=req.body.brand
   const mrp=req.body.mrp
   const sp=req.body.sp
+  const discount=Math.ceil(100-(sp/mrp)*100)
   const category=req.body.category
   const products=new Product({
     name: name,
     sp: sp,
     mrp: mrp,
+    discount: discount,
     description: description,
     brand: brand,
     category: category,
     images: images,
     delete: false
   })
+  console.log(products)
   await products.save();
   console.log("New product: "+products)
   res.redirect('products')
@@ -261,48 +292,78 @@ const product_add_post=async (req,res, next) => {
   catch{
     console.log("Product adding failed")
     res.redirect('/admin/product-add?message=Product+registration+failed!+Try+Again');
-
   }
-
-
 }
 
 const categories_get=async(req,res)=>{
-  const categories=await Category.find({delete:false})
-  res.render('categories',{categories, layout: 'admin/layout'})
+  const categories=await Category.find()
+  res.render('admin/categories',{categories:categories, layout: 'admin/layout'})
 }
 
 const category_add_get=async(req,res)=>{
-  res.render('category-add',{layout: 'admin/layout'})
+  const message = req.query.message;
+
+  const categories=await Category.find()
+
+  res.render('admin/category-add',{message,categories:categories, layout: 'admin/layout'})
 }
 
 const category_add_post=async(req,res)=>{
   const name=req.body.name
-  await Category.create({name,delete:false})  
+  const isDuplicate=await Category.findOne({name:name})
+  if(isDuplicate){
+    console.log("Duplicate category name")
+    res.redirect('/admin/category-add?message=Duplicate+category+name+found!+Try+Again');
+  }
+  else{
+  await Category.create({name,delete:false}) 
   res.redirect('categories')
-}
+  }
+  
+
+  }
+  
+
 
 const category_edit_get=async(req,res)=>{
+  const message = req.query.message;
   const _id=req.query.id
   const categories=await Category.find({_id:_id})
-  res.render('category-edit',{categories, layout: 'admin/layout'})
+  console.log(message)
+  res.render('admin/category-edit',{message, categories, layout: 'admin/layout'})
 }
 
-const category_edit_post=async(req,res)=>{
-    const _id=req.query.id
-    const name=req.body.name
-    if(req.body.softdel=== '1'){
-      await Category.findByIdAndUpdate({_id:_id},{
-        delete: true
-      });
-    }
-    await Category.findByIdAndUpdate({_id:_id},{
-      name: name,
-    })
-    res.redirect('categories')
+const category_edit_post = async (req, res, next) => {
+  try {
+    
+      const _id = req.query.id;
+      const name = req.body.name;
+      const isDuplicate=await Category.findOne({_id:{$ne:_id},name:name})
+      if(isDuplicate){
+    console.log("Duplicate category name")
+    res.redirect(`/admin/category-edit?message=Duplicate+category+name+found!+Try+Again&id=${_id}`);
+  }
+  else{
+    if (req.body.softdel) {
+          await Category.findByIdAndUpdate({ _id: _id }, { delete: true });
+      } else {
+          await Category.findByIdAndUpdate({ _id: _id }, { delete: false });
+      }
+
+      await Category.findByIdAndUpdate({ _id: _id }, { name: name });
+
+      // After all processing, redirect to the appropriate route
+      res.redirect('/admin/categories');
+  } 
+  }
+  catch (error) {
+    // Handle any errors that occur during the process
+    next(error); // Pass the error to the error handling middleware
 }
 
-  
+      
+};
+
 
 const admin_logout=(req,res)=>{
   
@@ -315,6 +376,9 @@ const admin_logout=(req,res)=>{
  });
 }
 
+const page_not_found=(req,res)=>{
+  res.render('admin/page-error-404', { title: 'Search' , layout:false});
+  }
 module.exports={
   login_get,
   login_post,
@@ -339,7 +403,8 @@ module.exports={
   brand_add_get,
   brand_add_post,
   brand_edit_get,
-  brand_edit_post
+  brand_edit_post,
+  page_not_found
 
   
 }

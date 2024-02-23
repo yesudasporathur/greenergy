@@ -1,12 +1,16 @@
         {{#each brands}}
         <section class="content-main">
-            <form action="/admin/brand-edit?id={{this._id}}" method="post">
+            <form action="/admin/brand-edit?id={{this._id}}" method="post" enctype="multipart/form-data">
+        {{/each}}
 
             <div class="row">
                 <div class="col-6">
                     <div class="content-header">
                         <h2 class="content-title">Edit Brand</h2>
-                        
+                        <h3>
+                        <span class="form-check-label text-danger">Delete: </span>
+                        <input type="checkbox" name="softdel" class="form-check-input text-danger " {{#if delete}} checked {{/if}} >
+                        </h3>                       
                         
                         <div>
                             <!--
@@ -16,9 +20,13 @@
                             
                         </div>
                     </div>
+                    <div  class=" text-danger">
+                        <h4 class=" text-danger">{{message}}</h4>
+                    </div>
                 </div>
             </div>
-            
+            {{#each brands}}
+
 
             <div class="row">
                 <div class="col-lg-6">
@@ -34,6 +42,18 @@
                                         <input name="name" type="text" value="{{this.name}}" class="form-control">
                                     </div>
                                     
+                                </div> <!-- col.// -->
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-check">
+                                            <input type="checkbox" name="imgUpdate" class="form-check-input" value="1" >
+                                            <span class="form-check-label">Update Images</span>
+                                        </label>
+                                        <div class="mb-4">
+                                        <label class="form-label">Images</label>
+                                        <input class="form-control" type="file" name="image" accept="image/*" >
+                                    </div>
+                                    </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
                             

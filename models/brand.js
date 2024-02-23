@@ -5,7 +5,8 @@ const Schema=mongoose.Schema;
 const brandSchema=new Schema({
     name: String, 
     brand: String,
-    images: String
+    image: String,
+    delete: Boolean
 })
 
 module.exports=mongoose.model("brand",brandSchema)

@@ -3,7 +3,6 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Products List</h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
                 </div>
                 <div>
                     
@@ -21,9 +20,9 @@
                         <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
                             <select class="form-select">
                                 <option selected>All category</option>
-                                <option>Electronics</option>
-                                <option>Clothes</option>
-                                <option>Automobile</option>
+                                {{#each products}}
+                                <option value="{{this.category._id}}">{{this.category.name}}</option>
+                                {{/each}}
                             </select>
                         </div>
                         <div class="col-md-2 col-6">
@@ -39,8 +38,9 @@
                         </div>
                     </div>
                 </header> <!-- card-header end// -->
-                {{#each products}}
                 <div class="card-body">
+                                    {{#each products}}
+
                     <article class="itemlist" onclick="window.location.href='product-edit?id={{this._id}}';" style="cursor: pointer;">
                         <div class="row align-items-center">
                             <div class="col col-check flex-grow-0">
@@ -68,6 +68,7 @@
                                 <span class="badge rounded-pill alert-success">Active</span>
                             </div>
                             {{/if}}
+                            <!--
                             
                             <div class="col-lg-1 col-sm-2 col-4 col-date">
                                 <span>02.11.2021</span>
@@ -80,11 +81,13 @@
                                     <i class="material-icons md-delete_forever"></i> Delete
                                 </a>
                             </div>
+                            -->
                         </div> <!-- row .// -->
                     </article> <!-- itemlist  .// -->
+                                {{/each}}
+
                 </div> <!-- card-body end// -->
-            </div> <!-- card end// -->
-            {{/each}}
+                <!--
             <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
@@ -97,4 +100,5 @@
                     </ul>
                 </nav>
             </div>
+            -->
         </section> <!-- content-main end// -->

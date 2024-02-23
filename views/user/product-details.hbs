@@ -64,21 +64,11 @@ function resetZoom() {
                             <div class="gallery-items">
                                 <div class="swiper-container gallery-items-slider">
                                     <div class="swiper-wrapper">
+                                        {{#each this.images}}
                                         <div class="gallery-item swiper-slide">
-                                            <img src="/images/{{this.images.[0]}}" alt="Slide 01" />
+                                            <img src="/images/{{this}}" alt="Slide {{@index}}" />
                                         </div>
-                                        <div class="gallery-item swiper-slide">
-                                            <img src="/images/{{this.images.[1]}}" alt="Slide 02" />
-                                        </div>
-                                        <div class="gallery-item swiper-slide">
-                                            <img src="/images/{{this.images.[2]}}" alt="Slide 03" />
-                                        </div>
-                                        <div class="gallery-item swiper-slide">
-                                            <img src="/images/{{this.images.[3]}}" alt="Slide 04" />
-                                        </div>
-                                        <div class="gallery-item swiper-slide">
-                                            <img src="/images/{{this.images.[4]}}" alt="Slide 04" />
-                                        </div>
+                                        {{/each}}
                                     </div>
                                 </div>
                                 <div class="gallery-prev-item">
@@ -173,7 +163,7 @@ function resetZoom() {
 
                             <div class="products__content-price">
                                 <h2 class="font-body--xxxl-500"><del class="font-body--xxl-400">Rs. {{this.mrp}}</del> Rs. {{this.sp}}</h2>
-                                <span class="label sale-off"> 64% off </span>
+                                <span class="label sale-off"> {{this.discount}}% off </span>
                             </div>
                         </div>
                         <!-- brand  -->
@@ -182,7 +172,7 @@ function resetZoom() {
                                 <div class="brand-name">
                                     <h2 class="font-body--md-400">Brand:</h2>
                                     <a href="#" class="brand-name-logo" >
-                                        <img src="/images/{{this.brand}}.jpg" alt="brand-img" style="max-width: 100px;"/>
+                                        <img src="/images/{{this.brand.image}}" alt="brand-img" style="max-width: 100px;"/>
                                     </a>
                                 </div>
                                 <div class="social-site">
@@ -273,7 +263,7 @@ function resetZoom() {
                         </div>
                         <!-- Tags  -->
                         <div class="products__content">
-                            <h5 class="products__content-category font-body--md-500">Category: <a href="#">{{this.category}}</a></h5>
+                            <h5 class="products__content-category font-body--md-500">Category: <a href="#">{{this.category.name}}</a></h5>
                             <!--
                             <div class="products__content-tags">
                                 <h5 class="font-body--md-500">Tag :</h5>
@@ -418,8 +408,8 @@ function resetZoom() {
                                                 </svg>
                                             </span>
                                             <div class="text__info">
-                                                <h5>64% Discount</h5>
-                                                <p>Save your 64% money with us</p>
+                                                <h5>{{this.discount}}% Discount</h5>
+                                                <p>Save your {{this.discount}}% money with us</p>
                                             </div>
                                         </div>
                                         <div class="products-video__card-item">
@@ -545,8 +535,8 @@ function resetZoom() {
                                                 </svg>
                                             </span>
                                             <div class="text__info">
-                                                <h5>64% Discount</h5>
-                                                <p>Save your 64% money with us</p>
+                                                <h5>{{this.discount}}% Discount</h5>
+                                                <p>Save your {{this.discount}}% money with us</p>
                                             </div>
                                         </div>
                                         <div class="products-video__card-item">
@@ -919,8 +909,8 @@ function resetZoom() {
                                                 </svg>
                                             </span>
                                             <div class="text__info">
-                                                <h5>64% Discount</h5>
-                                                <p>Save your 64% money with us</p>
+                                                <h5>{{this.discount}}% Discount</h5>
+                                                <p>Save your {{this.discount}}% money with us</p>
                                             </div>
                                         </div>
                                         <div class="products-video__card-item">
@@ -1731,7 +1721,7 @@ function resetZoom() {
                                             <del class="font-body--xxl-400">$48.00</del>
                                             $17.28
                                         </h2>
-                                        <span class="label sale-off"> 64% off </span>
+                                        <span class="label sale-off"> {{this.discount}}% off </span>
                                     </div>
                                 </div>
                                 <!-- brand  -->
