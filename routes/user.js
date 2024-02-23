@@ -2,9 +2,11 @@ var express = require('express');
 var router = express.Router();
 var userController=require('../controllers/userController')
 var MongoClient=require('mongodb').MongoClient
+const User = require("../models/user");
 
-router.get('/shop', requireLogin,setNoCache,userController.shop_get);
-router.get('/product', requireLogin,setNoCache,userController.product)
+
+router.get('/shop', requireLogin,setNoCache,isBlock,userController.shop_get);
+router.get('/product', requireLogin,setNoCache,isBlock,userController.product)
 router.get('/sign-in',isLoggedIn, setNoCache, userController.sign_in_get);
 router.post('/sign-in', setNoCache, userController.sign_in_post)
 router.get('/create-account',  setNoCache, userController.create_account_get);
@@ -31,6 +33,18 @@ async function isLoggedIn(req, res, next) {
     }
     next();
 }
+async function isBlock(req,res,next){
+  const userdata=await User.findOne({email: req.session.user})
+
+  if(userdata.block==true){
+    console.log("blocked")
+    return res.redirect('/logout');
+  }
+  next()
+
+}
+
+
 function setNoCache(req, res, next) {
   res.set({
       'Cache-Control': 'no-cache, no-store, must-revalidate',
