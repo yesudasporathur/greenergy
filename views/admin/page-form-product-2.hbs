@@ -1,5 +1,5 @@
         <section class="content-main">
-            <form action="/admin/product-add" method="post" enctype="multipart/form-data">
+            <form id="form" action="/admin/product-add" method="post" enctype="multipart/form-data">
 
             <div class="row">
                 <div class="col-6">
@@ -9,7 +9,7 @@
                             <!--
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                             -->
-                            <button class="btn btn-md rounded font-sm hover-up" type="submit" >Save</button>
+                            <button id="submit" class="btn btn-md rounded font-sm hover-up" type="submit" >Save</button>
                             
                         </div>
                         
@@ -31,15 +31,23 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Product name</label>
-                                        <input name="name" type="text" placeholder="Type here" class="form-control">
+                                        <p class="error-message" style="color: red;" id="nameError"></p>
+
+                                        <input name="name" id="name" type="text" placeholder="Type here" class="form-control">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Description</label>
-                                        <textarea name="description" placeholder="Type here" class="form-control" rows="4"></textarea>
+                                      <p class="error-message" style="color: red;" id="descriptionError"></p>
+
+                                        <textarea name="description" id="description" placeholder="Type here" class="form-control" rows="4"></textarea>
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Brand name</label>
-                                        <select class="form-select" name="brand">
+                                        <p class="error-message" style="color: red;" id="brandError"></p>
+
+                                        <select class="form-select" name="brand" id="brand">
+                                        <option value=""></option>
+
                                             {{#each brands}}
                                             <option value="{{this._id}}">{{this.name}}</option>
                                             {{/each}}
@@ -55,11 +63,13 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label" >MRP</label>
-                                        <input type="text" placeholder="Rs. " name="mrp" class="form-control">
+                                        <p class="error-message" style="color: red;" id="mrpError"></p>
+                                        <input type="text" placeholder="Rs. " name="mrp" id="mrp" class="form-control">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Selling Price</label>
-                                        <input type="text" placeholder="Rs. " name="sp" class="form-control">
+                                        <p class="error-message" style="color: red;" id="spError"></p>
+                                        <input type="text" placeholder="Rs. " name="sp" id="sp" class="form-control">
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
@@ -71,10 +81,13 @@
                                 <div class="col-md-9">
                                     <div class="mb-4" name="category">
                                         <label class="form-label">Category</label>
-                                        <select class="form-select" name="category">
-                                            {{#each categories}}
-                                            <option value="{{this._id}}">{{this.name}}</option>
+                                         <p class="error-message" style="color: red;" id="categoryError"></p>
 
+                                        <select class="form-select" name="category" id="category">
+                                            <option value=""></option>
+                                            {{#each categories}}
+
+                                            <option value="{{this._id}}">{{this.name}}</option>
                                             {{/each}}
                                         </select>
                                     </div>
@@ -88,7 +101,8 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Images</label>
-                                        <input class="form-control" type="file" name="images" accept="image/*" multiple>
+                                        <p class="error-message" style="color: red;" id="imagesError"></p>
+                                        <input class="form-control" type="file" name="images" id="images" accept="image/*" multiple>
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- .row end// -->
@@ -100,4 +114,117 @@
             </form>
 
         </section> <!-- content-main end// -->
-        
+
+<script>
+    $(document).ready(function() {
+        // Function to validate product name
+        function validateName() {
+            const name = $("#name").val().trim();
+            if (name === '') {
+                $("#nameError").text("Please enter the product name.");
+                return false;
+            } else {
+                $("#nameError").text("");
+                return true;
+            }
+        }
+
+        // Function to validate description
+        function validateDescription() {
+            const description = $("#description").val().trim();
+            if (description === '') {
+                $("#descriptionError").text("Please enter the description.");
+                return false;
+            } else {
+                $("#descriptionError").text("");
+                return true;
+            }
+        }
+
+        // Function to validate brand
+        function validateBrand() {
+            const brand = $("#brand").val().trim();
+            if (brand === '') {
+                $("#brandError").text("Please select a brand.");
+                return false;
+            } else {
+                $("#brandError").text("");
+                return true;
+            }
+        }
+
+
+        // Function to validate MRP
+        function validateMRP() {
+            const mrp = $("#mrp").val().trim();
+            if (mrp === '') {
+                $("#mrpError").text("Please enter the MRP.");
+                return false;
+            } else {
+                $("#mrpError").text("");
+                return true;
+            }
+        }
+
+        // Function to validate selling price
+        function validateSP() {
+            const sp = $("#sp").val().trim();
+            if (sp === '') {
+                $("#spError").text("Please enter the selling price.");
+                return false;
+            } else {
+                $("#spError").text("");
+                return true;
+            }
+        }
+
+        // Function to validate category
+        function validateCategory() {
+            const category = $("#category").val().trim();
+            if (category === '') {
+                $("#categoryError").text("Please select a category.");
+                return false;
+            } else {
+                $("#categoryError").text("");
+                return true;
+            }
+        }
+
+        // Function to validate image uploads
+        function validateImages() {
+            const files = $("#images").prop('files');
+            if (files.length === 0) {
+                $("#imagesError").text("Please upload at least one image.");
+                return false;
+            } 
+            else if (files.length >10) {
+                $("#imagesError").text("Please upload at most ten images.");
+                return false;
+            }
+            else {
+                $("#imagesError").text("");
+                return true;
+            }
+        }
+
+        // Event listener for form submission
+        $("#form").submit(function(event) {
+            // Prevent default form submission
+            event.preventDefault();
+
+            // Validate each field
+            const isValidName = validateName();
+            const isValidDescription = validateDescription();
+            const isValidBrand = validateBrand();
+            const isValidMRP = validateMRP();
+            const isValidSP = validateSP();
+            const isValidCategory = validateCategory();
+            const isValidImages = validateImages();
+
+            // If all fields are valid, submit the form
+            if (isValidName && isValidDescription && isValidBrand && isValidMRP && isValidSP && isValidCategory && isValidImages) {
+                this.submit();
+            }
+        });
+    });
+</script>

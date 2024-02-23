@@ -3,6 +3,7 @@ const User = require("../models/user");
 const Product=require("../models/product")
 const Category=require("../models/category");
 const Brand=require("../models/brand");
+let title="Greenergy"
 const login_get=(req,res)=>{
   if(req.session.admin){
     res.redirect('/admin/users')
@@ -261,7 +262,7 @@ const product_add_get=async (req,res)=>{
 
   const categories=await Category.find()
   const brands=await Brand.find()
-  res.render('admin/page-form-product-2',{categories,brands,message: message, layout: 'admin/layout'})
+  res.render('admin/page-form-product-2',{categories,brands,message: message,title:`${title}`, layout: 'admin/layout'})
 }
 const product_add_post=async (req,res, next) => {
   try{

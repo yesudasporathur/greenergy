@@ -7,6 +7,7 @@ const otpGenerator = require('otp-generator');
 const sendOTP=require('../public/modules/sendOTP')
 const crypt=require('../public/modules/crypt')
 
+let title="Greenergy"
 
 
 
@@ -157,9 +158,9 @@ const product=async (req,res)=>{
   const id=req.query.id
   
   const details=await Product.find({ _id: id }).populate(['brand','category']);
-  console.log(details)
+  const related=await Product.find({_id:{$ne:id}});
 
-  res.render('user/product-details', {user: req.session.user,details})
+  res.render('user/product-details', {user: req.session.user,details,related})
   console.log("Product details rendered")
 }
   
