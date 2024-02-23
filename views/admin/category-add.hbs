@@ -1,5 +1,5 @@
         <section class="content-main">
-            <form action="/admin/category-add" method="post">
+            <form id="form"  action="/admin/category-add" method="post">
 
             <div class="row">
                 <div class="col-6">
@@ -31,9 +31,15 @@
                                     <h6>Details</h6>
                                 </div>
                                 <div class="col-md-9">
+                                    <label class="form-check" style="display: none;">
+                                            <input type="checkbox" name="imgUpdate"  class="form-check-input" value="1"  >
+                                            <span class="form-check-label">Update Images</span>
+                                        </label>
                                     <div class="mb-4">
                                         <label class="form-label">Category name</label>
-                                        <input name="name" type="text" class="form-control">
+                                        <input name="name"  id="name" type="text" class="form-control">
+                                       <span id="nameError" class="text-danger"></span> <!-- Error message placeholder -->
+
                                     </div>
                                     
                                 </div> <!-- col.// -->
@@ -50,3 +56,4 @@
             </form>
 
         </section> <!-- content-main end// -->
+                <script src="/assets/js/namecheck.js"></script>

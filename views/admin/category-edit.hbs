@@ -1,7 +1,6 @@
         {{#each categories}}
         <section class="content-main">
-            <form action="/admin/category-edit?id={{this._id}}" method="post">
-        {{/each}}
+            <form id="form"  action="/admin/category-edit?id={{this._id}}" method="post">
 
 
             <div class="row">
@@ -21,6 +20,8 @@
                             
                         </div>
                     </div>
+                            {{/each}}
+
                     <div  class=" text-danger">
                         <h4 class=" text-danger">{{message}}</h4>
                     </div>  
@@ -39,9 +40,15 @@
                                     <h6>Details</h6>
                                 </div>
                                 <div class="col-md-9">
+                                    <label class="form-check" style="display: none;">
+                                            <input type="checkbox" name="imgUpdate"  class="form-check-input" value="1"  >
+                                            <span class="form-check-label">Update Images</span>
+                                        </label>
                                     <div class="mb-4">
                                         <label class="form-label">Category name</label>
-                                        <input name="name" type="text" value="{{this.name}}" class="form-control">
+                                        <input name="name"  id="name" type="text" value="{{this.name}}" class="form-control">
+                                       <span id="nameError" class="text-danger"></span> <!-- Error message placeholder -->
+
                                     </div>
                                     
                                 </div> <!-- col.// -->
@@ -60,3 +67,4 @@
         </section> <!-- content-main end// -->
         {{/each}}
 
+        <script src="/assets/js/namecheck.js"></script>

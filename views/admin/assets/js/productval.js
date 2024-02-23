@@ -42,23 +42,30 @@ $(document).ready(function() {
             if (mrp === '') {
                 $("#mrpError").text("Please enter the MRP.");
                 return false;
-            } else {
+            } else if (!/^\d+$/.test(mrp)) {
+                $("#mrpError").text("Please enter only numbers for the MRP.");
+                return false;
+            }else {
                 $("#mrpError").text("");
                 return true;
             }
         }
 
         // Function to validate selling price
-        function validateSP() {
-            const sp = $("#sp").val().trim();
-            if (sp === '') {
-                $("#spError").text("Please enter the selling price.");
-                return false;
-            } else {
-                $("#spError").text("");
-                return true;
-            }
-        }
+function validateSP() {
+    const sp = $("#sp").val().trim();
+    if (sp === '') {
+        $("#spError").text("Please enter the selling price.");
+        return false;
+    } else if (!/^\d+$/.test(sp)) {
+        $("#spError").text("Please enter only numbers for the selling price.");
+        return false;
+    } else {
+        $("#spError").text("");
+        return true;
+    }
+}
+
 
         // Function to validate category
         function validateCategory() {
@@ -75,6 +82,13 @@ $(document).ready(function() {
         // Function to validate image uploads
         function validateImages() {
             const files = $("#images").prop('files');
+            const imgUpdateChecked = $("input[name='imgUpdate']").is(":checked");
+
+            if (!imgUpdateChecked) {
+                // If the checkbox is not checked, return true (no need for image uploads)
+                $("#imagesError").text("");
+                return true;
+            }
             if (files.length === 0) {
                 $("#imagesError").text("Please upload at least one image.");
                 return false;

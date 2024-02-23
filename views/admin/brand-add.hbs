@@ -1,5 +1,5 @@
         <section class="content-main">
-            <form action="/admin/brand-add" method="post" enctype="multipart/form-data">
+            <form id="form" action="/admin/brand-add" method="post" enctype="multipart/form-data">
 
             <div class="row">
                 <div class="col-6">
@@ -11,7 +11,7 @@
                             <!--
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                             -->
-                            <button class="btn btn-md rounded font-sm hover-up" type="submit" >Save</button>
+                            <button type="submit" class="btn btn-md rounded font-sm hover-up"  >Save</button>
                             
                         </div>
                     </div>
@@ -34,13 +34,21 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Brand name</label>
-                                        <input name="name" type="text" class="form-control">
+                                        <input name="name" id="name" type="text" class="form-control">
+                                        <span id="nameError" class="text-danger"></span> <!-- Error message placeholder -->
+
                                     </div>
                                 </div> <!-- col.// -->
                                 <div class="col-md-9">
+                                    <label class="form-check" style="display: none;">
+                                            <input type="checkbox" name="imgUpdate"  class="form-check-input" value="1" checked >
+                                            <span class="form-check-label">Update Images</span>
+                                        </label>
                                     <div class="mb-4">
                                         <label class="form-label">Images</label>
-                                        <input class="form-control" type="file" name="image" accept="image/*" >
+                                        <span id="imagesError" class="text-danger"></span> <!-- Error message placeholder -->
+
+                                        <input class="form-control" type="file" name="image" id="image" accept="image/*" >
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
@@ -56,5 +64,5 @@
             </form>
 
         </section> <!-- content-main end// -->
-        
+        <script src="/assets/js/namecheck.js"></script>
 

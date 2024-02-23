@@ -29,7 +29,8 @@ const home_post=(req,res)=>{
   }
 const shop_get=async (req,res)=>{
   const products=await Product.find({delete:false}).populate('category')
-    res.render('user/shop-02', {user: req.session.user, products:products, title: 'Shop' });
+  const categories=await Category.find({delete: false})
+    res.render('user/shop-02', {user: req.session.user,title, categories,products:products, title: 'Shop' });
     console.log("shop_get rendered")
   }
 const sign_in_get=(req, res, next) =>{
@@ -47,11 +48,11 @@ const sign_in_get=(req, res, next) =>{
         const user = await User.findOne({ email});
         // If user not found, return error
         if (!user ) {
-            return res.status(400).render('user/sign-in',{ message: 'User not found' });
+            return res.status(400).render('user/sign-in',{title, message: 'User not found' });
         }
 
         if (user.block) {
-          return res.status(400).render('user/sign-in',{ message: 'User is blocked' });
+          return res.status(400).render('user/sign-in',{ title,message: 'User is blocked' });
       }
 
 
@@ -61,7 +62,7 @@ const sign_in_get=(req, res, next) =>{
         
         // If password does not match, return error
         if (val==false) {
-          return res.status(400).render('user/sign-in',{ message: 'Invalid credentials' });
+          return res.status(400).render('user/sign-in',{ title,message: 'Invalid credentials' });
         }
         else{
           req.session.user=email
@@ -75,7 +76,7 @@ const sign_in_get=(req, res, next) =>{
 
     } catch (error) {
         console.error(error);
-        res.status(500).render('user/sign-in', {message: 'Server error' });
+        res.status(500).render('user/sign-in', {title,message: 'Server error' });
     }
 ;
 
@@ -90,7 +91,7 @@ const create_account_post =  async (req, res) =>{
   const userExist=await User.exists({email})
   if(userExist){
 
-    res.render('user/sign-in', {user: req.session.user, message: 'Email already registered. Please Login' });
+    res.render('user/sign-in', {user: req.session.user,title, message: 'Email already registered. Please Login' });
     console.log("User exist")
     
   }
@@ -102,7 +103,7 @@ const create_account_post =  async (req, res) =>{
 
    }
    else{
-    res.render('user/create-account', { user: req.session.user,message: 'Password not matching' });
+    res.render('user/create-account', { user: req.session.user,title,message: 'Password not matching' });
     
    }
 
@@ -145,13 +146,13 @@ console.log('Generated OTP:', otp);
   
      
      else{
-      res.render('user/otp', { user: req.session.user,message: 'OTP invalid' });
+      res.render('user/otp', { user: req.session.user,title,message: 'OTP invalid' });
       
      }
     }
 
 const otp_success=(req,res)=>{
-  res.render('user/otp-success', { user: req.session.user,message: 'Your account have been created. Please proceed to login.' });
+  res.render('user/otp-success', { user: req.session.user,title,message: 'Your account have been created. Please proceed to login.' });
 }
 
 const product=async (req,res)=>{
@@ -160,7 +161,7 @@ const product=async (req,res)=>{
   const details=await Product.find({ _id: id }).populate(['brand','category']);
   const related=await Product.find({_id:{$ne:id}});
 
-  res.render('user/product-details', {user: req.session.user,details,related})
+  res.render('user/product-details', {user: req.session.user,details,title,related})
   console.log("Product details rendered")
 }
   

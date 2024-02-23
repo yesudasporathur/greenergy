@@ -10,7 +10,7 @@ const login_get=(req,res)=>{
   }
   else
   {
-    res.render('admin/admin-login', { message: '' ,layout:false});
+    res.render('admin/admin-login', { title, message: '' ,layout:false});
     console.log('Admin Login rendered')
   };
 }
@@ -26,7 +26,7 @@ const login_post=async(req,res)=>{
 
       // If user not found, return error
       if (!user ) {
-          return res.status(400).render('admin/admin-login',{ message: 'Unauthorised access' ,layout:false});
+          return res.status(400).render('admin/admin-login',{ title,message: 'Unauthorised access' ,layout:false});
       }
       
 
@@ -38,7 +38,7 @@ const login_post=async(req,res)=>{
         
         // If password does not match, return error
         if (val==false) {
-          return res.status(400).render('admin-login',{ message: 'Invalid credentials' ,layout:false});
+          return res.status(400).render('admin/admin-login',{title, message: 'Invalid credentials' ,layout:false});
       }
       req.session.admin = username;
       res.redirect('/admin/users')
@@ -55,7 +55,7 @@ const login_post=async(req,res)=>{
   }
 
 const dashboard_get=(req,res)=>{ 
-  res.render('admin-dashboard', { message: '' ,layout:'admin/layout'});
+  res.render('admin-dashboard', {title, message: '' ,layout:'admin/layout'});
   console.log("Admin Dashboard rendered")  
   
 }
@@ -66,7 +66,7 @@ const user_list_get=async (req,res)=>{
   try {
     // Retrieve products from MongoDB
     const users = await User.find();
-    res.render('admin/userlist',{users,layout:'admin/layout'})
+    res.render('admin/userlist',{title,users,layout:'admin/layout'})
   }
   catch (error) {
     console.error(error);
@@ -98,16 +98,16 @@ const user_details_get=async(req,res)=>{
   const id=req.query.id
   const users = await User.find({_id:id});
   console.log(users+"\nUser details loaded")
-  res.render('admin/user-details',{users, layout:'admin/layout'})
+  res.render('admin/user-details',{title,users, layout:'admin/layout'})
 }
 
 const brands_get=async(req,res)=>{
   const brands=await Brand.find()
-  res.render('admin/page-brands',{brands, layout: 'admin/layout'})
+  res.render('admin/page-brands',{title,brands, layout: 'admin/layout'})
 }
 const brand_add_get=async(req,res)=>{
   const message = req.query.message;
-  res.render('admin/brand-add',{message, layout:'admin/layout'})
+  res.render('admin/brand-add',{title,message, layout:'admin/layout'})
 }
 
 const brand_add_post=async (req,res, next) => {
@@ -137,7 +137,7 @@ const brand_edit_get=async(req,res)=>{
   const _id=req.query.id
   const message=req.query.message
   const brands=await Brand.find({_id:_id})
-  res.render('admin/brand-edit',{message,brands, layout: 'admin/layout'})
+  res.render('admin/brand-edit',{message,title,brands, layout: 'admin/layout'})
 }
 const brand_edit_post=async(req,res)=>{
     const _id=req.query.id
@@ -184,7 +184,7 @@ const user_details_post=async(req,res)=>{
   const id=req.query.id
   const users = await User.find({_id:id});
   console.log("Invalid operation")
-  res.render('user-details',{users,message:"Invalid operation", layout:'admin/layout'})
+  res.render('user-details',{users,title,message:"Invalid operation", layout:'admin/layout'})
   }
   else{
   await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block,password,isAdmin})
@@ -200,7 +200,7 @@ const products_get = async(req,res)=>{
     // Retrieve products from MongoDB
     const products = await Product.find().populate('category');
     console.log("Products list loaded");
-    res.render('admin/page-products-list',{products, layout:'admin/layout'})
+    res.render('admin/page-products-list',{products,title, layout:'admin/layout'})
   }
   catch(error){
     console.error(error)
@@ -211,12 +211,12 @@ const products_get = async(req,res)=>{
 const product_edit_get=async(req,res)=>{
   const _id=req.query.id
   const products = await Product.find({ _id: _id }).populate(['brand', 'category']);
-  const brands=await Brand.find()
-  const categories=await Category.find()
+  const brands=await Brand.find({delete: false})
+  const categories=await Category.find({delete: false})
 
 
   console.log("Product details loaded:\n"+products)
-  res.render('admin/product-edit',{products,categories,brands, layout: 'admin/layout'})
+  res.render('admin/product-edit',{products,categories,brands,title, layout: 'admin/layout'})
 }
 
 const product_edit_post=async(req,res)=>{
@@ -260,8 +260,8 @@ const product_edit_post=async(req,res)=>{
 const product_add_get=async (req,res)=>{
   const message = req.query.message;
 
-  const categories=await Category.find()
-  const brands=await Brand.find()
+  const categories=await Category.find({delete: false})
+  const brands=await Brand.find({delete: false})
   res.render('admin/page-form-product-2',{categories,brands,message: message,title:`${title}`, layout: 'admin/layout'})
 }
 const product_add_post=async (req,res, next) => {
@@ -298,7 +298,7 @@ const product_add_post=async (req,res, next) => {
 
 const categories_get=async(req,res)=>{
   const categories=await Category.find()
-  res.render('admin/categories',{categories:categories, layout: 'admin/layout'})
+  res.render('admin/categories',{categories:categories, title,layout: 'admin/layout'})
 }
 
 const category_add_get=async(req,res)=>{
@@ -306,7 +306,7 @@ const category_add_get=async(req,res)=>{
 
   const categories=await Category.find()
 
-  res.render('admin/category-add',{message,categories:categories, layout: 'admin/layout'})
+  res.render('admin/category-add',{message,categories:categories, title,layout: 'admin/layout'})
 }
 
 const category_add_post=async(req,res)=>{
@@ -330,8 +330,7 @@ const category_edit_get=async(req,res)=>{
   const message = req.query.message;
   const _id=req.query.id
   const categories=await Category.find({_id:_id})
-  console.log(message)
-  res.render('admin/category-edit',{message, categories, layout: 'admin/layout'})
+  res.render('admin/category-edit',{message, categories, title,layout: 'admin/layout'})
 }
 
 const category_edit_post = async (req, res, next) => {

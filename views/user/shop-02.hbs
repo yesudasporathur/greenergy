@@ -100,8 +100,8 @@
                         <div class="filter-box__top-left">
                             <div class="select-box--item">
                                 <select id="category" class="filter__dropdown-menu">
-                                    {{#each products}}
-                                    <option value="{{this.category._id}}">{{this.category.name}}</option>
+                                    {{#each categories}}
+                                    <option value="{{this._id}}">{{this.name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
