@@ -1,15 +1,17 @@
-
 const User = require("../models/user");
 const Product=require("../models/product")
 const Category=require("../models/category")
 
 const otpGenerator = require('otp-generator');
-const sendOTP=require('../public/modules/sendOTP')
-const crypt=require('../public/modules/crypt')
+const sendOTP=require('../public/javascripts/sendOTP')
+const crypt=require('../public/javascripts/crypt')
 
 let title="Greenergy"
 
 
+
+
+//---------------------------------- User Routes -----------------------------------------\\
 
 const home_get=(req,res)=>{
   res.redirect('/sign-in')
@@ -175,7 +177,7 @@ const search_get=(req, res, next)=> {
 const page_not_found=(req,res)=>{
   res.status(404).render('user/404', { title: 'Search' , layout:false});
   }
-
+  
 
   const user_logout=(req,res)=>{
   
@@ -188,19 +190,149 @@ const page_not_found=(req,res)=>{
    });
   }
 
+
+
+//------------------------------------- Admin Routes -------------------------------------\\
+
+
+
+const admin_user_details_post=async(req,res)=>{
+  const {_id,first_name,last_name,email,phone,block,password,isAdmin}=req.body
+  if(req.session.admin==email && block==true){
+  const id=req.query.id
+  const users = await User.find({_id:id});
+  console.log("Invalid operation")
+  res.render('user-details',{users,title,message:"Invalid operation", layout:'admin/layout'})
+  }
+  else{
+  await User.findOneAndReplace({_id:_id},{first_name,last_name,email,phone,block,password,isAdmin})
+  res.redirect('users')
+  }
+
+}
+
+const admin_login_get=(req,res)=>{
+  if(req.session.admin){
+    res.redirect('/admin/users')
+  }
+  else
+  {
+    res.render('admin/admin-login', { title, message: '' ,layout:false});
+    console.log('Admin Login rendered')
+  };
+}
+const admin_login_post=async(req,res)=>{
+    const { username, password } = req.body;
+    
+    try {
+      // Find the user by email
+      const user = await User.findOne({ email:username, isAdmin:true});
+      
+
+      
+
+      // If user not found, return error
+      if (!user ) {
+          return res.status(400).render('admin/admin-login',{ title,message: 'Unauthorised access' ,layout:false});
+      }
+      
+
+      // Check if password matches
+      const data = await User.findOne({email:username});       
+
+      // If password does not match, return error
+      const val = await crypt.cmpPassword(data.password,password);
+        
+        // If password does not match, return error
+        if (val==false) {
+          return res.status(400).render('admin/admin-login',{title, message: 'Invalid credentials' ,layout:false});
+      }
+      req.session.admin = username;
+      res.redirect('/admin/users')
+      //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
+      console.log('Logged in as '+req.session.admin)
+      // If user is valid, render the home page
+      // Assuming you have a home template
+  } catch (error) {
+      console.error(error);
+      res.status(500, '/', {message: 'Server error' ,layout:false});
+  }
+;
+
+  }
+
+const admin_dashboard_get=(req,res)=>{ 
+  res.render('admin-dashboard', {title, message: '' ,layout:'admin/layout'});
+  console.log("Admin Dashboard rendered")  
+  
+}
+
+const admin_user_list_get=async (req,res)=>{
+  
+  
+  try {
+    // Retrieve products from MongoDB
+    const users = await User.find();
+    res.render('admin/userlist',{title,users,layout:'admin/layout'})
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+}
+}
+
+const admin_user_details_get=async(req,res)=>{
+  const id=req.query.id
+  const users = await User.find({_id:id});
+  console.log("user_details_get loaded")
+  res.render('admin/user-details',{title,users, layout:'admin/layout'})
+}
+
+const admin_page_not_found=(req,res)=>{
+  res.render('admin/page-error-404', { title: 'Search' , layout:false});
+  }
+
+
+
+const admin_logout=(req,res)=>{
+  
+  req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+    }
+    res.redirect('/admin/')
+    console.log("Redirected to Admin Login")
+ });
+}
+
+
+
+
+
+
+//------------------------------------- Exports -------------------------------------\\
 module.exports={
-    home_get,
-    home_post,
-    shop_get,
-    sign_in_get,
-    sign_in_post,
-    create_account_get,
-    create_account_post,
-    otp_get,
-    otp_post,
-    otp_success,
-    search_get,
-    page_not_found,
-    product,
-    user_logout
+  admin_login_get,
+  admin_login_post,
+  admin_dashboard_get,
+  admin_user_list_get,
+  admin_user_details_get,
+  admin_user_details_post,
+  admin_page_not_found,
+  admin_logout,
+  home_get,
+  home_post,
+  shop_get,
+  sign_in_get,
+  sign_in_post,
+  create_account_get,
+  create_account_post,
+  otp_get,
+  otp_post,
+  otp_success,
+  search_get,
+  page_not_found,
+  product,
+  user_logout,
+    
 }
