@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
 
 
-const PORT=process.env.PORT
+const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
 

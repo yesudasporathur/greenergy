@@ -1,4 +1,7 @@
 const Product=require("../models/product")
+const Category=require("../models/category")
+const Brand=require('../models/brand')
+
 let title="Products"
 
 

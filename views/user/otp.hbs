@@ -161,7 +161,7 @@
               <span id="timer"></span>
             </div>
             <div class="form-register" id="resendOTP" style="display: none;" >
-              <a href="/otp" >
+              <a href="#" onclick="resendOTP()">
                 Resend OTP
             </a>
               
@@ -213,7 +213,29 @@
     }
 
     // Start the timer with a duration of 5 minutes (300 seconds)
-    startTimer(60);
+    startTimer(10);
+    
+
+    function resendOTP() {
+    // Send AJAX request
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/resend-otp", true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // Handle successful response
+                console.log("OTP Resent Successfully");
+                // Restart timer
+                startTimer(10);
+            } else {
+                // Handle error
+                console.error("Error resending OTP");
+            }
+        }
+    };
+    xhr.send();
+}
+
   </script>
   
   </body>
