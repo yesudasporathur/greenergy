@@ -32,7 +32,7 @@ const home_post=(req,res)=>{
 const shop_get=async (req,res)=>{
   const products=await Product.find({delete:false}).populate('category')
   const categories=await Category.find({delete: false})
-    res.render('user/shop-02', {user: req.session.user,title, categories,products:products, title: 'Shop' });
+    res.render('user/shop-02', { shop:true, user: req.session.user,title, categories,products:products, title: 'Shop' });
     console.log("shop_get rendered")
   }
 const sign_in_get=(req, res, next) =>{
@@ -67,8 +67,9 @@ const sign_in_get=(req, res, next) =>{
           return res.status(400).render('user/sign-in',{ title,message: 'Invalid credentials' });
         }
         else{
+          console.log(req.session.redirect)
           req.session.user=email
-          res.redirect('/shop'); 
+          res.redirect(`${req.session.redirect}`); 
         }
 
         
@@ -175,7 +176,7 @@ const search_get=(req, res, next)=> {
   }
 
 const page_not_found=(req,res)=>{
-  res.status(404).render('user/404', { title: 'Search' , layout:false});
+  res.status(404).render('user/404', { title: 'Search' , layout:false, shop:'user/shop-02'});
   }
   
 
@@ -189,6 +190,19 @@ const page_not_found=(req,res)=>{
       console.log("Redirect")
    });
   }
+
+
+const user_dashboard_get=async (req,res)=>{
+  const user=await User.find({email:req.session.user})
+  res.render('user/user-dashboard',{user,title,user_dashboard:true, my_account:true})
+}
+
+
+const profile_get=async(req,res)=>{
+  const user=await User.find({email:req.session.user})
+  res.render('user/profile',{user,title,user_dashboard:true, my_account:true, layout: 'layout', dash:1 })
+
+}
 
 
 
@@ -248,7 +262,7 @@ const admin_login_post=async(req,res)=>{
           return res.status(400).render('admin/admin-login',{title, message: 'Invalid credentials' ,layout:false});
       }
       req.session.admin = username;
-      res.redirect('/admin/users')
+      res.redirect(`/admin${req.session.redirect}`); 
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
       console.log('Logged in as '+req.session.admin)
       // If user is valid, render the home page
@@ -261,7 +275,7 @@ const admin_login_post=async(req,res)=>{
 
   }
 
-const admin_dashboard_get=(req,res)=>{ 
+const admin_dashboard_get=(req,res)=>{
   res.render('admin-dashboard', {title, message: '' ,layout:'admin/layout'});
   console.log("Admin Dashboard rendered")  
   
@@ -334,5 +348,7 @@ module.exports={
   page_not_found,
   product,
   user_logout,
+  user_dashboard_get,
+  profile_get,
     
 }

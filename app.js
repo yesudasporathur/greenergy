@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 //const logger = require('morgan');
 //const createError = require('http-errors');
 const mongoose = require("mongoose");
+var hbs = require('express-handlebars');
 
 
 const PORT=process.env.CONNECTION
@@ -15,9 +16,20 @@ const adminRouter=require('./routes/admin')
 
 mongoose.connect(process.env.MONGODB_URI);
 
-// view engine setup
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+// view engine setup
+app.engine('hbs', hbs({
+  extname: 'hbs', 
+  defaultLayout: 'layout', 
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir  : [
+      //  path to your partials
+      path.join(__dirname, 'views/partials'),
+  ]
+}));
 
 //app.use(logger('dev'));
 app.use(express.json());

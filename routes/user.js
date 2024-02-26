@@ -4,6 +4,7 @@ var userController=require('../controllers/userController')
 var MongoClient=require('mongodb').MongoClient
 const User = require("../models/user");
 
+const setNoCache=require('../public/javascripts/setNoCache')
 
 router.get('/shop', requireLogin,setNoCache,isBlock,userController.shop_get);
 router.get('/product', requireLogin,setNoCache,isBlock,userController.product)
@@ -15,6 +16,8 @@ router.get('/otp', setNoCache,  userController.otp_get);
 router.post('/otp', setNoCache, userController.otp_post);
 router.get('/otp-success', setNoCache, userController.otp_success)
 router.get('/search', setNoCache, userController.search_get);
+router.get('/user-dashboard',setNoCache,requireLogin,userController.user_dashboard_get)
+router.get('/profile',setNoCache,requireLogin,userController.profile_get)
 router.get('/logout', requireLogin, setNoCache, userController.user_logout)
 router.get('/',  setNoCache, userController.home_get);
 router.post('/',  setNoCache, userController.home_post)
@@ -42,16 +45,6 @@ async function isBlock(req,res,next){
   }
   next()
 
-}
-
-
-function setNoCache(req, res, next) {
-  res.set({
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-  });
-  next();
 }
 
 
