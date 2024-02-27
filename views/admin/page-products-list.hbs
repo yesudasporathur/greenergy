@@ -41,55 +41,48 @@
                         </div>
                     </div>
                 </header> <!-- card-header end// -->
+                {{#each products}}
                 <div class="card-body">
-                                    {{#each products}}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <style>.table td,.table th {vertical-align: middle;}</style>    
+                            <thead>
+                                <tr>
+                                    <th scope="col">SKU#</th>
+                                    <th scope="col"></th>
 
-                    <article class="itemlist" onclick="window.location.href='product-edit?id={{this._id}}';" style="cursor: pointer;">
-                        <div class="row align-items-center">
-                            <div class="col col-check flex-grow-0">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="">
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                                <a class="itemside" href="#">
-                                    <div class="left">
-                                        <img src="/images/{{this.images.[0]}}" class="img-sm img-thumbnail" alt="Item">
-                                    </div>
-                                    <div class="info">
-                                        <h6 class="mb-0">{{this.name}}</h6>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>Rs. {{this.sp}}</span> </div>
-                            {{#if delete}}
-                            <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                <span class="badge rounded-pill alert-danger">Disabled</span>
-                            </div>
-                            {{else}}
-                            <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                <span class="badge rounded-pill alert-success">Active</span>
-                            </div>
-                            {{/if}}
-                            <!--
-                            
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span>02.11.2021</span>
-                            </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                    <i class="material-icons md-edit"></i> Edit
-                                </a>
-                                <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                    <i class="material-icons md-delete_forever"></i> Delete
-                                </a>
-                            </div>
-                            -->
-                        </div> <!-- row .// -->
-                    </article> <!-- itemlist  .// -->
-                                {{/each}}
-
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Selling Price</th>
+                                    <th scope="col">Stocks</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>{{this.sku}}</b></td>
+                                    <td style="max-width: 40px;"><img src="/images/{{this.images.[0]}}" alt="product image"></td>
+                                    <td>{{this.name}}</td>
+                                    <td>Rs. {{this.sp}}</td>
+                                    <td>{{this.stock}}</td>
+                                    {{#if delete}}
+                                    <td><span class="badge rounded-pill alert-danger">Deleted</span></td>
+                                    <td>
+                                        <a href="#" onclick="actProduct()" class="btn btn-md rounded font-sm">Toggle Status</a>
+                                    </td>
+                                    {{else}}
+                                    <td><span class="badge rounded-pill alert-success">Active</span></td>
+                                    <td>
+                                        <a href="#" onclick="dltProduct()" class="btn btn-md rounded font-sm">Toggle Status</a>
+                                    </td>
+                                    {{/if}}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
+                {{/each}}            
+
                 <!--
             <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
@@ -105,3 +98,9 @@
             </div>
             -->
         </section> <!-- content-main end// -->
+
+        <script>
+            function dltProduct(){
+                
+            }
+        </script>

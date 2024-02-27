@@ -114,26 +114,27 @@ const create_account_post =  async (req, res) =>{
     //res.render('user/create-account', {user: req.session.user, title: 'Create-Account' });
     
   }
-
 const otp_get=(req, res, next)=> {
-mail_id=req.session.data.email
+  mail_id= 'yesudas@yopmail.com'
+//mail_id=req.session.data.email
 // Generate a 6-digit OTP
 const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 sendOTP(otp,mail_id)
 req.session.otp=otp
-console.log('Generated OTP:', otp);
+//console.log('Generated OTP:', otp);
     res.render('user/otp', { user: req.session.user,title: 'OTP Verification' });
     console.log("OTP Verification rendered")
       //console.log(req.session.data)
   }
 
-  const otp_post=async(req, res, next)=> {
+const otp_check=async(req, res, next)=> {
     let otp=req.session.otp
-    
-    if(req.body.userotp===otp){
-      res.redirect('otp-success');
+    const userotp = req.body
+    let recotp=[]
+    for(const key in userotp) recotp.push(key)
 
-        // Hash the password along with the salt
+    if(recotp[0]===otp){
+      res.redirect('otp-success');
          const hashedPassword = await crypt.hashPassword(req.session.data.password);
         console.log("password:  ",hashedPassword)
       await User.create({
@@ -146,16 +147,20 @@ console.log('Generated OTP:', otp);
         isAdmin: 0,
       })      
     }
-  
-     
      else{
-      res.render('user/otp', { user: req.session.user,title,message: 'OTP invalid' });
-      
-     }
-    }
+      res.status(400).json({ error: 'Invalid OTP' });
 
+      //res.render('user/otp', { user: req.session.user,title,message: 'OTP invalid' });
+     }
+}
+const otp_resend=(req,res,next)=>{
+  console.log("OTP Resent");
+
+  
+}
 const otp_success=(req,res)=>{
-  res.render('user/otp-success', { user: req.session.user,title,message: 'Your account have been created. Please proceed to login.' });
+  let user=req.session.user
+  res.render('user/otp-success', { user:user ,title,message: 'Your account have been created. Please proceed to login.' });
 }
 
 const product=async (req,res)=>{
@@ -342,7 +347,8 @@ module.exports={
   create_account_get,
   create_account_post,
   otp_get,
-  otp_post,
+  otp_resend,
+  otp_check,
   otp_success,
   search_get,
   page_not_found,

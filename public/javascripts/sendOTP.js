@@ -27,15 +27,12 @@ const send_otp = (otp,mail_id)=>{
   
     // Send the email
     transporter.sendMail(mailOptions, (error, info) => {
-  
-      setImmediate(() => {
-        if (error) {
-          console.error('Error sending email:', error);
-        } else {
-          console.log('Email sent:', info.response);
-          console.log('OTP is',otp)
-        }
-      }, 500);
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+        console.log('OTP is',otp)
+      }
     });
   }
 module.exports=send_otp

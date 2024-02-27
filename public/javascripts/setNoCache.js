@@ -4,7 +4,7 @@ function setNoCache(req, res, next) {
         'Pragma': 'no-cache',
         'Expires': '0',
     });
-    if(req.url!='/sign-in' &&  req.url!='/'){
+    if(req.url!='/sign-in' || req.url!='/'){
       req.session.redirect=req.url
     }
     next();

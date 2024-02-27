@@ -13,7 +13,8 @@ router.post('/sign-in', setNoCache, userController.sign_in_post)
 router.get('/create-account',  setNoCache, userController.create_account_get);
 router.post('/create-account',  setNoCache, userController.create_account_post);
 router.get('/otp', setNoCache,  userController.otp_get);
-router.post('/otp', setNoCache, userController.otp_post);
+router.get('/resend', setNoCache, userController.otp_resend);
+router.post('/otpcheck', setNoCache, userController.otp_check);
 router.get('/otp-success', setNoCache, userController.otp_success)
 router.get('/search', setNoCache, userController.search_get);
 router.get('/user-dashboard',setNoCache,requireLogin,userController.user_dashboard_get)

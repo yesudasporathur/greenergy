@@ -3,9 +3,11 @@ const mongoose=require("mongoose")
 const Schema=mongoose.Schema;
 
 const productSchema=new Schema({
+    sku: Number,
     name: String,
     sp: Number,
     mrp: Number,
+    stock: Number,
     discount: Number,
     description: String, 
     brand: {

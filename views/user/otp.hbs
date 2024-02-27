@@ -72,9 +72,9 @@
           <div class="form-register">
               Please enter the OTP sent to your mail
             </div>
-          <form action="otp" method="post">
+          <form>
             <div class="form-input">
-              <input type="text" placeholder="OTP" name="userotp" />
+              <input type="text" placeholder="OTP" name="userotp" id="userotp"/>
               <span class="icon icon-warning">
                 <svg
                   width="20"
@@ -164,11 +164,13 @@
               <a href="#" onclick="resendOTP()">
                 Resend OTP
             </a>
-              
             </div>
-            
-            <div class="form-button">
-              <button type="submit" class="button button--md w-100">Create Account</button>
+            <div class="form-register" id="resent" style="display: none;" >
+              OTP Resent!
+            </div>
+            <div class="form-register text-danger" id="otperror" style="display: none;"></div>
+            <div class="form-button" a href="#" onclick="checkOTP()">
+              <button id="createAccountBtn" class="button button--md w-100">Create Account</button>
             </div>
             <div class="form-register">
               Already have account ? <a href="sign-in">Login</a>
@@ -187,6 +189,11 @@
     <script src="src/lib/js/bootstrap.bundle.min.js"></script>
     <script src="src/js/main.js"></script>
     <script>
+      document.getElementById("createAccountBtn").addEventListener("click", function(event) {
+        event.preventDefault();
+         });
+
+
     function startTimer(durationInSeconds) {
       let timer = durationInSeconds;
       const timerElement = document.getElementById("timer");
@@ -204,6 +211,10 @@
           document.getElementById("OTPtimer").style.display = "none";
 
         }
+        else{
+          document.getElementById("resendOTP").style.display = "none";
+          document.getElementById("OTPtimer").style.display = "";
+        }
 
         timer--;
       }
@@ -213,29 +224,49 @@
     }
 
     // Start the timer with a duration of 5 minutes (300 seconds)
-    startTimer(10);
-    
+    startTimer(3);
+    function resendOTP(){
+      console.log("Resend requested")
+      fetch('/resend')
+      document.getElementById("resendOTP").style.display = "none";
+      document.getElementById("resent").style.display = "";
 
-    function resendOTP() {
-    // Send AJAX request
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/resend-otp", true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                // Handle successful response
-                console.log("OTP Resent Successfully");
-                // Restart timer
-                startTimer(10);
+
+
+    }
+    function checkOTP(){
+    console.log("otp check");
+    var userotp = document.getElementById("userotp"); // Assuming userotp is the id of your OTP input field
+    
+    if(userotp.value === ""){
+        document.getElementById("otperror").style.display = "block";
+        document.getElementById("otperror").innerText = "OTP cannot be empty"; // Use innerText to set text content
+        console.error("OTP not entered");
+    }
+    else {
+      const otp=document.getElementById("userotp").value
+      console.log(otp)
+      const userotp=new URLSearchParams(otp)
+      fetch(('/otpcheck'),{
+        method:"post",
+        body: userotp
+      }).then((res)=>{
+        if (res.ok) {
+                window.location.href = '/otp-success';
+                console.log('otp complete')
             } else {
-                // Handle error
-                console.error("Error resending OTP");
+                document.getElementById("otperror").style.display = "block";
+                document.getElementById("otperror").innerText = "Wrong OTP entered";
+        console.error("Wrong OTP entered");
+
             }
-        }
-    };
-    xhr.send();
+      }).catch(error=>{
+        console.error(error)
+      })
+    }
 }
 
+    
   </script>
   
   </body>
