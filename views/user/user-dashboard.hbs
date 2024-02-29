@@ -3,13 +3,15 @@
     <div class="dashboard section">
       <div class="container">
         <div class="row dashboard__content">
+          <!------------------ Nav bar start -------------------------->
+
           <div class="col-lg-3">
             <nav class="dashboard__nav">
               <h5 class="dashboard__nav-title font-body--xxl-500">
                 navigation
               </h5>
               <ul class="dashboard__nav-item">
-                <li class="dashboard__nav-item-link active">
+                <li class="dashboard__nav-item-link {{#if dashboard}}active{{/if}}">
                   <a href="user-dashboard" class="font-body--lg-400">
                     <span class="icon">
                       <svg
@@ -28,8 +30,55 @@
                     <span class="name">Dashboard</span>
                   </a>
                 </li>
+
+                <!-- Profile -->
+                <li class="dashboard__nav-item-link {{#if profile}}active{{/if}}">
+                  <a href="order-history" class="font-body--lg-400">
+                    <span class="icon">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="-2 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M12 2c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5z" />
+                        <path d="M12 14c4.418 0 8 2.239 8 5v2H4v-2c0-2.761 3.582-5 8-5z" />
+                      </svg>
+
+                    </span>
+                    <span class="name"> Profile</span>
+                  </a>
+                </li>
+                
+                <!-- Addresses -->
+                <li class="dashboard__nav-item-link {{#if address}}active{{/if}}">
+                  <a href="addresses" class="font-body--lg-400">
+                    <span class="icon">
+                      <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 25 25"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 2c-4.418 0-8 3.582-8 8s8 14 8 14 8-9.582 8-14-3.582-8-8-8z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    </span>
+                    <span class="name"> Addresses</span>
+                  </a>
+                </li>
                 <!-- Order History -->
-                <li class="dashboard__nav-item-link">
+                <li class="dashboard__nav-item-link {{#if orders}}active{{/if}}">
                   <a href="order-history" class="font-body--lg-400">
                     <span class="icon">
                       <svg
@@ -49,7 +98,7 @@
                   </a>
                 </li>
                 <!-- Wishlist -->
-                <li class="dashboard__nav-item-link">
+                <li class="dashboard__nav-item-link {{#if wishlist}}active{{/if}}">
                   <a href="wishlist" class="font-body--lg-400">
                     <span class="icon">
                       <svg
@@ -70,7 +119,7 @@
                   </a>
                 </li>
                 <!-- Shopping Cart  -->
-                <li class="dashboard__nav-item-link">
+                <li class="dashboard__nav-item-link {{#if cart}}active{{/if}}">
                   <a href="shopping-cart" class="font-body--lg-400">
                     <span class="icon">
                       <svg
@@ -94,7 +143,7 @@
                   </a>
                 </li>
                 <!--  Settings   -->
-                <li class="dashboard__nav-item-link">
+                <li class="dashboard__nav-item-link {{#if settings}}active{{/if}}">
                   <a href="account-setting" class="font-body--lg-400">
                     <span class="icon">
                       <svg
@@ -169,7 +218,8 @@
                 </svg>
               </button>
             </nav>
-          </div>
+          </div>          
+          <!-- ___________________________ Nav bar end ____________________________ -->
           <div class="col-lg-9 section--xl pt-0">
             <div class="container">
               <!-- User Info -->
@@ -198,7 +248,7 @@
                 <div class="col-lg-5">
                   <div class="dashboard__user-billing dashboard-card">
                     <h2 class="dashboard__user-billing-title font-body--md-500">
-                      Billing Address
+                      Default Address
                     </h2>
                     <div class="dashboard__user-billing-info">
                       <h5
@@ -226,7 +276,7 @@
                       </p>
                     </div>
                     <a
-                      href="account-setting.html"
+                      href="profile"
                       class="
                         dashboard__user-billing-editaddress
                         font-body--lg-500

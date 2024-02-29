@@ -1,4 +1,19 @@
 $(document).ready(function() {
+        // Function to validate SKU
+        function validateSKU() {
+            const sku = $("#sku").val().trim();
+            if (sku === '') {
+                $("#skuError").text("Please enter SKU.");
+                return false;
+            }  else if (!/^\d+$/.test(sku)) {
+                $("#skuError").text("Please enter only numbers for SKU.");
+                return false;
+            }else {
+                $("#skuError").text("");
+                return true;
+            }
+        }
+    
         // Function to validate product name
         function validateName() {
             const name = $("#name").val().trim();
@@ -66,6 +81,20 @@ function validateSP() {
     }
 }
 
+        // Function to validate SKU
+        function validateStock() {
+            const stock = $("#stock").val().trim();
+            if (stock === '') {
+                $("#stockError").text("Please enter stock.");
+                return false;
+            }  else if (!/^\d+$/.test(stock)) {
+                $("#stockError").text("Please enter only numbers for stock.");
+                return false;
+            }else {
+                $("#stockError").text("");
+                return true;
+            }
+        }
 
         // Function to validate category
         function validateCategory() {
@@ -109,16 +138,18 @@ function validateSP() {
             event.preventDefault();
 
             // Validate each field
+            const isValidSKU = validateSKU()
             const isValidName = validateName();
             const isValidDescription = validateDescription();
             const isValidBrand = validateBrand();
             const isValidMRP = validateMRP();
             const isValidSP = validateSP();
+            const isValidStock = validateStock()
             const isValidCategory = validateCategory();
             const isValidImages = validateImages();
 
             // If all fields are valid, submit the form
-            if (isValidName && isValidDescription && isValidBrand && isValidMRP && isValidSP && isValidCategory && isValidImages) {
+            if (isValidSKU && isValidName && isValidDescription && isValidBrand && isValidMRP && isValidSP && isValidStock && isValidCategory && isValidImages) {
                 this.submit();
             }
         });

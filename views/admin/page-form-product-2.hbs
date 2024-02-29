@@ -30,6 +30,11 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
+                                        <label class="form-label">Product SKU</label>
+                                        <p class="error-message" style="color: red;" id="skuError"></p>
+                                        <input name="sku" id="sku" type="text" placeholder="Type here" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
                                         <label class="form-label">Product name</label>
                                         <p class="error-message" style="color: red;" id="nameError"></p>
 
@@ -71,6 +76,11 @@
                                         <p class="error-message" style="color: red;" id="spError"></p>
                                         <input type="text" placeholder="Rs. " name="sp" id="sp" class="form-control">
                                     </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Stock</label>
+                                        <p class="error-message" style="color: red;" id="stockError"></p>
+                                        <input type="text" placeholder="" name="stock" id="stock" class="form-control">
+                                    </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
                             <hr class="mb-4 mt-0">
@@ -86,7 +96,6 @@
                                         <select class="form-select" name="category" id="category">
                                             <option value=""></option>
                                             {{#each categories}}
-
                                             <option value="{{this._id}}">{{this.name}}</option>
                                             {{/each}}
                                         </select>
@@ -119,4 +128,4 @@
 
         </section> <!-- content-main end// -->
 
-        <script src="/assets/js/productval.js"></script>
+        <script src="../admin/assets/js/productval.js"></script>

@@ -25,6 +25,7 @@
                                 {{/each}}
                             </select>
                         </div>
+                        
 
                         <!--
                             <div class="col-md-2 col-6">
@@ -41,7 +42,6 @@
                         </div>
                     </div>
                 </header> <!-- card-header end// -->
-                {{#each products}}
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -59,29 +59,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                {{#each products}}
+
+                                    <tr onclick="window.location.href = 'product-edit?id={{this._id}}';">
                                     <td><b>{{this.sku}}</b></td>
                                     <td style="max-width: 40px;"><img src="/images/{{this.images.[0]}}" alt="product image"></td>
                                     <td>{{this.name}}</td>
                                     <td>Rs. {{this.sp}}</td>
                                     <td>{{this.stock}}</td>
                                     {{#if delete}}
-                                    <td><span class="badge rounded-pill alert-danger">Deleted</span></td>
+                                    <td><span id="{{this._id}}"  class="badge rounded-pill alert-danger">Deleted</span></td>
                                     <td>
-                                        <a href="#" onclick="actProduct()" class="btn btn-md rounded font-sm">Toggle Status</a>
+                                        <a  id="btn{{this._id}}" href="product-unblock/{{this._id}}" class="btn btn-md rounded font-sm">Activate</a>
                                     </td>
                                     {{else}}
-                                    <td><span class="badge rounded-pill alert-success">Active</span></td>
+                                    <td><span id="{{this._id}}" class="badge rounded-pill alert-success">Active</span></td>
                                     <td>
-                                        <a href="#" onclick="dltProduct()" class="btn btn-md rounded font-sm">Toggle Status</a>
+                                        <a  id="btn{{this._id}}" href="product-block/{{this._id}}" class="btn btn-md rounded font-sm">Delete</a>
                                     </td>
                                     {{/if}}
                                 </tr>
+                {{/each}}            
                             </tbody>
                         </table>
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
-                {{/each}}            
 
                 <!--
             <div class="pagination-area mt-30 mb-50">
@@ -98,9 +100,47 @@
             </div>
             -->
         </section> <!-- content-main end// -->
-
+<!--
         <script>
-            function dltProduct(){
-                
-            }
+            const badgeElement = document.getElementById(productId);
+            const buttonElement = document.getElementById('btn' + productId);
+            function dltProduct(_id){
+                console.log(_id)
+                fetch('/admin/product-block', {
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify([_id])
+                        })
+                        .then(res=>{
+                            document.getElementById(`${_id}`).style.display="none"
+                            document.getElementById(`btn${_id}`).style.display="none"
+                            res.json()
+                            })
+                            .then(data=>console.log(data))
+                            .catch(error=>{console.log(error)})
+    }
+
+    function actProduct(_id){
+                console.log(_id)
+        fetch('/admin/product-unblock', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([_id])
+    })
+    .then(res=>{
+        res.json()
+        document.getElementById(`${_id}`).style.display="none"
+        document.getElementById(`btn${_id}`).style.display="none"
+
+
+    })
+    .then(data=>console.log(data))
+    .catch(error=>{console.log(error)})
+    }
         </script>
+
+        -->

@@ -1,4 +1,3 @@
-        {{#each products}}
         <section class="content-main">
             <form  id="form" action="/admin/product-edit?id={{this._id}}" method="post" enctype="multipart/form-data">
 
@@ -12,16 +11,22 @@
                         </h3>
                         
                         <div>
+
                             <!--
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
                             -->
                             <button class="btn btn-md rounded font-sm hover-up" type="submit" >Save</button>
                             
                         </div>
+                        
                     </div>
+                    <div  class=" text-danger">
+                        <h4 class=" text-danger">{{message}}</h4>
+                    </div> 
                 </div>
             </div>
             
+        {{#each products}}
 
             <div class="row">
                 <div class="col-lg-6">
@@ -29,9 +34,15 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3">
+                                    <input type="text" id="_id" name="_id" value="{{this._id}}" style="display: none;">
                                     <h6>1. General info</h6>
                                 </div>
                                 <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">Product SKU</label>
+                                        <p class="error-message" style="color: red;" id="skuError"></p>
+                                        <input name="sku" id="sku" type="text" value="{{this.sku}}" placeholder="Type here" class="form-control">
+                                    </div>
                                     <div class="mb-4">
                                         <label class="form-label">Product name</label>
                                        <p class="error-message" style="color: red;" id="nameError"></p>
@@ -74,6 +85,11 @@
                                         <label class="form-label">Selling Price</label>
                                         <p class="error-message" style="color: red;" id="spError"></p>
                                         <input type="text" value="{{this.sp}}" id="sp" name="sp" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Stock</label>
+                                        <p class="error-message" style="color: red;" id="stockError"></p>
+                                        <input type="text" placeholder="" value="{{this.stock}}" name="stock" id="stock" class="form-control">
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->

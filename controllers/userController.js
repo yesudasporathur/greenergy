@@ -29,12 +29,7 @@ const home_post=(req,res)=>{
       }
     })
   }
-const shop_get=async (req,res)=>{
-  const products=await Product.find({delete:false}).populate('category')
-  const categories=await Category.find({delete: false})
-    res.render('user/shop-02', { shop:true, user: req.session.user,title, categories,products:products, title: 'Shop' });
-    console.log("shop_get rendered")
-  }
+
 const sign_in_get=(req, res, next) =>{
   
 
@@ -67,9 +62,11 @@ const sign_in_get=(req, res, next) =>{
           return res.status(400).render('user/sign-in',{ title,message: 'Invalid credentials' });
         }
         else{
-          console.log(req.session.redirect)
-          req.session.user=email
-          res.redirect(`${req.session.redirect}`); 
+          let userData=await User.findOne({email:email})
+          console.log(`logged in ${userData._id}`)
+          req.session.user=userData._id
+          res.redirect(`${req.session.redirect}`);
+          console.log(`redirected to `+req.session.redirect)
         }
 
         
@@ -163,16 +160,7 @@ const otp_success=(req,res)=>{
   res.render('user/otp-success', { user:user ,title,message: 'Your account have been created. Please proceed to login.' });
 }
 
-const product=async (req,res)=>{
-  const id=req.query.id
-  
-  const details=await Product.find({ _id: id }).populate(['brand','category']);
-  const related=await Product.find({_id:{$ne:id}});
 
-  res.render('user/product-details', {user: req.session.user,details,title,related})
-  console.log("Product details rendered")
-}
-  
 
   
 const search_get=(req, res, next)=> {
@@ -198,17 +186,20 @@ const page_not_found=(req,res)=>{
 
 
 const user_dashboard_get=async (req,res)=>{
-  const user=await User.find({email:req.session.user})
+  const user=await User.find({_id:req.session.user})
   res.render('user/user-dashboard',{user,title,user_dashboard:true, my_account:true})
 }
 
 
 const profile_get=async(req,res)=>{
-  const user=await User.find({email:req.session.user})
-  res.render('user/profile',{user,title,user_dashboard:true, my_account:true, layout: 'layout', dash:1 })
+  const user=await User.find({_id:req.session.user})
+  res.render('user/profile',{user,title,user_dashboard:true, my_account:true, layout: 'layout'})
 
 }
 
+const settings_get=async(req,res)=>{
+  res.render('user/settings')
+}
 
 
 //------------------------------------- Admin Routes -------------------------------------\\
@@ -266,7 +257,8 @@ const admin_login_post=async(req,res)=>{
         if (val==false) {
           return res.status(400).render('admin/admin-login',{title, message: 'Invalid credentials' ,layout:false});
       }
-      req.session.admin = username;
+      const adminData = await User.findOne({email:username})
+      req.session.admin = adminData._id;
       res.redirect(`/admin${req.session.redirect}`); 
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
       console.log('Logged in as '+req.session.admin)
@@ -290,7 +282,6 @@ const admin_user_list_get=async (req,res)=>{
   
   
   try {
-    // Retrieve products from MongoDB
     const users = await User.find();
     res.render('admin/userlist',{title,users,layout:'admin/layout'})
   }
@@ -341,7 +332,6 @@ module.exports={
   admin_logout,
   home_get,
   home_post,
-  shop_get,
   sign_in_get,
   sign_in_post,
   create_account_get,
@@ -352,9 +342,9 @@ module.exports={
   otp_success,
   search_get,
   page_not_found,
-  product,
   user_logout,
   user_dashboard_get,
   profile_get,
+  settings_get
     
 }

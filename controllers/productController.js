@@ -20,6 +20,7 @@ const products_get = async(req,res)=>{
   
   
   const product_edit_get=async(req,res)=>{
+    const message=req.query.message
     const _id=req.query.id
     const products = await Product.find({ _id: _id }).populate(['brand', 'category']);
     const brands=await Brand.find({delete: false})
@@ -27,29 +28,32 @@ const products_get = async(req,res)=>{
   
   
     console.log("Product details loaded:\n"+products)
-    res.render('admin/product-edit',{products,categories,brands,title, layout: 'admin/layout'})
+    res.render('admin/product-edit',{message:message,products,categories,brands,title, layout: 'admin/layout'})
   }
   
   const product_edit_post=async(req,res)=>{
-    const _id=req.query.id
+    const _id=req.body._id
     const name=req.body.name
-    const isDuplicate=await Product.findOne({_id:{$ne:_id},name:name})
-    if(isDuplicate){
-      console.log("duplicate product name")
-      //res.redirect('/product-edit?message=duplicate+product+found&id=)
-  
-    }
-    else{
-      const description=req.body.description
+    const sku=req.body.sku
+    const description=req.body.description
     const brand=req.body.brand
     const mrp=req.body.mrp
     const sp=req.body.sp
+    const stock=req.body.stock
     const discount=Math.ceil(100-(sp/mrp)*100)
     const category=req.body.category
+    const isDup=await Product.findOne({_id:{$ne:_id},sku:sku})
+    if(isDup){
+      res.redirect(`product-edit?message=Duplicate&id=${_id}`)
+    }
+    else
+    {
     const update=await Product.findByIdAndUpdate({_id:_id},{
       name: name,
+      sku:sku,
       sp: sp,
       mrp: mrp,
+      stock:stock,
       discount: discount,
       description: description,
       brand: brand,
@@ -72,11 +76,27 @@ const products_get = async(req,res)=>{
           delete: false
       });
     }
-    res.redirect('products')
+    res.redirect('/admin/products')
+  }
+    
   
-    }
+    
     
   }
+const product_block=async (req,res)=>{
+  const _id=req.params._id
+  await Product.findByIdAndUpdate({ _id: _id }, {delete: true})
+  res.redirect('/admin/products')
+
+}
+const product_unblock=async (req,res)=>{
+  const _id=req.params._id
+  await Product.findByIdAndUpdate({ _id: _id }, {delete: false})
+  res.redirect('/admin/products')
+
+}
+
+
   
   const product_add_get=async (req,res)=>{
     const message = req.query.message;
@@ -87,18 +107,22 @@ const products_get = async(req,res)=>{
   }
   const product_add_post=async (req,res, next) => {
     try{
+      const sku=req.body.sku
       const name=req.body.name
-      const images = req.files.map(file=>file.filename )
+      const images = req.files.map(file=>file.filename)
       const description=req.body.description
     const brand=req.body.brand
     const mrp=req.body.mrp
     const sp=req.body.sp
+    const stock=req.body.stock
     const discount=Math.ceil(100-(sp/mrp)*100)
     const category=req.body.category
     const products=new Product({
+      sku: sku,
       name: name,
       sp: sp,
       mrp: mrp,
+      stock:stock,
       discount: discount,
       description: description,
       brand: brand,
@@ -107,9 +131,16 @@ const products_get = async(req,res)=>{
       delete: false
     })
     console.log(products)
-    await products.save();
-    console.log("New product: "+products)
-    res.redirect('products')
+    const isDuplicate=await Product.findOne({sku:sku})
+    console.log(isDuplicate)
+    if(isDuplicate){
+      res.redirect('/admin/product-add?message=Duplicate+SKU+found!+Try+Again');
+    }
+    else{
+      await products.save();
+      console.log("New product: "+products)
+      res.redirect('products')
+    }
     }
     catch{
       console.log("Product adding failed")
@@ -117,10 +148,31 @@ const products_get = async(req,res)=>{
     }
   }
 
+  const product=async (req,res)=>{
+    const id=req.query.id
+    
+    const details=await Product.find({ _id: id }).populate(['brand','category']);
+    const related=await Product.find({_id:{$ne:id}});
+  
+    res.render('user/product-details', {user: req.session.user,details,title,related})
+    console.log("Product details rendered")
+  }
+  
+  const shop_get=async (req,res)=>{
+    const products=await Product.find({delete:false}).populate('category')
+    const categories=await Category.find({delete: false})
+      res.render('user/shop-02', { shop:true, user: req.session.user,title, categories,products:products, title: 'Shop' });
+      console.log("shop_get rendered")
+    }
+
 module.exports={
     products_get,
     product_edit_get,
     product_edit_post,
     product_add_get,
-    product_add_post
+    product_add_post,
+    product_block,
+    product_unblock,
+    product,
+    shop_get,
 }
