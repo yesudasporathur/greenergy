@@ -23,11 +23,13 @@ router.get('/search', setNoCache.user, userController.search_get);
 router.get('/user-dashboard',setNoCache.user,requireLogin,userController.user_dashboard_get)
 router.get('/profile',setNoCache.user,requireLogin,userController.profile_get)
 router.get('/settings',setNoCache.user,requireLogin,userController.settings_get)
+router.post('/settings',setNoCache.user,requireLogin,userController.settings_post)
 router.get('/address-add',setNoCache.user,requireLogin,addressController.address_add_get)
 router.post('/address-add',setNoCache.user,requireLogin,addressController.address_add_post)
 router.get('/addresses',setNoCache.user,requireLogin,addressController.addresses_get)
 router.get('/address-edit',setNoCache.user,requireLogin,addressController.address_edit_get)
 router.post('/address-edit',setNoCache.user,requireLogin,addressController.address_edit_post)
+router.get('/addToCart/:id',setNoCache.user,requireLogin,addressController.address_edit_get)
 router.get('/logout', requireLogin, setNoCache.user, userController.user_logout)
 router.get('/',  setNoCache.user, userController.home_get);
 router.post('/',  setNoCache.user, userController.home_post)

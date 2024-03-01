@@ -198,7 +198,30 @@ const profile_get=async(req,res)=>{
 }
 
 const settings_get=async(req,res)=>{
-  res.render('user/settings')
+  const message=req.query.message
+  res.render('user/settings',{message:message})
+}
+
+const settings_post=async(req,res)=>{
+  const _id=req.session.user
+  const data = await User.findOne({_id:_id});       
+  const val = await crypt.cmpPassword(data.password,req.body.oldpassword)
+  if(val){
+    try{
+      const hashedPassword = await crypt.hashPassword(req.body.newpassword);
+    await User.findOneAndUpdate({_id:_id},{password:hashedPassword})
+    console.log("password changed")
+    res.redirect('/settings?message=Password+successfully+changed')
+    }
+    catch(error){
+      console.log(error+"\nredirecting with error msg")
+      res.redirect('/settings?message=Some+error+has+occurred')
+    }
+  }
+  else{
+    console.log("passwords not matching")
+    res.redirect('/settings?message=Old+password+does+not+match')
+  }
 }
 
 
@@ -345,6 +368,7 @@ module.exports={
   user_logout,
   user_dashboard_get,
   profile_get,
-  settings_get
+  settings_get,
+  settings_post
     
 }

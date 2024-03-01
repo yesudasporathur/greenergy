@@ -20,7 +20,7 @@ function admin(req, res, next) {
         'Expires': '0',
     });
     if(req.url!='/sign-in'){
-      req.session.redirect=req.url
+      req.session.redirect='/'//req.url
     }
     next();
   }

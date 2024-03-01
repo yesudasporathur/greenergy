@@ -1,3 +1,4 @@
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <!--  Secton Start  -->
     <div class="dashboard section">
@@ -174,122 +175,56 @@
             <div class="container">
               
 
-              <!-- Change Password  -->
-              <div class="dashboard__content-card">
-                <div class="dashboard__content-card-header">
-                  <h5 class="font-body--xxl-500">Change Password</h5>
-                </div>
-                <div class="dashboard__content-card-body">
-                  <form action="/settings" id="passwordform" name="passwordform" method="post"> 
-                    <div class="contact-form__content">
-                      <div class="contact-form-input">
-                        <label for="cpassword">Current Password </label>
-                        <input
-                          type="password"
-                          id="cpassword"
-                          name="cpassword"
-                          placeholder="Password"
-                        />
-                        <span
-                          class="icon"
-                          onclick="showPassword('cpassword',this)"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="21"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-eye"
-                          >
-                            <path
-                              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                            ></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                          </svg>
-                        </span>
-                      </div>
-                      <div class="contact-form__content-group">
-                        <!-- New Password  -->
-                        <div class="contact-form-input">
-                          <label for="npassword">new Password </label>
-                          <input
-                            type="password"
-                            id="npassword"
-                            name="npassword"
-                            placeholder="Password"
-                          />
-                          <span
-                            class="icon"
-                            onclick="showPassword('npassword',this)"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="21"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="feather feather-eye"
-                            >
-                              <path
-                                d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                              ></path>
-                              <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                          </span>
-                        </div>
-                        <!-- confirm  Password  -->
-                        <div class="contact-form-input">
-                          <label for="confirmPassword">confirm Password</label>
-                          <input
-                            type="password"
-                            id="confirmPassword"
-                            id="confirmPassword"
+<!--//////////////////////////////////////// Form begin \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\-->
+<h2>Change Password</h2>
+<br>
+<p class="text-danger">{{message}}</p>
+<br>
 
-                            placeholder="Password"
-                          />
-                          <span
-                            class="icon"
-                            onclick="showPassword('confirmPassword',this)"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="20"
-                              height="21"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="feather feather-eye"
-                            >
-                              <path
-                                d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                              ></path>
-                              <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                      <div id="passwordError"></div>
-                      <div class="contact-form-btn"  id="submit" name="submit">
-                        <button class="button button--md" type="submit">
-                          Change Password
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
+
+
+    <form id="loginform" action="/settings" method="post">
+  <div class="form-input">
+    <input type="password" placeholder="Old Password" name="oldpassword" id="oldpassword" required />
+    <button
+      type="button"
+      class="icon icon-eye"
+      onclick="showPassword('password',this)"
+    >
+      <!-- Icon SVG -->
+    </button>
+    <!-- Other icons -->
+  </div>
+  <div class="form-input">
+    <input type="password" placeholder="New Password" name="newpassword" id="newpassword" minlength="8" required />
+    <button
+      type="button"
+      class="icon icon-eye"
+      onclick="showPassword('password',this)"
+    >
+      <!-- Icon SVG -->
+    </button>
+    <!-- Other icons -->
+  </div>
+  <div class="form-input">
+    <input type="password" placeholder="Confirm Password" name="confirmpassword" id="confirmpassword" minlength="8" required />
+    <button
+      type="button"
+      class="icon icon-eye"
+      onclick="showPassword('password',this)"
+    >
+      <!-- Icon SVG -->
+    </button>
+    <!-- Other icons -->
+  </div>
+  <button type="submit" class="button button--md w-100">Submit</button>
+</form>
+
+<!--//////////////////////////////////////// Form end \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\-->
+
+
+
+
             </div>
           </div>
         </div>
@@ -297,62 +232,20 @@
     </div>
     <!--  Secton  End  -->
 
-
 <script>
-// Function to handle form submission
-function handleSubmit(event) {
-    event.preventDefault(); // Prevent default form submission
+  // JavaScript validation
+  document.getElementById('loginform').addEventListener('submit', function(event) {
+    var newPassword = document.getElementById('newpassword').value;
+    var confirmPassword = document.getElementById('confirmpassword').value;
 
-    // Call the password validation function
-    var isValid = validatePassword();
-
-    // If password validation fails, return false to prevent form submission
-    if (!isValid) {
-        return false;
-    }
-
-    // If password validation passes, you can proceed with form submission
-    // You may choose to submit the form via AJAX or other means here
-    // For demonstration purposes, I'll log a message
-    console.log("Form submitted successfully!");
-}
-
-// Function to validate password
-function validatePassword() {
-    var currentPassword = document.getElementById("cpassword").value;
-    var newPassword = document.getElementById("npassword").value;
-    var confirmPassword = document.getElementById("confirmPassword").value;
-    var errorElement = document.getElementById("passwordError");
-
-    // Reset error message
-    errorElement.innerHTML = "";
-
-    // Check if current password is empty
-    if (currentPassword.trim() === "") {
-        errorElement.innerHTML = "Current password cannot be empty";
-        return false;
-    }
-
-    // Check if new password is empty
-    if (newPassword.trim() === "") {
-        errorElement.innerHTML = "New password cannot be empty";
-        return false;
-    }
-
-    // Check if new password meets minimum length requirement
-    if (newPassword.length < 8) {
-        errorElement.innerHTML = "New password must be at least 8 characters long";
-        return false;
-    }
-
-    // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
-        errorElement.innerHTML = "New password and confirm password do not match";
-        return false;
+      alert("New password and confirm password must match.");
+      event.preventDefault(); // Prevent form submission
     }
 
-    // If all validations pass, return true
-    return true;
-}
-
+    if (newPassword.length < 8) {
+      alert("Password must be at least 8 characters long.");
+      event.preventDefault(); // Prevent form submission
+    }
+  });
 </script>

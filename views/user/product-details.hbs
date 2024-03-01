@@ -228,7 +228,8 @@ function resetZoom() {
                         <!-- Action button -->
                         <div class="products__content">
                             <div class="products__content-action">
-                                <div class="counter-btn-wrapper products__content-action-item">
+                                <!--
+                                    <div class="counter-btn-wrapper products__content-action-item">
                                     <button class="counter-btn-dec counter-btn" onclick="decrement()">
                                         -
                                     </button>
@@ -237,8 +238,10 @@ function resetZoom() {
                                         +
                                     </button>
                                 </div>
+                                -->
                                 <!-- add to cart  -->
-                                <button class="button button--md products__content-action-item">
+                                <a href="#" onclick="addToCart()">
+                                <button class="button button--md products__content-action-item" >
                                     Add to Cart
                                     <span>
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -252,6 +255,9 @@ function resetZoom() {
                                         </svg>
                                     </span>
                                 </button>
+                                
+                                </a>
+                                
 
                                 <!-- fav  -->
                                 <button class="button-fav products__content-action-item">
@@ -1377,5 +1383,8 @@ function resetZoom() {
             </a>
         </div>
         -->
+
+        <script src="../user/src/js/zoom.js"></script>
+        <script src="../user/src/js/addtocart.js"></script>
     </body>
 </html>
