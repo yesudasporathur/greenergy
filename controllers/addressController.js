@@ -4,15 +4,22 @@ let title="Address"
 
 
 const address_add_get=async(req,res)=>{
-  const message=req.query.message
+  const message=req.query.message    
     res.render('user/address-add', {message,title})
   }
   
 const address_add_post=async(req,res)=>{
+  let defaultVal=false
+
+
+    firstAddress=await Address.findOne({u_id:req.session.user})
+    if(!firstAddress){
+      defaultVal=true
+    }
     
     const data=new Address({
-      default: false,
-      user_id:req.session.user,
+      default: defaultVal,
+      u_id:req.session.user,
       name:req.body.name,
       pincode:req.body.pincode,
       addr1:req.body.addr1,
@@ -36,7 +43,7 @@ const address_add_post=async(req,res)=>{
 
 
   const addresses_get=async(req,res)=>{
-    const addrs=await Address.find({user_id:req.session.user},{})
+    const addrs=await Address.find({u_id:req.session.user},{})
     res.render('user/addresses',{addrs,title})
     console.log(`addresses_get rendered`)
   }
@@ -82,7 +89,36 @@ const address_add_post=async(req,res)=>{
       }
   }
   
-
+  const address_cart_get=async(req,res)=>{
+    const message=req.query.message
+      res.render('user/address-cart', {message,title})
+    }
+    
+  const address_cart_post=async(req,res)=>{
+      
+      const data=new Address({
+        default: false,
+        u_id:req.session.user,
+        name:req.body.name,
+        pincode:req.body.pincode,
+        addr1:req.body.addr1,
+        addr2:req.body.addr2,
+        mark: req.body.mark,
+        city:req.body.city,
+        state:req.body.state,
+        country:req.body.country,
+        type:req.body.type,
+        email:req.body.email,
+        phone:req.body.phone,
+      })
+      try{
+        await data.save()
+        res.redirect('checkout')
+      }
+      catch{
+        res.redirect('address-cart?message=Error+occured.+Try+again')
+      }
+  }
 
 //------------------------------------- Exports -------------------------------------\\
 module.exports={
@@ -92,6 +128,9 @@ module.exports={
     
     addresses_get,
     address_edit_get,
-    address_edit_post
+    address_edit_post,
+
+    address_cart_get,
+    address_cart_post
       
   }

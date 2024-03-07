@@ -112,8 +112,8 @@ const create_account_post =  async (req, res) =>{
     
   }
 const otp_get=(req, res, next)=> {
-  mail_id= 'yesudas@yopmail.com'
-//mail_id=req.session.data.email
+  //mail_id= 'yesudas@yopmail.com'
+mail_id=req.session.data.email
 // Generate a 6-digit OTP
 const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 sendOTP(otp,mail_id)
@@ -150,6 +150,8 @@ const otp_check=async(req, res, next)=> {
       //res.render('user/otp', { user: req.session.user,title,message: 'OTP invalid' });
      }
 }
+
+
 const otp_resend=(req,res,next)=>{
   console.log("OTP Resent");
 
@@ -174,6 +176,9 @@ const page_not_found=(req,res)=>{
   
 
   const user_logout=(req,res)=>{
+    res.cookie('redirecturl','/')
+
+    console.log("cookie: " + req.cookies.redirecturl);
   
     req.session.destroy(err => {
       if (err) {

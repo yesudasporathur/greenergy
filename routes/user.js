@@ -3,39 +3,52 @@ var router = express.Router();
 var userController=require('../controllers/userController')
 var addressController=require('../controllers/addressController')
 var productController=require('../controllers/productController')
+var cartController=require('../controllers/cartController')
+var orderController=require('../controllers/orderController')
+
 
 var MongoClient=require('mongodb').MongoClient
 const User = require("../models/user");
 
-const setNoCache=require('../public/javascripts/setNoCache')
+const setNoCache=require('../public/javascripts/setNoCache');
+const Cart = require('../models/cart');
 
-router.get('/shop', requireLogin,setNoCache.user,isBlock,productController.shop_get);
-router.get('/product', requireLogin,setNoCache.user,isBlock,productController.product)
-router.get('/sign-in',isLoggedIn, setNoCache.user, userController.sign_in_get);
-router.post('/sign-in', setNoCache.user, userController.sign_in_post)
-router.get('/create-account',  setNoCache.user, userController.create_account_get);
-router.post('/create-account',  setNoCache.user, userController.create_account_post);
-router.get('/otp', setNoCache.user,  userController.otp_get);
-router.get('/resend', setNoCache.user, userController.otp_resend);
-router.post('/otpcheck', setNoCache.user, userController.otp_check);
-router.get('/otp-success', setNoCache.user, userController.otp_success)
-router.get('/search', setNoCache.user, userController.search_get);
-router.get('/user-dashboard',setNoCache.user,requireLogin,userController.user_dashboard_get)
-router.get('/profile',setNoCache.user,requireLogin,userController.profile_get)
-router.get('/settings',setNoCache.user,requireLogin,userController.settings_get)
-router.post('/settings',setNoCache.user,requireLogin,userController.settings_post)
-router.get('/address-add',setNoCache.user,requireLogin,addressController.address_add_get)
-router.post('/address-add',setNoCache.user,requireLogin,addressController.address_add_post)
-router.get('/addresses',setNoCache.user,requireLogin,addressController.addresses_get)
-router.get('/address-edit',setNoCache.user,requireLogin,addressController.address_edit_get)
-router.post('/address-edit',setNoCache.user,requireLogin,addressController.address_edit_post)
-router.get('/addToCart/:id',setNoCache.user,requireLogin,addressController.address_edit_get)
-router.get('/logout', requireLogin, setNoCache.user, userController.user_logout)
-router.get('/',  setNoCache.user, userController.home_get);
-router.post('/',  setNoCache.user, userController.home_post)
-router.get('/*', setNoCache.user, userController.page_not_found)
+router.get('/shop', requireLogin,setNoCache.user,isBlock,userPreload,productController.shop_get);
+router.get('/product', requireLogin,setNoCache.user,isBlock,userPreload,productController.product)
+router.get('/sign-in',isLoggedIn, setNoCache.user, userPreload,userController.sign_in_get);
+router.post('/sign-in', setNoCache.user, userPreload,userController.sign_in_post)
+router.get('/create-account',  setNoCache.user,userPreload, userController.create_account_get);
+router.post('/create-account',  setNoCache.user, userPreload,userController.create_account_post);
+router.get('/otp', setNoCache.user, userPreload, userController.otp_get);
+router.get('/resend', setNoCache.user, userPreload,userController.otp_resend);
+router.post('/otpcheck', setNoCache.user,userPreload, userController.otp_check);
+router.get('/otp-success', setNoCache.user,userPreload, userController.otp_success)
+router.get('/search', setNoCache.user, userPreload,userController.search_get);
+router.get('/user-dashboard',setNoCache.user,requireLogin,userPreload,userController.user_dashboard_get)
+router.get('/profile',setNoCache.user,requireLogin,userPreload,userController.profile_get)
+router.get('/settings',setNoCache.user,requireLogin,userPreload,userController.settings_get)
+router.post('/settings',setNoCache.user,requireLogin,userPreload,userController.settings_post)
+router.get('/address-add',setNoCache.user,requireLogin,userPreload,addressController.address_add_get)
+router.post('/address-add',setNoCache.user,requireLogin,userPreload,addressController.address_add_post)
+router.get('/addresses',setNoCache.user,requireLogin,userPreload,addressController.addresses_get)
+router.get('/address-edit',setNoCache.user,requireLogin,userPreload,addressController.address_edit_get)
+router.post('/address-edit',setNoCache.user,requireLogin,userPreload,addressController.address_edit_post)
+router.get('/address-cart',setNoCache.user,requireLogin,userPreload,addressController.address_cart_get)
+router.post('/address-cart',setNoCache.user,requireLogin,userPreload,addressController.address_cart_post)
+router.get('/cart',setNoCache.user,requireLogin,userPreload,cartController.cart_view_get)
+router.post('/addToCart',setNoCache.user,requireLogin,userPreload,cartController.add_to_cart_post)
+router.post('/removeFromCart',setNoCache.user,requireLogin,userPreload,cartController.remove_from_cart_post)
+router.get('/deleteFromCart',setNoCache.user,requireLogin,userPreload,cartController.delete_from_cart_get)
+router.get('/checkout',setNoCache.user,requireLogin,userPreload,cartController.checkout_get)
+router.post('/checkout',setNoCache.user,requireLogin,userPreload,cartController.checkout_post)
+router.get('/order-details',setNoCache.user,requireLogin,userPreload,orderController.order_details_get)
+router.get('/logout', requireLogin, setNoCache.user, userPreload,userController.user_logout,()=>{console.log("cookie"+req.cookies.redirecturl)})
+router.get('/',  setNoCache.user, userPreload,userController.home_get);
+router.post('/',  setNoCache.user, userPreload,userController.home_post)
+router.get('/*', setNoCache.user, userPreload,userController.page_not_found)
 
 async function requireLogin(req, res, next) {
+  req.session.user='65dc11c766e50223004d914e'
     if (!req.session.user) {
       return res.redirect('/sign-in');
     }
@@ -59,9 +72,13 @@ async function isBlock(req,res,next){
   next()
 
 }
-
-
-
-
+async function userPreload(req,res,next){
+  console.log(req.session.user)
+  const cart=await Cart.findOne({u_id:req.session.user})
+  cartnum=cart.items.length
+  carttotal=cart.total
+  console.log(cartnum,carttotal)
+  next()  
+}
 
 module.exports = router;

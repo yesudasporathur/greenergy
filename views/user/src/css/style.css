@@ -4588,10 +4588,10 @@ body.overlay::after {
 .shopping-cart {
   position: fixed;
   top: 0;
-  right: -455px;
-  width: 355px;
+  right: -600px;
+  width: 500px;
   height: 100%;
-  padding: 40px;
+  padding: 20px;
   overflow-y: auto;
   background-color: #fff;
   z-index: 9999;
@@ -4608,6 +4608,7 @@ body.overlay::after {
   }
 }
 .shopping-cart.active {
+  display: none;
   right: 0px;
   width: 455px;
   transition: all 0.3s linear;

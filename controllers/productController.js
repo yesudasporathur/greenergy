@@ -1,6 +1,7 @@
 const Product=require("../models/product")
 const Category=require("../models/category")
 const Brand=require('../models/brand')
+const Cart = require("../models/cart")
 
 let title="Products"
 
@@ -153,15 +154,19 @@ const product_unblock=async (req,res)=>{
     
     const details=await Product.find({ _id: id }).populate(['brand','category']);
     const related=await Product.find({_id:{$ne:id}});
-  
+    
+
     res.render('user/product-details', {user: req.session.user,details,title,related})
     console.log("Product details rendered")
   }
   
   const shop_get=async (req,res)=>{
+
     const products=await Product.find({delete:false}).populate('category')
     const categories=await Category.find({delete: false})
-      res.render('user/shop-02', { shop:true, user: req.session.user,title, categories,products:products, title: 'Shop' });
+    const cart = await Cart.findOne({user:req.session.user})
+
+      res.render('user/shop-02', { shop:true, user: req.session.user,title, categories,products:products, title: 'Shop' , cartnum,carttotal});
       console.log("shop_get rendered")
     }
 

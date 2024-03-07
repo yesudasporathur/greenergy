@@ -1,5 +1,0 @@
-function addToCart(){
-    console.log({{}})
-
-
-}

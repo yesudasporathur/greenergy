@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const addressSchema = new Schema({
     default: Boolean,
-    user_id: {
+    u_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },

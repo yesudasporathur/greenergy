@@ -3,7 +3,7 @@ const mongoose=require("mongoose")
 const Schema=mongoose.Schema;
 
 const cartSchema=new Schema({
-    user:{
+    u_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },
@@ -17,11 +17,12 @@ const cartSchema=new Schema({
             default: 1
         },
         subtotal:{
-            type: Number
+            type: Number,
         }
-}],
-    
-    
-},{timestamp: true})
+    }],
+    total:{
+        type:Number,
+    }    
+},{timestamp: true,versionKey:false})
 
 module.exports=mongoose.model("cart",cartSchema)

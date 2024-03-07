@@ -1,0 +1,181 @@
+
+    <!-- Billing Section Start  -->
+    <form action="/checkout" method="post">
+    <input type="text" value="{{cart._id}}" name="c_id" style="display: none;"></input>
+
+    <section class="section billing section--xl pt-0">
+      <div class="container">
+        <div class="row billing__content">
+          <div class="col-lg-8">
+            <div class="billing__content-card">
+              <div class="billing__content-card-header">
+                <h2 class="font-body--xxxl-500">Billing Information</h2>
+              </div>
+              {{#if address.length}}
+              <div class="contact-form-input">
+                        <label for="country">Select Address</label>
+                        <select
+                          id="country"
+                          name="a_id"
+                          class="contact-form-input__dropdown"
+                        >
+                        {{#each address}}
+                        {{#if this.default}}
+                          <option selected value="{{this._id}}">{{this.name}}, {{this.addr1}}, {{this.addr2}}, {{this.city}}, {{this.state}}, {{this.country}} - {{this.pincode}} | {{this.phone}}</option>
+                        {{/if}}
+                        {{#unless this.default}}
+                          <option value="{{this._id}}">{{this.name}}, {{this.addr1}}, {{this.addr2}}, {{this.city}}, {{this.state}}, {{this.country}} - {{this.pincode}} | {{this.phone}}</option>
+                          {{/unless}}
+                        {{#unless address.length}}
+                          <p>No addresses found. Create new address</p>
+                          {{/unless}}
+                        {{/each}}
+                          
+                        </select>
+              </div>
+              {{else}}
+              <div>No address found</div>
+              
+              
+              {{/if}}
+              <div style="margin-top: 20px; margin-bottom:20px">
+                <a href="/address-cart">
+                <button class="button button--lg button-- w-100" type="submit">
+                    Create Now
+                  </button>
+                  </a>
+              </div>
+                
+            </div>
+            <div class="billing__content-card">
+              <div class="billing__content-card-header">
+                <h2 class="font-body--xxxl-500">Additional Information</h2>
+              </div>
+              <div class="billing__content-card-body">
+                <div class="contact-form-input contact-form-textarea">
+                  <label for="note">Order Notes <span>(Optional)</span> </label>
+                  <!-- <input type="text" id="fname1" placeholder="Your first name" /> -->
+                  <textarea
+                    name="notes"
+                    id="note"
+                    placeholder="Notes about your order, e.g. special notes for delivery"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="bill-card">
+              <div class="bill-card__content">
+                <div class="bill-card__header">
+                  <h2 class="bill-card__header-title font-body--xxl-500">
+                    Order Summery
+                  </h2>
+                </div>
+                <div class="bill-card__body">
+                  <!-- Product Info -->
+                  <div class="bill-card__product">
+                    
+                    {{#each cart.items}}
+                    <div class="bill-card__product-item">
+                      <div class="bill-card__product-item-content">
+                        <div class="img-wrapper">
+                          <img
+                            src="/images/{{this.product.images.[0]}}"
+                            alt="product-img"
+                          />
+                        </div>
+                        <h5 class="font-body--md-400">
+                          {{this.product.name}}<span class="quantity"> x{{this.qty}}</span>
+                        </h5>
+                      </div>
+
+                      <p class="bill-card__product-price font-body--md-500">
+                        Rs. {{this.subtotal}}
+                      </p>
+                    </div>
+
+                    {{/each}}
+                    
+                  </div>
+                  <!-- memo  -->
+                  <div class="bill-card__memo">
+                    <!-- Subtotal  -->
+                    <div class="bill-card__memo-item subtotal">
+                      <p class="font-body--md-400">Subtotal:</p>
+                      <span class="font-body--md-500">Rs. {{cart.total}}</span>
+                    </div>
+                    <!-- Shipping  -->
+                    <div class="bill-card__memo-item shipping">
+                      <p class="font-body--md-400">Shipping:</p>
+                      <span class="font-body--md-500">Free</span>
+                    </div>
+                    <!-- total  -->
+                    <div class="bill-card__memo-item total">
+                      <p class="font-body--lg-400">Total:</p>
+                      <span class="font-body--xl-500">Rs. {{cart.total}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bill-card__content">
+                <div class="bill-card__header">
+                  <div class="bill-card__header">
+                    <h2 class="bill-card__header-title font-body--xxl-500">
+                      Payment Method
+                    </h2>
+                  </div>
+                </div>
+                <div class="bill-card__body">
+                    <!-- Payment Methods  -->
+                    <div class="bill-card__payment-method">
+                      <div class="bill-card__payment-method-item">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="payment"
+                            id="cash"
+                            value="1"
+                            checked
+                          />
+                          <label
+                            class="form-check-label font-body--400"
+                            for="cash"
+                          >
+                            cash on delivery
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="bill-card__payment-method-item">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="payment"
+                            id="razorpay"
+                            value="2"
+                          />
+                          <label
+                            class="form-check-label font-body--400"
+                            for="paypal"
+                          >
+                            Paypal
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button class="button button--lg w-100" type="submit">
+                      Place Order
+                    </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </form>
+    <!-- Billing Section  End  -->

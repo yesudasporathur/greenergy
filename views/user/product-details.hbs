@@ -55,6 +55,7 @@ function resetZoom() {
 
         <!-- Products View Section Start  -->
         {{#each details}}
+        <input type="text" value="{{this._id}}"  name="_id" id="_id   ">
         <section class="products section">
             <div class="container">
                 <div class="row" style="margin-top: 32px;">
@@ -240,7 +241,8 @@ function resetZoom() {
                                 </div>
                                 -->
                                 <!-- add to cart  -->
-                                <a href="#" onclick="addToCart()">
+                                <a href="#" onclick="addToCart('{{this._id}}')">
+
                                 <button class="button button--md products__content-action-item" >
                                     Add to Cart
                                     <span>
@@ -1383,8 +1385,8 @@ function resetZoom() {
             </a>
         </div>
         -->
-
+        
         <script src="../user/src/js/zoom.js"></script>
-        <script src="../user/src/js/addtocart.js"></script>
+        <script src="../user/src/js/cartmanage.js"></script>
     </body>
 </html>
