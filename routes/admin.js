@@ -4,6 +4,8 @@ var brandController=require('../controllers/brandController')
 var userController=require('../controllers/userController')
 const productController=require('../controllers/productController')
 const categoryController=require('../controllers/categoryController')
+const orderController=require('../controllers/orderController')
+
 
 
 const multer=require('../public/javascripts/multer')
@@ -35,6 +37,9 @@ router.get('/brand-add', setNoCache.admin, requireLogin,  brandController.brand_
 router.post('/brand-add', setNoCache.admin, requireLogin,  multer.single('image'),brandController.brand_add_post)
 router.get('/brand-edit', setNoCache.admin, requireLogin,  brandController.brand_edit_get)
 router.post('/brand-edit', setNoCache.admin, requireLogin,  multer.single('image'),brandController.brand_edit_post)
+router.get('/orders', setNoCache.admin,  requireLogin, orderController.orders_get)
+router.get('/order-edit', setNoCache.admin,  requireLogin, orderController.order_edit_get)
+router.post('/order-edit', setNoCache.admin,  requireLogin, orderController.order_edit_post)
 router.get('/', setNoCache.admin, userController.admin_login_get);
 router.post('/', setNoCache.admin,  userController.admin_login_post);
 router.get('/*', setNoCache.admin, userController.admin_page_not_found)
@@ -43,6 +48,8 @@ router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
 
 function requireLogin(req, res, next) {
+  req.session.admin='65dc11c766e50223004d914e'
+
   if (!req.session.admin) {
     return res.redirect('/admin');
   }

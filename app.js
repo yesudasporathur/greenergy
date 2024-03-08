@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const exphbs  = require('express-handlebars');
 const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -9,7 +10,6 @@ const bodyParser = require('body-parser');
 //const createError = require('http-errors');
 const mongoose = require("mongoose");
 
-
 const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
@@ -17,7 +17,9 @@ const adminRouter=require('./routes/admin')
 mongoose.connect(process.env.MONGODB_URI);
 
 
+
 app.set('views', path.join(__dirname, 'views'));
+
 app.set('view engine', 'hbs');
 
 

@@ -12,7 +12,6 @@ const addressSchema = new Schema({
     addr1: String,
     addr2: String,
     mark: String,
-    type: String,
     city: String,
     state: String,
     country: String,

@@ -55,10 +55,11 @@ async function removeFromCart(p_id) {
 
         
         // Update the quantity displayed inside the <p> element
-        document.getElementById(`counter-btn-counter-${p_id}`).textContent = quantity;
         document.getElementById(`subtotal-${p_id}`).textContent = `Rs. ${subtotal}`;
         document.getElementById(`total`).textContent = `Rs. ${total}`;
         document.getElementById(`incltotal`).textContent = `Rs. ${total}`;
+        document.getElementById(`navtotal`).innerHTML = `Rs. ${total}`;
+
         
         console.log('Item removed from cart successfully');
         

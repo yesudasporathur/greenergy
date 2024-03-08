@@ -21,18 +21,28 @@ const orderSchema = new Schema({
         },
         subtotal: {
             type: Number,
+        },
+        rate:{
+            type:Number
         }
     }],
     total: {
         type: Number,
     },
-    address: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'address'
-    },
+        name: String,
+        addr1: String,
+        addr2: String,
+        mark: String,
+        city: String,
+        state: String,
+        country: String,
+        pincode: String,
+        email: String,
+        phone: Number,
+        type: Boolean,
     paytype: String,
     payref: Number,
-    date: Date,
+    notes:String,
     time: { type: Date, default: Date.now },
     status: String
 }, { timestamps: true, versionKey: false });

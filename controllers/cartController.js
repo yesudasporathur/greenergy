@@ -1,6 +1,9 @@
 const Cart=require("../models/cart")
 const Product=require("../models/product")
 const Address=require('../models/address')
+const Order=require('../models/order')
+const numGen=require('../public/javascripts/numGen')
+const product = require("../models/product")
 
 const cart_view_get=async(req,res)=>{
     const carts=await Cart.findOne({u_id:req.session.user}).populate('items.product')
@@ -13,41 +16,45 @@ const add_to_cart_post = async (req, res) => {
     const u_id = req.session.user;
 
     try {
-        const product = await Product.findById(p_id);
-        
-        if (!product) {
-            return res.status(404).send("Product not found");
-        }
-
-        if (product.stock === 0) {
-            console.log("Stock out");
-            return res.status(400).send("Product out of stock");
-        }
-
         let cart = await Cart.findOne({ u_id: u_id });
 
         if (!cart) {
             cart = await Cart.create({ u_id: u_id });
             console.log("New Cart created: ", cart);
         }
+        const product = await Product.findById(p_id);
+        
+        if (!product) {
+            return res.status(404).send("Product not found");
+        }
+
+        
+
+        
         const existingCartItem = cart.items.find(item => item.product.toString() === p_id);
         if (!existingCartItem) {
             cart.items.push({
                 product: p_id,
                 qty: 1,
-                subtotal: product.sp
+                subtotal: product.sp,
+                rate: product.sp
             });
         } else {
+            if (product.stock < cart.items.qty) {
+                console.log("Stock out");
+                return res.status(400).send("Product stock limited");
+            }
             existingCartItem.qty += 1;
             existingCartItem.subtotal = existingCartItem.qty * product.sp;
         }
 
-        // Recalculate the total
         cart.total = cart.items.reduce((total, item) => total + item.subtotal, 0);
-
-
         await cart.save();
         console.log("Cart updated: ", cart);
+
+
+
+
         res.status(200).json({ message: "Product added to cart successfully", quantity: existingCartItem.qty ,subtotal:existingCartItem.subtotal ,total:cart.total, cartnum: cart.items.length});
 
 
@@ -161,19 +168,72 @@ const checkout_get=async(req,res)=>{
     u_id=req.session.user
     const address=await Address.find({u_id:u_id})
     const cart=await Cart.findOne({u_id:u_id}).populate('items.product')
-    console.log(address)
     res.render('user/checkout',{cart,address})
 }
 
 const checkout_post=async(req,res)=>{
-    const u_id=req.session.user
+    try{
+        const u_id=req.session.user
     const c_id=req.body.c_id
     const a_id=req.body.a_id
+    const paytype=req.body.payment
+    const payref=numGen(200,400)
     const address=await Address.findOne({_id:a_id})
     const cart=await Cart.findOne({_id:c_id})
-    console.log(u_id,cart,address)
+       const  name= address.name
+       const  addr1= address.addr1
+       const   addr2= address.addr2
+       const   mark= address.mark
+       const   city= address.city
+       const   state= address.state
+        const   country= address.country
+        const   pincode= address.pincode
+        const   email= address.email
+        const  phone= address.phone
+        const  type= address.type
+
+
+
+    const order=new Order({
+        u_id:u_id,
+        items: cart.items,
+        total: cart.total,        
+            name: name,
+            addr1: addr1,
+            addr2: addr2,
+            mark: mark,
+            city: city,
+            state: state,
+            country: country,
+            pincode: pincode,
+            email: email,
+            phone: phone,
+            type: type,        
+        paytype: paytype,
+        payref: payref,
+        status:"Ordered"
+    })
+    await order.save()
+
+
+    cart.items.forEach(async item => {
+        const productId = item.product; 
+        const qty = item.qty; 
+        const prod = await Product.findByIdAndUpdate(
+            productId,
+            { $inc: { stock: -qty, popularity: qty } }
+        );        
+        console.log(prod)
+
+    });
     
-    
+
+
+    res.redirect(`order-details?message=Order+has+been+successfully+placed!&_id=${order._id}`)
+    }
+    catch(error){
+        console.error(error)
+    }
 }
 
 

@@ -1,0 +1,167 @@
+<form action="order-edit" method="post">
+
+<section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order detail</h2>
+                    <p>Details for Order ID: {{order.order_id}}</p>
+                    <input type="text" name="_id" id="" value="{{order._id}}" style="display: none;">
+                </div>
+            </div>
+            <div class="card">
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                            <span>
+                                <i class="material-icons md-calendar_today"></i> <b>{{order.createdAt}}</b>
+                            </span> <br>
+                            <small class="text-muted">Order ID: {{order.order_id}}</small>
+                        </div>
+                        <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                            <label for="status">Status:</label>
+
+                            <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                                <option value="{{order.status}}">{{order.status}}</option>
+                                <option value="Ordered">Ordered</option>
+                                <option  value="In Transit">In Transit</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                            <input type="submit" class="btn btn-primary" href="#">
+                            <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="row mb-50 mt-20 order-info-wrap">
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-person"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Customer</h6>
+                                    <p class="mb-1">
+                                        {{order.u_id.first_name}} {{order.u_id.last_name}}<br> <template class="__cf_email__" data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template> <br> {{order.phone}}
+                                    </p>
+                                    <a href="user-details?id={{order.u_id}}">View profile</a>
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-local_shipping"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Order info</h6>
+                                    <p class="mb-1">
+                                        Shipping: Bluedart <br> Pay method: {{order.paytype}} 
+                                    </p>
+                                    <a href="#">Download info</a>
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+                        <div class="col-md-4">
+                            <article class="icontext align-items-start">
+                                <span class="icon icon-sm rounded-circle bg-primary-light">
+                                    <i class="text-primary material-icons md-place"></i>
+                                </span>
+                                <div class="text">
+                                    <h6 class="mb-1">Deliver to</h6>
+                                    <p class="mb-1">
+                                        {{order.name}},<br>{{order.addr1}}, {{order.addr2}},<br>{{order.city}}, {{order.state}},<br>{{order.country}}-{{order.pincode}}
+                                    </p>
+                                    <a href="#">View profile</a>
+                                </div>
+                            </article>
+                        </div> <!-- col// -->
+                    </div> <!-- row // -->
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th width="40%">Product</th>
+                                            <th width="20%">Unit Price</th>
+                                            <th width="20%">Quantity</th>
+                                            <th width="20%" class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        {{#each order.items}}
+                                        <tr>
+                                            <td>
+                                                <a class="itemside" href="#">
+                                                    <div class="left">
+                                                        <img src="/images/{{this.product.images.[0]}}" width="40" height="40" class="img-xs" alt="Item">
+                                                    </div>
+                                                    <div class="info"> {{this.product.name}} </div>
+                                                </a>
+                                            </td>
+                                            <td> {{this.rate}} </td>
+                                            <td> {{this.qty}} </td>
+                                            <td class="text-end"> {{this.subtotal}} </td>
+                                        </tr>
+                                        {{/each}}
+                                        
+                                        
+
+
+                                        <tr>
+                                            <td colspan="4">
+                                                <article class="float-end">
+                                                    <dl class="dlist">
+                                                        <dt>Subtotal:</dt>
+                                                        <dd>Rs. {{order.total}}</dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Shipping cost:</dt>
+                                                        <dd>Free</dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Grand total:</dt>
+                                                        <dd> <b class="h5">Rs. {{order.total}}</b> </dd>
+                                                    </dl>
+                                                    <!--
+                                                    <dl class="dlist">
+                                                        <dt class="text-muted">Status:</dt>
+                                                        <dd>
+                                                            <span class="badge rounded-pill alert-success text-warning">Payment</span>
+                                                        </dd>
+                                                    </dl>
+                                                    -->
+                                                </article>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div> <!-- table-responsive// -->
+                        </div> <!-- col// -->
+                        <div class="col-lg-1"></div>
+                        <div class="col-lg-4">
+                            <div class="box shadow-sm bg-light">
+                                <h6 class="mb-15">Payment info</h6>
+                                <p>
+                                    <!--
+                                    <img src="assets/imgs/card-brands/2.png" class="border" height="20"> Master Card **** **** 4768 <br>
+                                    Business name: Grand Market LLC <br>
+                                    Phone: +1 (800) 555-154-52
+                                    -->
+                                    {{order.paytype}}
+                                </p>
+                            </div>
+                            <div class="h-25 pt-4">
+                                <div class="mb-3">
+                                    <label>Notes</label>
+                                    <textarea class="form-control" name="notes" id="notes"  placeholder="Type some note">{{order.notes}}</textarea>
+                                </div>
+                            </div>
+                        </div> <!-- col// -->
+                    </div>
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+        </section> <!-- content-main end// -->
+</form>

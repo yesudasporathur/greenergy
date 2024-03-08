@@ -18,6 +18,9 @@ const cartSchema=new Schema({
         },
         subtotal:{
             type: Number,
+        },
+        rate:{
+            type:Number
         }
     }],
     total:{

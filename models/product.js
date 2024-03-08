@@ -23,7 +23,11 @@ const productSchema=new Schema({
         type: String
         }
     ],
-    delete: Boolean
+    delete: Boolean,
+    popularity:{
+        type:Number,
+        default:1
+    }
     
 })
 

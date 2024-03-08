@@ -42,6 +42,8 @@ router.get('/deleteFromCart',setNoCache.user,requireLogin,userPreload,cartContro
 router.get('/checkout',setNoCache.user,requireLogin,userPreload,cartController.checkout_get)
 router.post('/checkout',setNoCache.user,requireLogin,userPreload,cartController.checkout_post)
 router.get('/order-details',setNoCache.user,requireLogin,userPreload,orderController.order_details_get)
+router.get('/order-list',setNoCache.user,requireLogin,userPreload,orderController.order_list_get)
+router.get('/order-cancel',setNoCache.user,requireLogin,userPreload,orderController.order_cancel_get)
 router.get('/logout', requireLogin, setNoCache.user, userPreload,userController.user_logout,()=>{console.log("cookie"+req.cookies.redirecturl)})
 router.get('/',  setNoCache.user, userPreload,userController.home_get);
 router.post('/',  setNoCache.user, userPreload,userController.home_post)
@@ -73,12 +75,18 @@ async function isBlock(req,res,next){
 
 }
 async function userPreload(req,res,next){
-  console.log(req.session.user)
+  try{
   const cart=await Cart.findOne({u_id:req.session.user})
   cartnum=cart.items.length
   carttotal=cart.total
-  console.log(cartnum,carttotal)
   next()  
+  }
+  catch{
+    cartnum=0
+  carttotal=0
+  next() 
+
+  }
 }
 
 module.exports = router;
