@@ -46,7 +46,19 @@ const orderSchema = new Schema({
     razpay:String,
     razorder:String,
     time: { type: Date, default: Date.now },
-    status: String
+    status: String,
+    cancel:{
+        type:Boolean,
+        default: false
+    },
+    delivered:{
+        type:Boolean,
+        default: false
+    },
+    refunded:{
+        type:Boolean,
+        default: false
+    },
 }, { timestamps: true, versionKey: false });
 
 // Pre-save middleware to generate sequential order_id

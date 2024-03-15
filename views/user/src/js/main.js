@@ -33,6 +33,7 @@ Table Contents
         16.10   Brands Slider
         16.11   Member Slider
         16.12   Blog Post Slider
+        17      Message timeout
 
  */
 
@@ -1257,3 +1258,12 @@ function readURL(input) {
 $("#imageUpload").change(function () {
 	readURL(this);
 });
+
+
+/* 
+    17. Message timeout
+======================== */
+
+setTimeout(function() {
+  document.getElementById('querymsg').style.display = 'none';
+}, 5000);

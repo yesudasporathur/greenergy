@@ -81,55 +81,60 @@ async function placeOrder(event){
       payment:payment
 
     }
-    const response=await fetch('/checkout',{
-        method:"POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    if(response){
-        const {order,newOrderId,RAZORID,name,email,phone}=await response.json()
-        
-        var options = {
-            "key": RAZORID, // Enter the Key ID generated from the Dashboard
-            "amount": order.amount_due, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            "currency": "INR",
-            "name": "Greenergy",
-            "description": "Test Transaction",
-            "image": "https://github.com/BellerOphoN697/templates/blob/main/shopery/main/src/images/favicon/android-chrome-512x512.png?raw=true",
-            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            "handler": async function (response){
-                //alert(response.razorpay_payment_id);
-                console.log(response.razorpay_payment_id)
-                const res=await fetch(`/pay-id?id=${response.razorpay_payment_id}`,{
-                    method: "POST"
-                })
-                
-                    const url=await res.json()
-                    window.location.href=url
-                
-                //alert(response.razorpay_order_id);
-                //alert(response.razorpay_signature)
+    if(payment=="Razorpay"){
+        const response=await fetch('/checkout',{
+            method:"POST",
+            headers: {
+                'Content-Type': 'application/json'
             },
-            "prefill": {
-                "name": `${name}`,
-                "email": `${email}`,
-                "contact": `${phone}`
-            },
-            "notes": {
-                "address": "Razorpay Corporate Office"
-            },
-            "theme": {
-                "color": "#3399cc"
-            }
-        };
-        console.log(options)
-
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
-
-
+            body: JSON.stringify(data)
+        })
+        if(response){
+            const {order,newOrderId,RAZORID,name,email,phone}=await response.json()
+            
+            var options = {
+                "key": RAZORID, // Enter the Key ID generated from the Dashboard
+                "amount": order.amount_due, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "Greenergy",
+                "description": "Test Transaction",
+                "image": "https://github.com/BellerOphoN697/templates/blob/main/shopery/main/src/images/favicon/android-chrome-512x512.png?raw=true",
+                "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                "handler": async function (response){
+                    //alert(response.razorpay_payment_id);
+                    console.log(response.razorpay_payment_id)
+                    const res=await fetch(`/pay-id?id=${response.razorpay_payment_id}`,{
+                        method: "POST"
+                    })
+                    
+                        const url=await res.json()
+                        window.location.href=url
+                    
+                    //alert(response.razorpay_order_id);
+                    //alert(response.razorpay_signature)
+                },
+                "prefill": {
+                    "name": `${name}`,
+                    "email": `${email}`,
+                    "contact": `${phone}`
+                },
+                "notes": {
+                    "address": "Razorpay Corporate Office"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            console.log(options)
+    
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+    
+    
+        }
+    }
+    else{
+        window.location.href=`checkout-cod?c_id=${c_id}&a_id=${a_id}&payment=${payment}`
     }
 
   }

@@ -6,11 +6,13 @@ let title="Orders"
 
 
 const order_details_get=async(req,res)=>{
+    const _id=req.query._id
 const message=req.query.message
 let cancel=false
-    let order=await Order.findById(req.query._id).populate('items.product')
+    let order=await Order.findById(_id).populate('items.product')
     if(order.status=="Cancelled"){
         cancel=true
+        await Order.findByIdAndUpdate({_id},{cancel:true})
     }
     res.render('user/order-details',{order,title,message,cancel:cancel, cartnum, carttotal})
     console.log("order_details_get")
@@ -18,7 +20,7 @@ let cancel=false
 }
 
 const order_list_get=async(req,res)=>{
-    const order=await Order.find({u_id:req.session.user}).populate('items.product')
+    const order=await Order.find({u_id:req.session.user}).populate('items.product').sort({createdAt:-1})
     res.render('user/order-list',{order,title, cartnum, carttotal,orders:true})
 }
 

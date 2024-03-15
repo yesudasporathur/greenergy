@@ -12,11 +12,15 @@ const walletSchema=new Schema({
         default:0
     },
     action:[{
-        flow: String,
+        credit: Boolean,
         amount: Number,
         current:Number,
         reference: Number,
         time: { type: Date, default: Date.now },
+        o_id:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'order'
+        },
     }]
 },{ timestamps: true, versionKey: false })
 module.exports = mongoose.model("wallet", walletSchema);

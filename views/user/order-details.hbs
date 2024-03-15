@@ -168,22 +168,22 @@
                   <div>
                   <h2 class="font-body--xxl-500">Order Details</h2>
                   </div>
+                                    <div>
+
                   {{#unless cancel}}
 
-                  <div>
-                    <a href="order-cancel?_id={{order._id}}">
                   <div class=" button button--outline">
                             <button id="cancel">Cancel Order</button>
                 </div>  
 
 
                   {{/unless}}
-                </a>
                   <a style="margin-left:10px" href="order-list">back to list</a>
                   </div>
                   
                 </div>
-                <div class="dashboard__details-content text-danger">{{message}} <br> {{order.notes}} </div>
+                <div class="dashboard__details-content text-danger" id="querymsg">{{message}} </div>
+                <div class="dashboard__details-content ">{{order.notes}} </div>
                 
 
                 <div class="dashboard__details-content">
@@ -616,5 +616,15 @@
       </div>
     </div>
     <!-- dashboard Secton  End  -->
-
+<script>
+  
+    document.getElementById("cancel").addEventListener("click", function(event) {
+        if (confirm("Are you sure you want to cancel this order?")) {
+            // User clicked "OK", proceed to navigate to the cancel URL
+            window.location.href = "order-cancel?_id={{order._id}}";
+        } else {
+            // User clicked "Cancel", do nothing
+        }
+    });
+</script>
   

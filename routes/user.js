@@ -46,6 +46,8 @@ router.post('/removeFromCart',setNoCache.user,requireLogin,userPreload,cartContr
 router.get('/deleteFromCart',setNoCache.user,requireLogin,userPreload,cartController.delete_from_cart_get)
 router.get('/checkout',setNoCache.user,requireLogin,userPreload,cartController.checkout_get)
 router.post('/checkout',setNoCache.user,requireLogin,userPreload,cartController.checkout_post)
+router.get('/checkout-cod',setNoCache.user,requireLogin,userPreload,cartController.checkout_cod)
+
 router.post('/pay-id',setNoCache.user,requireLogin,userPreload,cartController.payId)
 router.get('/order-details',setNoCache.user,requireLogin,userPreload,orderController.order_details_get)
 router.get('/order-list',setNoCache.user,requireLogin,userPreload,orderController.order_list_get)
