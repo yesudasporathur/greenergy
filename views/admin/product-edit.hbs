@@ -126,6 +126,9 @@
                                         <label class="form-label">Images</label>
                                         <p class="error-message" style="color: red;" id="imagesError"></p> 
                                         <input class="form-control" type="file" name="images" id="images" accept="image/*" multiple>
+                                        {{#each this.images}}
+                                            <img src="/images/{{this}}" alt="image" style="max-width: 200px;">
+                                        {{/each}}
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- .row end// -->

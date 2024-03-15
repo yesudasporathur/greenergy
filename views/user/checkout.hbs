@@ -1,7 +1,7 @@
 
     <!-- Billing Section Start  -->
-    <form action="/checkout" method="post">
-    <input type="text" value="{{cart._id}}" name="c_id" style="display: none;"></input>
+    <form onsubmit="placeOrder(event)" >
+    <input type="text" value="{{cart._id}}" name="c_id" id="c_id" style="display: none;"></input>
 
     <section class="section billing section--xl pt-0">
       <div class="container">
@@ -35,14 +35,12 @@
               </div>
               {{else}}
               <div>No address found</div>
-              
-              
               {{/if}}
               <div style="margin-top: 20px; margin-bottom:20px">
                 <a href="/address-cart">
-                <button class="button button--lg button-- w-100" type="submit">
+                <div class="button button--lg button-- w-100">
                     Create Now
-                  </button>
+                  </div>
                   </a>
               </div>
                 
@@ -137,7 +135,7 @@
                             name="payment"
                             id="cash"
                             value="Cash on Delivery"
-                            checked
+                            
                           />
                           <label
                             class="form-check-label font-body--400"
@@ -156,6 +154,7 @@
                             name="payment"
                             id="razorpay"
                             value="Razorpay"
+                            checked
                           />
                           <label
                             class="form-check-label font-body--400"
@@ -179,3 +178,5 @@
     </section>
     </form>
     <!-- Billing Section  End  -->
+    <script src="../user/src/js/cartmanage.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>

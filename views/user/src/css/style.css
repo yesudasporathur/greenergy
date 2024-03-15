@@ -709,6 +709,7 @@ a {
   position: relative;
   color: #4d4d4d;
   font-size: 14px;
+  z-index: 10;
   font-family: "Poppins", sans-serif;
 }
 .bv_mainselect > .bv_background .arrow {
@@ -5871,6 +5872,7 @@ body.overlay::after {
   background-color: #fff;
   overflow: hidden;
   transition: all 0.3s linear;
+  z-index: 1 ;
 }
 .cards-sm:hover,
 .cards-sm--two:hover,
@@ -9756,6 +9758,7 @@ body.overlay::after {
   width: 178px;
   border: 1px solid #e5e5e5;
   margin-right: 16px;
+  
   padding: 0px;
 }
 @media (max-width: 991px) {

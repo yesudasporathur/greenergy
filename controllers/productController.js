@@ -64,6 +64,9 @@ const products_get = async(req,res)=>{
     if(req.body.imgUpdate=== '1'){
       const images = req.files.map(file =>   file.filename );
       await Product.findByIdAndUpdate({_id:_id},{
+        images: []
+      });
+      await Product.findByIdAndUpdate({_id:_id},{
         images: images
       });
     }
@@ -156,18 +159,35 @@ const product_unblock=async (req,res)=>{
     const related=await Product.find({_id:{$ne:id}});
     
 
-    res.render('user/product-details', {user: req.session.user,details,title,related})
+    res.render('user/product-details', {user: req.session.user,details,title,related, cartnum, carttotal})
     console.log("Product details rendered")
   }
-  
+  const clearSearch_get=(req,res)=>{
+    req.session.search=""
+    res.redirect('shop')
+  }
+  const availability=(req,res)=>{
+    if(req.session.availability==true){
+      req.session.availability=false
+    }
+    else{
+      req.session.availability=true
+    }
+    res.redirect('shop')
+  }
   const shop_get=async (req,res)=>{
+    const brand=await Brand.find({delete: false})
+    if(!req.session.search){
+      req.session.search=""
+    }
+    const products=await Product.find({delete:false, name: {$regex:new RegExp(req.session.search, 'i')}}).populate('category')
 
-    const products=await Product.find({delete:false}).populate('category')
     const categories=await Category.find({delete: false})
     const cart = await Cart.findOne({user:req.session.user})
 
-      res.render('user/shop-02', { shop:true, user: req.session.user,title, categories,products:products, title: 'Shop' , cartnum,carttotal});
+      res.render('user/shop-02', { brand,shop:true, user: req.session.user,search:req.session.search ,title, categories,products:products, title: 'Shop' , cartnum,carttotal});
       console.log("shop_get rendered")
+      
     }
 
 module.exports={
@@ -180,4 +200,6 @@ module.exports={
     product_unblock,
     product,
     shop_get,
+    clearSearch_get,
+    availability
 }

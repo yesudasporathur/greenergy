@@ -5,7 +5,7 @@ let title="Address"
 
 const address_add_get=async(req,res)=>{
   const message=req.query.message    
-    res.render('user/address-add', {message,title})
+    res.render('user/address-add', {message,title,address:true})
   }
   
 const address_add_post=async(req,res)=>{
@@ -44,7 +44,7 @@ const address_add_post=async(req,res)=>{
 
   const addresses_get=async(req,res)=>{
     const addrs=await Address.find({u_id:req.session.user},{})
-    res.render('user/addresses',{addrs,title})
+    res.render('user/addresses',{addrs,title,address:true})
     console.log(`addresses_get rendered`)
   }
   
@@ -52,7 +52,7 @@ const address_add_post=async(req,res)=>{
     const message=req.query.message
     const _id=req.query._id
     const data=await Address.findOne({_id:_id})
-      res.render('user/address-edit', {message:message,data,title})
+      res.render('user/address-edit', {message:message,data,title,address:true})
     }
 
     const address_edit_post=async(req,res)=>{
@@ -88,6 +88,13 @@ const address_add_post=async(req,res)=>{
         res.redirect(`address-edit?message=Error+occured.+Try+again&_id=${_id}`)
       }
   }
+
+  const address_delete_get=async(req,res)=>{
+    const message=req.query.message
+    const _id=req.query._id
+    const data=await Address.findOneAndDelete({_id:_id})
+      res.render('user/addresses', {message:message,data,title})
+    }
   
   const address_cart_get=async(req,res)=>{
     const message=req.query.message
@@ -129,6 +136,7 @@ module.exports={
     addresses_get,
     address_edit_get,
     address_edit_post,
+    address_delete_get,
 
     address_cart_get,
     address_cart_post

@@ -1,4 +1,5 @@
-<link rel="icon" type="image/png" href="src/images/favicon/favicon-16x16.png" />
+
+       
         <link rel="stylesheet" href="src/lib/css/swiper-bundle.min.css" />
         <link rel="stylesheet" href="src/lib/css/nouislider.min.css">
         <link rel="stylesheet" href="src/lib/css/bvselect.css" />
@@ -6,6 +7,9 @@
         <link rel="stylesheet" href="src/css/style.css" />
 
 
+
+       
+        
         <!-- breedcrumb section start  -->
         <div class="section breedcrumb">
             <div class="breedcrumb__img-wrapper">
@@ -26,12 +30,16 @@
                                 <span> > </span>
                             </a>
                         </li>
-                        <li class="active"><a href="shop-01.html">Shop 1</a></li>
+                        <li class="active"><a href="shop-01.html">Shop </a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <!-- breedcrumb section end   -->
+
+
+        <form id="filterform">
+
 
         <!-- Filter  -->
         <div class="filter--search">
@@ -57,17 +65,36 @@
                         </button>
                     </div>
                     <div class="col-lg-9">
-                        <div class="filter--search-result">
+                        <div class="filter--search-result" style="z-index: 3;">
                             <div class="sort-list">
                                 <label for="sort">Sort by:</label>
-                                <select id="sort" class="sort-list__dropmenu">
-                                    <option value="01">Latest</option>
-                                    <option value="02">Newest</option>
-                                    <option value="03">Oldest</option>
+                                <select id="sort" class="sort-list__dropmenu" onchange="SortChange()"  style="z-index: 4;">
+                                    {{#if sortsel}}
+                                    <option value="{{sortval}}"disabled selected >{{sorttext}}</option>
+                                    {{/if}}
+                                    <option value="hightolow"  style="z-index: 4;">Price - High to Low</option>
+                                    <option value="lowtohigh"  style="z-index: 4;">Price - Low to High</option>
+                                    <option value="popularity"  style="z-index: 4;">Popularity</option>
+                                    <option value="newest"  style="z-index: 4;">Newest Arrivals</option>
+                                    <option value="atoz"  style="z-index: 4;">A - Z</option>
+                                    <option value="ztoa"  style="z-index: 4;">Z - A</option>
+                                    
+
                                 </select>
+                                {{#if search}}
+
+                                <div style="margin-left: 10px;" onclick="window.location.href='clearSearch'" style="cursor: pointer;">
+                               <span style="cursor: pointer;">{{search}}</span><svg style="cursor: pointer;" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="22.5" cy="22.5" r="22.5" fill="white"></circle>
+                            <path d="M28.75 16.25L16.25 28.75" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M16.25 16.25L28.75 28.75" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                                
+                                </div>
+                                {{/if}}
                             </div>
                             <div class="result-found">
-                                <p><span class="number">52</span> Results Found</p>
+                                <p><span class="number">{{products.length}}</span> Results Found</p>
                             </div>
                         </div>
                     </div>
@@ -113,48 +140,20 @@
                                         <div id="collapseOne" class="accordion-collapse shop-collapse collapse show show" aria-labelledby="shop-item-accordion--one" data-bs-parent="#shop">
                                             <div class="accordion-body shop-body">
                                                 <div class="categories">
-                                                    <div class="categories-item">
+                                                    <div class="categories-item" >
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="fruit" />
-                                                            <label class="form-check-label" for="fruit"> Fresh Fruit (25) <span class="current">(134)</span> </label>
+                                                            <input class="form-check-input" type="radio" checked name="category" id="all" />
+                                                            <label class="form-check-label" for="all"> All <span class="current"></span> </label>
                                                         </div>
                                                     </div>
-                                                    <div class="categories-item">
+                                                    {{#each categories}}
+                                                    <div class="categories-item"  onclick="submitForm()">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="vegetable" checked />
-                                                            <label class="form-check-label" for="vegetable"> Fresh Fruit <span class="current">(150)</span> </label>
+                                                            <input class="form-check-input" type="radio" name="category" id="{{this.name}}" />
+                                                            <label class="form-check-label" for="{{this.name}}"> {{this.name}} <span class="current"></span> </label>
                                                         </div>
                                                     </div>
-                                                    <div class="categories-item">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="cooking" checked />
-                                                            <label class="form-check-label" for="cooking"> Cooking <span class="current">(54)</span> </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="categories-item">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="snacks" checked />
-                                                            <label class="form-check-label" for="snacks"> Snacks <span class="current">(47)</span> </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="categories-item">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="beverage" checked />
-                                                            <label class="form-check-label" for="beverage"> Beverages <span class="current">(43)</span> </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="categories-item">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="health" checked />
-                                                            <label class="form-check-label" for="health"> Beauty & Health <span class="current">(38)</span> </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="categories-item">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="category" id="bread" checked />
-                                                            <label class="form-check-label" for="bread"> Bread & Bakery<span class="current">(15)</span> </label>
-                                                        </div>
-                                                    </div>
+                                                    {{/each}}
                                                 </div>
                                             </div>
                                         </div>
@@ -177,11 +176,43 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Rating  -->
-                                <div class="accordion-item shop-item">
+                                     <!-- Brans -->
+
+                                    <div class="accordion-item shop-item">
                                     <h2 class="accordion-header" id="shop-item-accordion--three">
                                         <button class="accordion-button shop-button font-body--xxl-500 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            Brand
+                                            <span class="icon">
+                                                <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13 7L7 1L1 7" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </h2> 
+                                    <div id="collapseThree" class="accordion-collapse shop-collapse collapse show" aria-labelledby="shop-item-accordion--three" data-bs-parent="#shop">
+                                        <div class="accordion-body shop-body">
+                                            <div class="ratings">
+                                                {{#each brand}}
+
+                                                <div class="ratings--list-item">
+                                                    <div class="form-check d-flex align-items-center " style="vertical-align:middle;">
+                                                        <input class="form-check-input" type="checkbox" name="ratings" id="{{this._id}}" />
+                                                        
+                                                        <label for="{{this._id}}" class="star-num"  >{{this.name}}</label>
+                                                    </div>
+                                                </div>
+                                                {{/each}}
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    
+                                    <!-- rating -->
+
+                                    <div class="accordion-item shop-item">
+                                    <h2 class="accordion-header" id="shop-item-accordion--five">
+                                        <button class="accordion-button shop-button font-body--xxl-500 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                             Rating
                                             <span class="icon">
                                                 <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -190,7 +221,7 @@
                                             </span>
                                         </button>
                                     </h2>
-                                    <div id="collapseThree" class="accordion-collapse shop-collapse collapse show" aria-labelledby="shop-item-accordion--three" data-bs-parent="#shop">
+                                    <div id="collapseFive" class="accordion-collapse shop-collapse collapse show" aria-labelledby="shop-item-accordion--five" data-bs-parent="#shop">
                                         <div class="accordion-body shop-body">
                                             <div class="ratings">
                                                 <div class="ratings--list-item">
@@ -437,9 +468,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Popular Tag -->
-                                <div class="accordion-item shop-item">
+                                    </div>
+
+
+                                    
+
+                                    <!-- tags 
+                                    <div class="accordion-item shop-item">
                                     <h2 class="accordion-header" id="shop-item-accordion--four">
                                         <button class="accordion-button shop-button font-body--xxl-500 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                                             Popular Tag
@@ -469,8 +504,13 @@
                                             </div>
                                         </div>
                                     </div>
+                                    </div>
+                                    -->
+                                
+
+                                
                                 </div>
-                                <!-- banner  -->
+                                <!-- banner  
                                 <div class="shop-item">
                                     <div class="shop-img-banner">
                                         <img src="src/images/banner/banner-sm-19.jpg" alt="banner-sm" />
@@ -489,7 +529,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Sales Products  -->
+                                -->
+                                <!-- Sales Products 
                                 <div class="shop-item">
                                     <h2 class="font-body--xxl-500" style="margin-bottom: 12px;">Sale Products</h2>
                                     <a href="product-details.html" class="shop-sale-product-item">
@@ -655,18 +696,21 @@
                                         </div>
                                     </a>
                                 </div>
+                                -->
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-9">
+
                         <!-- Desktop Version  -->
                         <div class="row shop__product-items">
-                            {{#each products}}
-                            <div class="col-xl-4 col-md-6">
-                                <div class="cards-md cards-md--four w-100">
+                        {{#each products}}
+
+                            <div class="col-xl-4 col-md-6" >
+                                <div class="cards-md cards-md--four w-100" style="height: 500px;">
                                     <div class="cards-md__img-wrapper">
                                         <a href="product?id={{this._id}}">
-                                            <img src="/images/{{this.images.[0]}}" alt="products" />
+                                            <img src="images/{{this.images.[0]}}" alt="products" />
                                         </a>
                                         <span class="tag danger font-body--md-400">sale {{this.discount}}%</span>
                                         <div class="cards-md__favs-list">
@@ -696,7 +740,7 @@
                                         </div>
                                     </div>
                                     <div class="cards-md__info d-flex justify-content-between align-items-center">
-                                        <a href="product-details.html" class="cards-md__info-left">
+                                        <a href="product?id={{this._id}}" class="cards-md__info-left">
                                             <h6 class="font-body--md-400">{{this.name}}</h6>
                                             <div class="cards-md__info-price">
                                                 <span class="font-body--lg-500">Rs. {{this.sp}}</span>
@@ -745,19 +789,7 @@
                                                 </li>
                                             </ul>
                                         </a>
-                                        <div class="cards-md__info-right" onclick="addToCart('{{this._id}}')">
-                                            <span class="action-btn">
-                                                <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M6.66667 8.83333H4.16667L2.5 18H17.5L15.8333 8.83333H13.3333M6.66667 8.83333V6.33333C6.66667 4.49239 8.15905 3 10 3V3C11.8409 3 13.3333 4.49238 13.3333 6.33333V8.83333M6.66667 8.83333H13.3333M6.66667 8.83333V11.3333M13.3333 8.83333V11.3333"
-                                                        stroke="currentColor"
-                                                        stroke-width="1.3"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                    ></path>
-                                                </svg>
-                                            </span>
-                                        </div><div class="cards-md__info-right" onclick="removeFromCart('{{this._id}}')">
+                                        <div class="cards-md__info-right">
                                             <span class="action-btn">
                                                 <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path
@@ -773,8 +805,11 @@
                                     </div>
                                 </div>
                             </div>
-                            {{/each}}
+                        {{/each}}
+                            
                         </div>
+
+
                         
                         <nav aria-label="Page navigation pagination--one" class="pagination-wrapper section--xl" style="padding-top: 20px;">
                           <ul class="pagination justify-content-center">
@@ -807,6 +842,9 @@
         </section>
         <!-- Shop list Section End   -->
 
+
+        </form>
+
         <script src="src/lib/js/jquery.min.js"></script>
         <script src="src/lib/js/bootstrap.bundle.min.js"></script>
         <script src="src/lib/js/swiper-bundle.min.js"></script>
@@ -814,5 +852,30 @@
         <script src="src/lib/js/nouislider.min.js"></script>
         <script src="src/js/main.js"></script>
         <script src="src/lib/js/nouislider.min.js"></script>
-        <script src="../user/src/js/cartmanage.js"></script>
-        
+        <script>
+            function submitForm() {
+                console.log("form")
+    const form = document.getElementById('filterform');
+    console.log(form)
+    const formData = new FormData(form);
+    formData.append('category', category);
+
+    console.log(formData)
+
+    fetch('/submit', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Form data submitted successfully');
+        } else {
+            console.error('Failed to submit form data');
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting form data:', error);
+    });
+}
+
+        </script>

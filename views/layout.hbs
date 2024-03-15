@@ -83,9 +83,9 @@
                                     
                                     </a>
                         </div>
-                        <form action="#" style="display:flex; justify-content: space-around;">
+                        <form id="search" action="/search" method="post" style="display:flex; justify-content: space-around;">
                             <div class="header__input-form">
-                                <input type="text" placeholder="Search" />
+                                <input name="key" type="text" value="{{search}}" placeholder="Search" />
                                 <span class="search-icon">
                                     <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -105,7 +105,7 @@
                         </form>
                         <div class="header__cart">
                             <div class="header__cart-item">
-                                <a class="fav" href="wishlist.html">
+                                <a class="fav" href="wishlist">
                                     <svg width="25" height="23" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9.9996 16.5451C-6.66672 7.3333 4.99993 -2.6667 9.9996 3.65668C14.9999 -2.6667 26.6666 7.3333 9.9996 16.5451Z" stroke="#1A1A1A" stroke-width="1.5" />
                                     </svg>
@@ -205,38 +205,9 @@
                                         <a href="user-dashboard">User Dashboard </a>
                                     </li>
                                     <li class="header__navigation-drop-menu-link">
-                                        <a href="order-history">Order History </a>
+                                        <a href="order-list">Orders </a>
                                     </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="order-details">Order Details </a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="account-setting">Account Settings </a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="product-details">Product Details</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="wishlist"> Wishlist</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="shopping-cart"> Shopping Cart</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="checkout"> Checkout</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="sign-in"> Sign in</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="create-account"> Create Account</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="faq"> faq</a>
-                                    </li>
-                                    <li class="header__navigation-drop-menu-link">
-                                        <a href="404"> Error 404</a>
-                                    </li>
+                                    
                                 </ul>
                             </li>
                             <!--

@@ -90,7 +90,7 @@ if (document.getElementById('sort')) {
     selector: '#sort',
     searchbox: false,
     offset: false,
-    placeholder: 'Latest',
+    placeholder: 'Select option',
   });
 }
 
@@ -347,11 +347,11 @@ var range = document.getElementById('priceRangeSlider');
 
 if (range) {
   noUiSlider.create(range, {
-    start: [20, 80],
+    start: [0, 100000],
     connect: true,
     range: {
       min: 0,
-      max: 1500,
+      max: 100000,
     },
     tooltips: true,
   });

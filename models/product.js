@@ -27,6 +27,15 @@ const productSchema=new Schema({
     popularity:{
         type:Number,
         default:1
+    },
+    tags:[{
+        type: String
+    }],
+    rating:{
+        type: Number
+    },
+    review:{
+        type:String
     }
     
 })

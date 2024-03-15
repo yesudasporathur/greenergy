@@ -26,10 +26,12 @@
                           href="product?_id={{this.product._id}}"
                           class="cart-table__product-item"
                         >
-                          <div class="cart-table__product-item-img">
+                          <div class="cart-table__product-item-img" style="width: 300px;height: 50px; ">
                             <img
                               src="images/{{this.product.images.[0]}}"
                               alt="product"
+                              style="width: 100%;height: 100%"
+                        
                             />
                           </div>
                           <h5 class="font-body--lg-400">{{this.product.name}}</h5>
@@ -45,6 +47,9 @@
                           <button class="counter-btn-dec counter-btn" onclick="removeFromCart('{{this.product._id}}')">-</button>
                           <p id="counter-btn-counter-{{this.product._id}}" class="counter-btn-counter" style="margin-left: 10px;">{{this.qty}}</p>
                           <button class="counter-btn-inc counter-btn" onclick="addToCart('{{this.product._id}}')">+</button>
+                        </div>
+                        <div class="text-danger" id="errmsg-{{this.product._id}}" >
+                          
                         </div>
                       </td>
 

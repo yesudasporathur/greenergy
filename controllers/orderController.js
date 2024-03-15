@@ -1,6 +1,7 @@
 const Order=require("../models/order");
 const User=require("../models/user");
 const Product=require("../models/product");
+const dateConvert=require('../public/javascripts/dateConvert')
 let title="Orders"
 
 
@@ -11,14 +12,14 @@ let cancel=false
     if(order.status=="Cancelled"){
         cancel=true
     }
-    res.render('user/order-details',{order,title,message,cancel:cancel})
+    res.render('user/order-details',{order,title,message,cancel:cancel, cartnum, carttotal})
     console.log("order_details_get")
 
 }
 
 const order_list_get=async(req,res)=>{
     const order=await Order.find({u_id:req.session.user}).populate('items.product')
-    res.render('user/order-list',{order,title})
+    res.render('user/order-list',{order,title, cartnum, carttotal,orders:true})
 }
 
 const order_cancel_get=async(req,res)=>{
@@ -33,15 +34,17 @@ const order_cancel_get=async(req,res)=>{
 ////////////////////////////// Admin Section \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 const orders_get=async(req,res)=>{
-    const order=await Order.find().populate('u_id')
-    console.log(order)
-    res.render('admin/orders',{layout:'admin/layout',order})
+    const order=await Order.find().populate('u_id').sort({ createdAt: -1 });
+    res.render('admin/orders',{title,layout:'admin/layout',order})
 }
 
 const order_edit_get=async(req,res)=>{
     const _id=req.query._id
     const order = await Order.findById(_id).populate('u_id').populate('items.product')
+    //const datee=dateConvert(order.createdAt)
+    //order.createdAt.pull(_id)
     console.log(order)
+
     res.render('admin/order-edit',{title,order,layout:'admin/layout'})
     console.log("order_edit_get")
 }

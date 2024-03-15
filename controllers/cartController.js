@@ -4,10 +4,11 @@ const Address=require('../models/address')
 const Order=require('../models/order')
 const numGen=require('../public/javascripts/numGen')
 const product = require("../models/product")
+const User=require("../models/user");
+
 
 const cart_view_get=async(req,res)=>{
     const carts=await Cart.findOne({u_id:req.session.user}).populate('items.product')
-    console.log(carts);
     res.render('user/cart',{carts, cartnum,carttotal})
 }
 
@@ -20,18 +21,19 @@ const add_to_cart_post = async (req, res) => {
 
         if (!cart) {
             cart = await Cart.create({ u_id: u_id });
-            console.log("New Cart created: ", cart);
+            console.log("New Cart created: ");
         }
         const product = await Product.findById(p_id);
+        
         
         if (!product) {
             return res.status(404).send("Product not found");
         }
-
         
-
-        
+                
         const existingCartItem = cart.items.find(item => item.product.toString() === p_id);
+
+        
         if (!existingCartItem) {
             cart.items.push({
                 product: p_id,
@@ -40,9 +42,13 @@ const add_to_cart_post = async (req, res) => {
                 rate: product.sp
             });
         } else {
-            if (product.stock < cart.items.qty) {
+            if (product.stock <= existingCartItem.qty || !(product.stock!=0)) {
                 console.log("Stock out");
                 return res.status(400).send("Product stock limited");
+            }
+            if (existingCartItem.qty==5){
+                return res.status(400).send("Max purchase limit reached");
+
             }
             existingCartItem.qty += 1;
             existingCartItem.subtotal = existingCartItem.qty * product.sp;
@@ -50,7 +56,7 @@ const add_to_cart_post = async (req, res) => {
 
         cart.total = cart.items.reduce((total, item) => total + item.subtotal, 0);
         await cart.save();
-        console.log("Cart updated: ", cart);
+        console.log("Cart updated: ");
 
 
 
@@ -112,7 +118,7 @@ const remove_from_cart_post = async (req, res,next) => {
             await cart.save();
     
             
-            console.log("Item quantity decreased in cart: ", cart);
+            console.log("Item quantity decreased in cart: ");
             res.status(200).json({ message: "Product removed from cart successfully", cartnum: cart.items.length, quantity: cart.items[itemIndex].qty ,subtotal:cart.items[itemIndex].subtotal,total:cart.total});
     
 
@@ -154,7 +160,7 @@ const delete_from_cart_get = async (req, res) => {
         // Save the updated cart
         await cart.save();
 
-        console.log("Item deleted from cart: ", cart);
+        console.log("Item deleted from cart: ");
         res.redirect('/cart'); // Redirect to cart page after successful deletion
 
     } catch (error) {
@@ -166,6 +172,12 @@ const delete_from_cart_get = async (req, res) => {
 
 const checkout_get=async(req,res)=>{
     u_id=req.session.user
+
+    const cartDel=await Cart.findOne({u_id:u_id,total:0})
+    // if(cartDel.total==0){
+    //     return res.redirect('cart')
+    // }
+
     const address=await Address.find({u_id:u_id})
     const cart=await Cart.findOne({u_id:u_id}).populate('items.product')
     res.render('user/checkout',{cart,address})
@@ -173,11 +185,12 @@ const checkout_get=async(req,res)=>{
 
 const checkout_post=async(req,res)=>{
     try{
+        req.session.payref=numGen(100000000000,999999999999).toString()
         const u_id=req.session.user
     const c_id=req.body.c_id
     const a_id=req.body.a_id
     const paytype=req.body.payment
-    const payref=numGen(200,400)
+    const payref=req.session.payref
     const address=await Address.findOne({_id:a_id})
     const cart=await Cart.findOne({_id:c_id})
        const  name= address.name
@@ -192,9 +205,12 @@ const checkout_post=async(req,res)=>{
         const  phone= address.phone
         const  type= address.type
 
+       
+        
 
 
-    const order=new Order({
+
+    const newOrder=new Order({
         u_id:u_id,
         items: cart.items,
         total: cart.total,        
@@ -213,7 +229,39 @@ const checkout_post=async(req,res)=>{
         payref: payref,
         status:"Ordered"
     })
-    await order.save()
+    await newOrder.save()
+    req.session.orderid=newOrder._id   
+    if(paytype=='Razorpay'){
+        console.log(cart.total)
+        const Razorpay = require('razorpay');
+        var instance = new Razorpay({ key_id: process.env.RAZORID, key_secret: process.env.RAZORSECRET })
+
+        const user=await User.findOne({_id:req.session.user})
+        const name=user.first_name+" "+user.last_name
+        if(cart.total==0){
+            total=1
+        }
+        else{
+            total=cart.total
+        }
+        console.log(total)
+
+        var options = {
+        amount: total*100, 
+        currency: "INR",
+        receipt: payref,
+        
+        };
+        
+        instance.orders.create(options, async function(err, order) {
+            await Order.findOneAndUpdate({_id:req.session.orderid},{razorder:order.id})
+
+
+
+            console.log("Order Created. proceeding to payment")
+            res.status(200).json({ order: order, newOrderId: newOrder._id ,RAZORID:process.env.RAZORID,name:name, email:user.email, phone:user.phone});
+
+        });
 
 
     cart.items.forEach(async item => {
@@ -223,19 +271,35 @@ const checkout_post=async(req,res)=>{
             productId,
             { $inc: { stock: -qty, popularity: qty } }
         );        
-        console.log(prod)
 
     });
+    const cartDel=await Cart.findOneAndUpdate({_id:c_id},{items:[],total:0})
+
     
 
+    }
+    
+    else{
+        res.json(newOrder._id)
 
-    res.redirect(`order-details?message=Order+has+been+successfully+placed!&_id=${order._id}`)
+    }
+
+
+    
+
     }
     catch(error){
+        res.render('user/checkout')
         console.error(error)
+        res.status(500).json(error)
     }
 }
 
+const payId=async(req,res)=>{
+    await Order.findOneAndUpdate({_id:req.session.orderid},{razpay:req.query.id})
+    const url=`order-details?message=Order+has+been+successfully+placed!&_id=${req.session.orderid}`
+    res.status(200).json(url)
+}
 
 module.exports={
     cart_view_get,
@@ -243,5 +307,6 @@ module.exports={
     remove_from_cart_post,
     delete_from_cart_get,
     checkout_get,
-    checkout_post
+    checkout_post,
+    payId
 }

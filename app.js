@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 //const logger = require('morgan');
 //const createError = require('http-errors');
 const mongoose = require("mongoose");
+var hbs = require('hbs');
 
 const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
@@ -19,6 +20,8 @@ mongoose.connect(process.env.MONGODB_URI);
 
 
 app.set('views', path.join(__dirname, 'views'));
+hbs.registerHelper('dateFormat', require( '../greenergy/public/javascripts/dateConvert'));
+hbs.registerHelper('timeFormat', require( '../greenergy/public/javascripts/timeConvert'));
 
 app.set('view engine', 'hbs');
 

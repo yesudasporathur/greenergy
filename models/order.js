@@ -43,6 +43,8 @@ const orderSchema = new Schema({
     paytype: String,
     payref: Number,
     notes:String,
+    razpay:String,
+    razorder:String,
     time: { type: Date, default: Date.now },
     status: String
 }, { timestamps: true, versionKey: false });

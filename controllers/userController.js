@@ -1,10 +1,12 @@
 const User = require("../models/user");
 const Product=require("../models/product")
-const Category=require("../models/category")
+const Order=require("../models/order")
+const Address=require("../models/address")
 
 const otpGenerator = require('otp-generator');
 const sendOTP=require('../public/javascripts/sendOTP')
-const crypt=require('../public/javascripts/crypt')
+const crypt=require('../public/javascripts/crypt');
+const address = require("../models/address");
 
 let title="Greenergy"
 
@@ -32,13 +34,15 @@ const home_post=(req,res)=>{
 
 const sign_in_get=(req, res, next) =>{
   
-
-    res.render('user/sign-in', { user: req.session.user,message:'',title: 'Sign-in' });
-
+    res.render('user/sign-in', { user: req.session.user,email:req.session.email,message:'',title: 'Sign-in' });
     console.log("sign_in_get rendered")
+    
+
   }
   const sign_in_post=async(req, res, next) =>{
     const { email, password } = req.body;
+    req.session.email=email
+
 
     try {
         // Find the user by email
@@ -165,9 +169,11 @@ const otp_success=(req,res)=>{
 
 
   
-const search_get=(req, res, next)=> {
-    res.render('user/!search!not!defined!', {user: req.session.user, title: 'Search' });
-    console.log("Search rendered")
+const search_post=async(req, res, next)=> {
+    req.session.search=req.body.key
+    const results = await Product.find({ name: { $regex: req.session.search } });
+    console.log("key is" + req.session.search)
+    res.redirect('shop', cartnum, carttotal, title)
   }
 
 const page_not_found=(req,res)=>{
@@ -192,19 +198,25 @@ const page_not_found=(req,res)=>{
 
 const user_dashboard_get=async (req,res)=>{
   const user=await User.find({_id:req.session.user})
-  res.render('user/user-dashboard',{user,title,user_dashboard:true, my_account:true})
+  const address=await Address.findOne({u_id:req.session.user,default:true})
+  const order=await Order.find({u_id:req.session.user}).populate('items.product').sort({createdAt:-1}).limit(4)
+
+  console.log(address)
+  res.render('user/user-dashboard',{user,title,cartnum,carttotal,address,order,dashboard:true})
 }
 
 
 const profile_get=async(req,res)=>{
   const user=await User.find({_id:req.session.user})
-  res.render('user/profile',{user,title,user_dashboard:true, my_account:true, layout: 'layout'})
+  console.log(user)
+  res.redirect('user-dashboard')
+  //res.render('user/profile',{user,title,user_dashboard:true, my_account:true, layout: 'layout'})
 
 }
 
 const settings_get=async(req,res)=>{
   const message=req.query.message
-  res.render('user/settings',{message:message})
+  res.render('user/settings',{message:message, cartnum, carttotal, })
 }
 
 const settings_post=async(req,res)=>{
@@ -368,7 +380,7 @@ module.exports={
   otp_resend,
   otp_check,
   otp_success,
-  search_get,
+  search_post,
   page_not_found,
   user_logout,
   user_dashboard_get,
