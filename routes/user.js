@@ -16,6 +16,7 @@ const setNoCache=require('../public/javascripts/setNoCache');
 const Cart = require('../models/cart');
 
 router.get('/shop', requireLogin,setNoCache.user,isBlock,userPreload,productController.shop_get);
+router.post('/filter', requireLogin,setNoCache.user,isBlock,userPreload,productController.filter);
 router.get('/clearSearch', requireLogin,setNoCache.user,isBlock,userPreload,productController.clearSearch_get);
 router.get('/availability',requireLogin,setNoCache.user,isBlock,userPreload,productController.availability)
 router.get('/product', requireLogin,setNoCache.user,isBlock,userPreload,productController.product)

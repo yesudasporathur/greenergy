@@ -190,6 +190,43 @@ const product_unblock=async (req,res)=>{
       
     }
 
+
+const filter=async (req,res)=>{
+  const {category,pricemin,pricemax,brand,rating,sort}=req.body
+  let search=req.body.search
+  if(!search){
+    search=""
+  }
+  switch (sort) {
+    case 'lowtohigh':
+        sorting = 'sp:1';
+        break;
+    case 'hightolow':
+        sorting = 'sp:-1';
+        break;
+    case 'popularity':
+      sorting='popularity:-1'
+      break;
+    case 'rating':
+      sorting='rating:-1'
+      break;
+    case 'atoz':
+      sorting = 'name:1';
+        break;
+    case 'ztoa':
+      sorting = 'name:-1';
+        break;
+    default:
+      sorting = 'sp:1';
+      break;
+
+  }
+  const products=await Product.find({delete:false, name: {$regex:new RegExp(search, 'i')}}).populate('category').sort(sorting)
+  console.log(products)
+  return res.status(200).json("OK")
+
+}
+
 module.exports={
     products_get,
     product_edit_get,
@@ -201,5 +238,6 @@ module.exports={
     product,
     shop_get,
     clearSearch_get,
-    availability
+    availability,
+    filter
 }
