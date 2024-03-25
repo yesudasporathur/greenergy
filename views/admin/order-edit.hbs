@@ -22,10 +22,26 @@
 
                             <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
                                 <option value="{{order.status}}">{{order.status}}</option>
-                                <option value="Ordered">Ordered</option>
-                                <option  value="In Transit">In Transit</option>
-                                <option value="Delivered">Delivered</option>
-                                <option value="Cancelled">Cancelled</option>
+                                {{#if order.cancel}}
+                                
+                                    {{#if order.refunded}}
+                                    <option value="Refund Complete">Refund Complete</option>
+                                    {{else}}
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Refund Issued">Refund Issued</option>
+
+                                    {{/if}}
+
+                                {{else}}
+                                    {{#if order.delivered}}
+                                    <option value="Delivered">Delivered</option>
+                                    {{else}}
+                                    <option value="Ordered">Ordered</option>
+                                    <option  value="In Transit">In Transit</option>
+                                    {{/if}}
+                                
+                                {{/if}}
+                                
                             </select>
                             <input type="submit" class="btn btn-primary" href="#">
                             <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
@@ -33,6 +49,13 @@
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
+                    {{#if order.reqCancel}}
+                    {{#if order.cancel}}
+                    {{else}}
+                    <div><h4 style="color: red;">Cancel Requested. Approve Cancel?</h4></div>
+                    <a href="/cancel-order?_id={{order._id}}"><button  class="btn btn-primary" >Cancel Order</button></a>
+                    {{/if}}
+                    {{/if}}
                     <div class="row mb-50 mt-20 order-info-wrap">
                         <div class="col-md-4">
                             <article class="icontext align-items-start">
@@ -150,7 +173,11 @@
                                     Business name: Grand Market LLC <br>
                                     Phone: +1 (800) 555-154-52
                                     -->
-                                    {{order.paytype}}
+                                    Ref: {{order.payref}}<br>
+                                    Mode: {{order.paytype}}<br>
+                                    
+                                    {{order.razorder}}<br>
+                                    
                                 </p>
                             </div>
                             <div class="h-25 pt-4">

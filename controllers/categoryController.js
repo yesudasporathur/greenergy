@@ -1,4 +1,6 @@
 const Category=require("../models/category");
+const Product=require("../models/product")
+
 let title="Categories"
 
 
@@ -70,12 +72,56 @@ const categories_get=async(req,res)=>{
         
   };
   
-
+  const categoryBlock=async (req,res)=>{
+    const _id=req.params._id
+    await Category.findByIdAndUpdate({ _id: _id }, {delete: true})
+    res.redirect('/admin/categories')
+  
+  }
+  const categoryUnblock=async (req,res)=>{
+    const _id=req.params._id
+    await Category.findByIdAndUpdate({ _id: _id }, {delete: false})
+    res.redirect('/admin/categories')
+  
+  }
+const catDiscount=async (req,res)=>{
+  try{
+    let {val,_id}=req.body
+    const percent=val
+    await Category.findByIdAndUpdate({_id:_id},{discount:val})
+    if(percent==0){
+      const products = await Product.find({ category: _id });
+      for (const product of products) {
+          product.sp = product.mrp;
+          product.discount=0
+          console.log(product.discount)
+          await product.save();
+      }
+    }
+    else{
+      val=(100-Number(val))/100
+      const products = await Product.find({ category: _id });
+      for (const product of products) {
+          product.sp = product.mrp;
+          product.discount=percent
+          product.sp *= val;
+          await product.save();
+      }
+    }
+    res.status(200).json()
+  }
+  catch(err){
+    console.log(err)
+  }
+}
 module.exports={
     categories_get,
     category_add_get,
     category_add_post,
     category_edit_get,
     category_edit_post,
+    categoryUnblock,
+    categoryBlock,
+    catDiscount
 
 }

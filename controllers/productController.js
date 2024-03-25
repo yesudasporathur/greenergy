@@ -101,6 +101,7 @@ const product_unblock=async (req,res)=>{
 }
 
 
+
   
   const product_add_get=async (req,res)=>{
     const message = req.query.message;
@@ -176,56 +177,69 @@ const product_unblock=async (req,res)=>{
     res.redirect('shop')
   }
   const shop_get=async (req,res)=>{
-    const brand=await Brand.find({delete: false})
     if(!req.session.search){
       req.session.search=""
     }
-    const products=await Product.find({delete:false, name: {$regex:new RegExp(req.session.search, 'i')}}).populate('category')
-
     const categories=await Category.find({delete: false})
-    const cart = await Cart.findOne({user:req.session.user})
+    const brand=await Brand.find({delete: false})
+    res.render('user/shop-02', { brand,shop:true, user: req.session.user,search:req.session.search ,title, categories, title: 'Shop' , cartnum,carttotal});
+    console.log("shop_get rendered")
 
-      res.render('user/shop-02', { brand,shop:true, user: req.session.user,search:req.session.search ,title, categories,products:products, title: 'Shop' , cartnum,carttotal});
-      console.log("shop_get rendered")
       
-    }
+  }
 
 
 const filter=async (req,res)=>{
-  const {category,pricemin,pricemax,brand,rating,sort}=req.body
-  let search=req.body.search
+  let {search,category,pricemin,pricemax,brand,rating,sort,availability,page}=req.body
+  let ratingVal = rating.reduce((acc, curr) => {
+    return acc < curr ? acc : curr;
+})
+  if(category=='all'){
+    category = await Category.find({delete: false})
+  }
   if(!search){
     search=""
   }
   switch (sort) {
     case 'lowtohigh':
-        sorting = 'sp:1';
+        sorting = {"sp":1};
         break;
     case 'hightolow':
-        sorting = 'sp:-1';
+        sorting = {"sp":-1}
         break;
     case 'popularity':
-      sorting='popularity:-1'
+      sorting={"popularity":-1}
       break;
     case 'rating':
-      sorting='rating:-1'
+      sorting={"rating":-1}
       break;
     case 'atoz':
-      sorting = 'name:1';
+      sorting = {"name":1};
         break;
     case 'ztoa':
-      sorting = 'name:-1';
+      sorting = {"name":-1};
         break;
     default:
-      sorting = 'sp:1';
+      sorting = {};
       break;
 
   }
-  const products=await Product.find({delete:false, name: {$regex:new RegExp(search, 'i')}}).populate('category').sort(sorting)
-  console.log(products)
-  return res.status(200).json("OK")
+
+  let stockMin=0
+  if(availability){
+    stockMin=1
+  }
+
+  let limit=6
+  let skip=(page-1)*limit
+  const count=await Product.countDocuments({delete:false,sp:{$gte:pricemin,$lte:pricemax},rating:{$gte:ratingVal},stock:{$gte:stockMin},category:{$in:category},brand: {$in:brand}, name: {$regex:new RegExp(search, 'i')}})
+  const products=await Product.find({delete:false,sp:{$gte:pricemin,$lte:pricemax},rating:{$gte:ratingVal},stock:{$gte:stockMin},category:{$in:category},brand: {$in:brand}, name: {$regex:new RegExp(search, 'i')}}).populate('category').sort(sorting).skip(skip).limit(limit)
+  let pages=Math.ceil(count/limit)
+  return res.status(200).json({count,products,page,pages})
 
 }
+
+
 
 module.exports={
     products_get,
@@ -239,5 +253,6 @@ module.exports={
     shop_get,
     clearSearch_get,
     availability,
-    filter
+    filter,
+    
 }

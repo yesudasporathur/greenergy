@@ -1,0 +1,94 @@
+
+        <section class="content-main">
+            <form id="form" action="/admin/coupon-add" method="post" >
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Coupon</h2>
+                        <div>
+                            <!--
+                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            -->
+                            <button class="btn btn-md rounded font-sm hover-up" type="submit" >Save</button>
+                            
+                        </div>
+                        
+                    </div>
+                    <div  class=" text-danger " id="querymsg">
+                        <h4 class=" text-danger">{{message}}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                
+                                <div class="col-md-3">
+                                    <h6></h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" value="true" name="newEntry" style="display: none;">
+                                    <div class="mb-4">
+                                        <label class="form-label">Coupon Code</label>
+                                        <p class="error-message" style="color: red;" id="codeError"></p>
+                                        <input name="code" id="code" type="text" placeholder="Type here" class="form-control">
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Description</label>
+                                      <p class="error-message" style="color: red;" id="descriptionError"></p>
+
+                                        <textarea name="description" id="description" placeholder="Type here" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Dicount Amount</label>
+                                        <p class="error-message" style="color: red;" id="discountError"></p>
+
+                                        <input name="discount" id="discount" type="text" placeholder="Type here" class="form-control">
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label" >Maximum Cart Amount</label>
+                                        <p class="error-message" style="color: red;" id="maxAmountError"></p>
+                                        <input type="text" placeholder="Rs. " name="maxAmount" id="maxAmount" class="form-control">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Minimum Cart Amount</label>
+                                        <p class="error-message" style="color: red;" id="minAmountError"></p>
+                                        <input type="text" placeholder="Rs. " name="minAmount" id="minAmount" class="form-control">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label">Expiry date:</label>
+                                        <p class="error-message" style="color: red;" id="dateError"></p>
+                                        <div class="input-group">
+                                            <input type="text" placeholder="DD-MM-YYYY" name="expiryDate" id="expiryDate" class="form-control">
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    
+                                    
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            </form>
+
+        </section> <!-- content-main end// -->
+        <script src="../admin/assets/js/calender.js">
+            
+
+        </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<script src="../admin/assets/js/couponVal.js"></script>

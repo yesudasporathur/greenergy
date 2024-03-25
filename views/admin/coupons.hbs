@@ -1,0 +1,156 @@
+
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupon List</h2>
+                </div>
+                <div>
+                    
+                    <a href="/admin/coupon-add" class="btn btn-primary btn-sm rounded">Create new</a>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <div  class=" text-danger">
+                        <h4 class=" text-danger">{{message}}</h4>
+                        </div>
+                        <div class="col col-check flex-grow-0">
+                            <div class="form-check ms-2">
+                                {{!-- <input class="form-check-input" type="checkbox" value=""> --}}
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                            {{!-- <select class="form-select">
+                                <option selected>All category</option>
+                                {{#each categories}}
+                                <option value="{{this.category._id}}">{{this.category.name}}</option>
+                                {{/each}}
+                            </select> --}}
+                        </div>
+                        
+
+                        <!--
+                            <div class="col-md-2 col-6">
+                            <input type="date" value="02.05.2021" class="form-control">
+                        </div>
+                        -->
+                        <div class="col-md-2 col-6">
+                            <select class="form-select">
+                                <option selected>Status</option>
+                                <option>Active</option>
+                                <option>Disabled</option>
+                                <option>Show all</option>
+                            </select>
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <style>.table td,.table th {vertical-align: middle;}</style>    
+                            <thead>
+                                <tr>
+                                    <th scope="col">Coupon Code</th>
+                                    <th scope="col">Discount</th>
+                                    <th scope="col">Max Amount</th>
+                                    <th scope="col">Min Amount</th>
+                                    <th scope="col">Expiry Date</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                {{#each coupons}}
+
+                                    <tr onclick="window.location.href = 'coupon-edit?_id={{this._id}}';"> 
+                                    <td><b>{{this.code}}</b></td>
+                                    <td>Rs. {{this.discount}}</td>
+                                    <td>Rs. {{this.maxAmount}}</td>
+                                    <td>Rs. {{this.minAmount}}</td>
+                                    <td>{{dateFormat this.expiryDate}}</td>
+                                    {{#if used}}
+                                    <td><span id="{{this._id}}" class="badge rounded-pill alert-danger">Expired</span></td>
+                                    <td>
+                                        <a  id="btn{{this._id}}" href="coupon-delete/{{this._id}}" class="btn btn-md rounded font-sm">Delete Forever</a>
+                                    </td>
+                                    {{else}}
+                                    {{#if status}}
+                                    <td><span id="{{this._id}}" class="badge rounded-pill alert-success">Active</span></td>
+                                    <td>
+                                        <a  id="btn{{this._id}}" href="coupon-block/{{this._id}}" class="btn btn-md rounded font-sm">Disable</a>
+                                    </td>
+                                    {{else}}
+                                    <td><span id="{{this._id}}"  class="badge rounded-pill alert-warning">Inactive</span></td>
+                                    <td>
+                                        <a  id="btn{{this._id}}" href="coupon-unblock/{{this._id}}" class="btn btn-md rounded font-sm">Enable</a>
+                                    </td>                        
+                                    {{/if}}
+                                    {{/if}}
+                                    
+                                </tr>
+                {{/each}}            
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+
+                <!--
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+            -->
+        </section> <!-- content-main end// -->
+<!--
+        <script>
+            const badgeElement = document.getElementById(productId);
+            const buttonElement = document.getElementById('btn' + productId);
+            function dltProduct(_id){
+                console.log(_id)
+                fetch('/admin/product-block', {
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify([_id])
+                        })
+                        .then(res=>{
+                            document.getElementById(`${_id}`).style.display="none"
+                            document.getElementById(`btn${_id}`).style.display="none"
+                            res.json()
+                            })
+                            .then(data=>console.log(data))
+                            .catch(error=>{console.log(error)})
+    }
+
+    function actProduct(_id){
+                console.log(_id)
+        fetch('/admin/product-unblock', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([_id])
+    })
+    .then(res=>{
+        res.json()
+        document.getElementById(`${_id}`).style.display="none"
+        document.getElementById(`btn${_id}`).style.display="none"
+
+
+    })
+    .then(data=>console.log(data))
+    .catch(error=>{console.log(error)})
+    }
+        </script>
+
+        -->

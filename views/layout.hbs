@@ -3,7 +3,7 @@
   <head>
 
     <title>{{title}}</title>
-    <link rel="icon" type="image/png" href="src/images/favicon/favicon-16x16.png" />
+    <link rel="icon" type="image/png" href="src/images/favicon/favicon-32x32.png" />
         <link rel="stylesheet" href="src/lib/css/swiper-bundle.min.css" />
         <link rel="stylesheet" href="src/lib/css/bvselect.css" />
         <link rel="stylesheet" href="src/lib/css/bootstrap.min.css" />
@@ -35,6 +35,9 @@
                                 Store Location: Thrissur, KL
                             </p>
                         </div>
+                        {{#if referral}}
+                        <div>Share your referral code to get Rs. 100 reward #{{referral}}</div>
+                        {{/if}}
                         <div class="header__top-right">
                             <!--
                                 <div class="header__dropdown">
@@ -75,11 +78,13 @@
                                 </svg>
                             </button>
                             <a href="/">
-                                <img src="src/images/favicon/favicon-32x32.png" alt="brand-logo" />
+                            <div style="max-width: 100px; height: 100%;">
+                                <img src="src/images/favicon/favicon-32x32.png" style="max-width: 100%; max-height:120%" alt="brand-logo" />
+                            </div>
                                 
                             </a>
-                            <a href="/" style="color: black;">
-                                    <h2> Greenergy</h2>
+                            <a href="/" >
+                                    <h2> <span style="color: green;">Gre</span><span style="color: green; " id="greenergy">en</span><span style="color: black; ">ergy</span> </h2>
                                     
                                     </a>
                         </div>
@@ -105,11 +110,19 @@
                         </form>
                         <div class="header__cart">
                             <div class="header__cart-item">
-                                <a class="fav" href="wishlist">
+                                <a class="fav" href="wishlist" >
                                     <svg width="25" height="23" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9.9996 16.5451C-6.66672 7.3333 4.99993 -2.6667 9.9996 3.65668C14.9999 -2.6667 26.6666 7.3333 9.9996 16.5451Z" stroke="#1A1A1A" stroke-width="1.5" />
                                     </svg>
                                 </a>
+                            </div>
+                            <div class="header__cart-item" style="margin-left: 14px;">
+                                        <a href="user-dashboard" class="icon user-icon" style=" 14px; color:black; :hover:color: green;"  onmouseover="this.style.color='green'" onmouseout="this.style.color='black'">
+                                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M16.0003 14.6667C18.9458 14.6667 21.3337 12.2789 21.3337 9.33333C21.3337 6.38781 18.9458 4 16.0003 4C13.0548 4 10.667 6.38781 10.667 9.33333C10.667 12.2789 13.0548 14.6667 16.0003 14.6667Z" stroke="currentColor" stroke-width="1.5"></path>
+                                                <path d="M20.0003 18.6666H12.0003C8.31764 18.6666 5.02031 22.0666 7.44297 24.8386C9.09097 26.724 11.8163 28 16.0003 28C20.1843 28 22.9083 26.724 24.5563 24.8386C26.9803 22.0653 23.6816 18.6666 20.0003 18.6666Z" stroke="currentColor" stroke-width="1.5"></path>
+                                            </svg>
+                                        </a>
                             </div>
                             <a href="/cart">
                             <div class="header__cart-item">
@@ -130,10 +143,19 @@
                                         <h5>Shopping cart:</h5>
                                         <span class="price" id="navtotal">Rs. {{carttotal}}</span>
                                     </div>
+
+
+                                    
+
+
+
+
+                                    
                                 </div>
                             </div>
-                            
                             </a>
+                            
+                            
                         </div>
                     </div>
                 </div>
@@ -868,7 +890,10 @@
             <div class="container">
                 <div class="newsletter newsletter--three">
                     <div class="newsletter__brand-logo">
-                        <img src="src/images/favicon/favicon-32x32.png" alt="logo" />
+                        <div style="width: 50px;">
+                        <img src="src/images/favicon/favicon-32x32.png" style="max-width: 100%;" alt="logo" />
+
+                        </div>
                         <a href="/" style="color: black;">
                                     <h2> Greenergy</h2>
                                     
@@ -904,7 +929,10 @@
                         <div class="col-xl-4">
                             <div class="footer__brand-info">
                                 <div class="footer__brand-info-logo">
-                                    <img src="src/images/favicon/favicon-32x32.png" alt="logo" />
+                                    <div style="width: 50px;">
+                                    <img src="src/images/favicon/favicon-32x32.png" style="max-width: 100%;" alt="logo" />
+
+                                    </div>
                                     <a href="/" style="color: black;">
                                     <h2> Greenergy</h2>
                                     

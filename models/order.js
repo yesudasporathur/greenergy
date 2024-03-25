@@ -29,6 +29,7 @@ const orderSchema = new Schema({
     total: {
         type: Number,
     },
+    subtotal:Number,
         name: String,
         addr1: String,
         addr2: String,
@@ -45,6 +46,11 @@ const orderSchema = new Schema({
     notes:String,
     razpay:String,
     razorder:String,
+    couponcode:String,
+    coupondiscount:{
+        type:Number,
+        default:0
+    },
     time: { type: Date, default: Date.now },
     status: String,
     cancel:{
@@ -56,6 +62,10 @@ const orderSchema = new Schema({
         default: false
     },
     refunded:{
+        type:Boolean,
+        default: false
+    },
+    reqCancel:{
         type:Boolean,
         default: false
     },

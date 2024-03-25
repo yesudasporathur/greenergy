@@ -13,7 +13,7 @@ let title="Greenergy"
 
 
 
-//---------------------------------- User Routes -----------------------------------------\\
+//-------------------------------------- User Routes -----------------------------------------\\
 
 const home_get=(req,res)=>{
   res.redirect('/sign-in')
@@ -34,7 +34,7 @@ const home_post=(req,res)=>{
 
 const sign_in_get=(req, res, next) =>{
   
-    res.render('user/sign-in', { user: req.session.user,email:req.session.email,message:'',title: 'Sign-in' });
+   res.render('user/sign-in', { user: req.session.user,email:req.session.email,message:'',title: 'Sign-in' });
     console.log("sign_in_get rendered")
     
 
@@ -86,6 +86,25 @@ const sign_in_get=(req, res, next) =>{
 
     }
 
+const forgotPassword=(req,res)=>{
+  const message=req.query.message
+  const email=req.session.email
+  res.render('user/forgot-password',{title, message,email,cartnum,carttotal})
+}
+
+const forgotPasswordForm=async (req,res)=>{
+
+  const email=req.body.email
+  const emailCheck=await User.findOne({email:email})
+  if(!emailCheck){
+    return res.redirect('/forgot-password?message=Email+not+registered')
+  }
+  req.session.email=email
+  req.session.forgotPassword=true
+  res.redirect('/otp')
+}
+
+
 const create_account_get=(req, res, next) =>{
     res.render('user/create-account', {user: req.session.user, title: 'Create-Account' ,message:''});
     console.log("Create-Account rendered")
@@ -116,8 +135,14 @@ const create_account_post =  async (req, res) =>{
     
   }
 const otp_get=(req, res, next)=> {
+  
   //mail_id= 'yesudas@yopmail.com'
-mail_id=req.session.data.email
+  if(req.session.forgotPassword){
+    mail_id=req.session.email
+  }
+  else{
+    mail_id=req.session.data.email
+  }
 // Generate a 6-digit OTP
 const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 sendOTP(otp,mail_id)
@@ -135,18 +160,27 @@ const otp_check=async(req, res, next)=> {
     for(const key in userotp) recotp.push(key)
 
     if(recotp[0]===otp){
-      res.redirect('otp-success');
+      if(req.session.forgotPassword){
+
+        return res.redirect('/new-password')
+
+    }
+      res.redirect('/otp-success');
+      
          const hashedPassword = await crypt.hashPassword(req.session.data.password);
         console.log("password:  ",hashedPassword)
-      await User.create({
-        email:req.session.data.email,
-        first_name: req.session.data.first_name,
-        last_name: req.session.data.last_name,
-        phone: req.session.data.phone,
-        password: hashedPassword,
-        block: 0,
-        isAdmin: 0,
-      })      
+      
+        await User.create({
+          email:req.session.data.email,
+          first_name: req.session.data.first_name,
+          last_name: req.session.data.last_name,
+          phone: req.session.data.phone,
+          password: hashedPassword,
+          block: 0,
+          isAdmin: 0,
+        })      
+
+      
     }
      else{
       res.status(400).json({ error: 'Invalid OTP' });
@@ -161,12 +195,35 @@ const otp_resend=(req,res,next)=>{
 
   
 }
-const otp_success=(req,res)=>{
-  let user=req.session.user
-  res.render('user/otp-success', { user:user ,title,message: 'Your account have been created. Please proceed to login.' });
+
+const newPassword=(req,res)=>{
+  res.render('user/new-password')
 }
 
+const otp_success=(req,res)=>{
+  let user=req.session.user
+  let message=""
+  if(req.session.forgotPassword){
+    return res.redirect('/new-password')
+  }
+  else{
+     message='Your account have been created. Please proceed to login.' 
 
+  }
+  res.render('user/otp-success', { user:user ,title,message: message});
+}
+
+const newPasswordForm=async (req,res)=>{
+  
+  const password=req.body.password
+  const email=req.session.email
+  const hashedPassword = await crypt.hashPassword(password);
+  const reset=await User.findOneAndUpdate({email:email},{password:hashedPassword})
+  console.log(reset)
+
+  res.render('user/otp-success', { title,message: 'Your password has been reset. Please proceed to login.' });
+  req.session.forgotPassword=false
+}
 
   
 const search_post=async(req, res, next)=> {
@@ -386,6 +443,10 @@ module.exports={
   user_dashboard_get,
   profile_get,
   settings_get,
-  settings_post
+  settings_post,
+  forgotPassword,
+  forgotPasswordForm,
+  newPassword,
+  newPasswordForm
     
 }

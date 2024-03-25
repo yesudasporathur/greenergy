@@ -43,6 +43,7 @@
         <br>
         {{/if}}
 
+          {{#if wishlist.items}}
           <div class="cart-table">
             <div class="table-responsive">
               <table class="table">
@@ -209,6 +210,18 @@
               </ul>
             </div>
           </div>
+          {{else}}
+
+          <div style="display: flex;  justify-content:center;color:red">
+            <h4>
+              Wishlist is empty
+
+            </h4>
+          </div>
+
+
+
+          {{/if}}
           <div class="shoping-cart__mobile">
             <div class="shoping-card">
               <div class="shoping-card__img-wrapper">

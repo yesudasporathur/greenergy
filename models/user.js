@@ -13,6 +13,11 @@ const userSchema = new Schema({
   password: String,
   block: Boolean,
   isAdmin: Boolean,
+  referral: String,
+  isRefer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'user'
+  },
   address: {
     addr1: String,
     addr2: String,

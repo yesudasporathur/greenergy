@@ -37,7 +37,9 @@
                             <thead>
                                 <tr>
                                     <th>Names</th>
+                                    <th>Discounts</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                     <!--
                                     <th>Email</th>
                                     
@@ -51,7 +53,8 @@
                             <tbody>
                                 {{#each categories}}
                                 
-                                <tr onclick="window.location.href='category-edit?id={{this._id}}';" style="cursor: pointer;">
+                                {{!-- <tr onclick="window.location.href='category-edit?id={{this._id}}';" style="cursor: pointer;"> --}}
+                                    <tr>
                                     <td width="40%">
                                         <a href="#" class="itemside">
                                             <!--
@@ -66,19 +69,23 @@
 
                                         </a>
                                     </td>
-                                    
                                     <td>
+                                       <input type="text" id="val-{{this._id}}" onchange="catDisc('{{this._id}}')" class="form-control" min="1" max="90" style="max-width: 100px;" value="{{this.discount}}">
+                                       <p id="querymsg-{{this._id}}" style="color: red; display:none" >Value Changed</p>
 
-                                        {{#if delete}}
-                            <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                <span class="badge rounded-pill alert-danger">Disabled</span>
-                            </div>
-                            {{else}}
-                            <div class="col-lg-2 col-sm-2 col-4 col-status">
-                                <span class="badge rounded-pill alert-success">Active</span>
-                            </div>
-                            {{/if}}
                                     </td>
+                                    
+                                    {{#if delete}}
+                                    <td><span id="{{this._id}}"  class="badge rounded-pill alert-danger">Deleted</span></td>
+                                    <td>
+                                        <a  id="btn{{this._id}}" href="category-unblock/{{this._id}}" class="btn btn-md rounded font-sm">Activate</a>
+                                    </td>
+                                    {{else}}
+                                    <td><span id="{{this._id}}" class="badge rounded-pill alert-success">Active</span></td>
+                                    <td>
+                                        <a  id="btn{{this._id}}" href="category-block/{{this._id}}" class="btn btn-md rounded font-sm">Delete</a>
+                                    </td>
+                                    {{/if}}
                                     
 
                                     
@@ -130,3 +137,43 @@
             </div>
         </section>
         
+
+        <script>
+            async function catDisc(_id){
+                const val=document.getElementById(`val-${_id}`).value
+                if(isNaN(val) || val<=-1 || val>90){
+                    document.getElementById(`querymsg-${_id}`).style.display = 'flex'
+                    document.getElementById(`querymsg-${_id}`).innerText = 'Enter a value between 1 and 90'
+                    
+                    setTimeout(()=>{
+                        document.getElementById(`querymsg-${_id}`).style.display = 'none';
+                    }                    
+                    ,5000)
+
+                }
+                else
+                {
+                    const res=await fetch('/admin/catDiscount',{
+                        method:'post',
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        body: JSON.stringify({val,_id})
+                    })
+                    if(!res){
+                        throw new Error
+                    }
+                    if(res.status==200){
+                        document.getElementById(`querymsg-${_id}`).style.display = 'flex'
+                    document.getElementById(`querymsg-${_id}`).innerText = 'Value updated'
+
+                    setTimeout(()=>{
+                        document.getElementById(`querymsg-${_id}`).style.display = 'none';
+                    }                    
+                    ,5000)
+                    }
+                }
+                
+                
+            }
+        </script>

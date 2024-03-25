@@ -1,32 +1,39 @@
 <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Order List </h2>
-                    <p></p>
-                </div>
-                <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                </div>
-            </div>
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Orders</h2>
+            <p id="count"></p>
+            <p id="subtotal"></p>
+            <p id="discount"></p>
+            <p id="total"></p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-9">
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row gx-3">
                         <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
+                            <input type="text" placeholder="Search..." id="search" name="search" onchange="filter()" class="form-control">
                         </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
+                        <div class="col-lg-3 col-md-3 col-6">
+                            <a href="#" class="btn btn-md rounded font-sm" onclick="exportpdf()">Export pdf</a>
+                            <a href="#" class="btn btn-md rounded font-sm" onclick="exportcsv()">Export csv</a>
+                        </div>
+                        <div class="col-lg-2 col-md-3 col-6">
+                            <select onchange="filter()" class="form-select">
                                 <option>Status</option>
                                 <option>Active</option>
                                 <option>Disabled</option>
                                 <option>Show all</option>
                             </select>
                         </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Show 20</option>
-                                <option>Show 30</option>
-                                <option>Show 40</option>
+                        <div class="col-lg-2 col-md-3 col-6">
+                            <select onchange="filter()" id="limit" name="limit"  class="form-select">
+                                <option value="10">Show 10</option>
+                                <option value="20">Show 20</option>
+                                <option value="30">Show 30</option>
                             </select>
                         </div>
                     </div>
@@ -36,62 +43,73 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>#ID</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col" class="text-end"> Action </th>
+                                    <th>ID</th>
+                                    <th>Customer name</th>
+                                    <th>Subtotal</th>
+                                    <th>Discount</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th class="text-end"> Action </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {{#each order}}
-
-                                <tr onclick="window.location.href='order-edit?_id={{this._id}}';" style="cursor: pointer;">
-                                    <td>{{this.payref}}</td>
-                                    <td><b>{{this.u_id.first_name}} {{this.u_id.last_name}}</b></td>
-                                    <td><template class="__cf_email__" data-cfemail="aec3cfdcd8c7c0eecbd6cfc3dec2cb80cdc1c3">[email&#160;protected]</template>{{this.u_id.email}}</td>
-                                    <td>Rs. {{this.total}}</td>
-                                    <td>{{this.status}}
-                                        <!--
-                                        <span class="badge rounded-pill alert-success">Delivered</span>
-                                        <span class="badge rounded-pill alert-warning">Ordered</span>
-                                        <span class="badge rounded-pill alert-warning">Processed</span>
-                                        <span class="badge rounded-pill alert-warning">In Transit</span>
-                                        <span class="badge rounded-pill alert-danger">Cancelled</span>
-                                        -->
-                                    </td>
-                                    <td >{{timeFormat this.createdAt}}</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-
-                                {{/each}}
+                            <tbody id="tableBody">
+                                
                             </tbody>
                         </table>
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
-        </section> <!-- content-main end// -->
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Filter by</h5>
+                    <form>
+                        {{!-- <div class="mb-4">
+                            <label for="order_id" class="form-label">Order ID</label>
+                            <input type="text"  onchange="filter()" placeholder="Type here" class="form-control" id="order_id">
+                        </div>
+                        <div class="mb-4">
+                            <label for="order_customer" class="form-label">Customer</label>
+                            <input type="text"  onchange="filter()" placeholder="Type here" class="form-control" id="order_customer">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Order Status</label>
+                            <select onchange="filter()" class="form-select">
+                                <option>Published</option>
+                                <option>Draft</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="order_total" class="form-label">Total</label>
+                            <input type="text" onchange="filter()" placeholder="Type here" class="form-control" id="order_total">
+                        </div> --}}
+                        <div class="mb-4">
+                            <label for="startDate" class="form-label">startDate</label>
+                            <input type="text" onchange="filter()" class="form-control datepicker" id="startDate"  data-date-end-date="#endDate">
+                        </div>
+                        <div class="mb-4">
+                            <label for="endDate" class="form-label">endDate</label>
+                            <input type="text" onchange="filter()" class="form-control datepicker" id="endDate"  data-date-start-date="#startDate">
+                        </div>
+                        {{!-- <div class="mb-4">
+                            <label for="order_customer_1" class="form-label">Customer</label>
+                            <input type="text" onchange="filter()" placeholder="Type here" class="form-control" id="order_customer_1">
+                        </div> --}}
+                    </form>
+                </div>
+            </div> <!-- card end// -->
+        </div>
+    </div>
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start" id="page">
+                
+            </ul>
+        </nav>
+    </div>
+</section> <!-- content-main end// -->
+
+
+<script src="../admin/assets/js/orderFilter.js"></script>

@@ -1267,3 +1267,12 @@ $("#imageUpload").change(function () {
 setTimeout(function() {
   document.getElementById('querymsg').style.display = 'none';
 }, 5000);
+
+setInterval(function(){
+  var greenergy = document.getElementById('greenergy');
+  if (greenergy.style.color === 'black') {
+      greenergy.style.color = 'green';
+  } else {
+      greenergy.style.color = 'black';
+  }
+}, 10000);

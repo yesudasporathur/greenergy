@@ -7,7 +7,10 @@ async function addToCart(p_id) {
         if (!response.ok) {
             throw new Error(await response.text());
         }
-        
+        if(response.status==500){
+            console.log('sss')
+            window.location.href='/cart'
+          }
         const data = await response.json();
         const quantity = data.quantity;
         const subtotal=data.subtotal
@@ -16,7 +19,8 @@ async function addToCart(p_id) {
         console.log(quantity,subtotal,total,cartnum)
 
         
-        const counterElement = document.getElementById(`counter-btn-counter-${p_id}`);
+        try{
+            const counterElement = document.getElementById(`counter-btn-counter-${p_id}`);
         if (counterElement) counterElement.textContent = quantity;
         document.getElementById(`subtotal-${p_id}`).textContent = `Rs. ${subtotal}`;
         document.getElementById(`total`).textContent = `Rs. ${total}`;
@@ -25,6 +29,13 @@ async function addToCart(p_id) {
         document.getElementById(`errmsg-${p_id}`).textContent = ``;
         
         console.log('Item added to cart successfully');
+        window.location.href="/cart"
+
+        }
+        catch{
+            window.location.href="/cart"
+
+        }
         
     } catch (error) {
         console.error('Error:', error.message);
@@ -38,11 +49,15 @@ async function removeFromCart(p_id) {
         const response = await fetch(`/removeFromCart?p_id=${p_id}`, {
             method: "POST"
         });
+        console.log(response)
         
         if (!response.ok) {
             throw new Error(await response.text());
         }
-        
+        if(response.status==500){
+            console.log('sss')
+            window.location.href='/cart'
+          }
         const data = await response.json();
         const quantity = data.quantity;
         const subtotal=data.subtotal
@@ -81,60 +96,81 @@ async function placeOrder(event){
       payment:payment
 
     }
-    if(payment=="Razorpay"){
-        const response=await fetch('/checkout',{
+    console.log(data)
+        const res=await fetch('/checkout',{
             method:"POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         })
-        if(response){
-            const {order,newOrderId,RAZORID,name,email,phone}=await response.json()
-            
-            var options = {
-                "key": RAZORID, // Enter the Key ID generated from the Dashboard
-                "amount": order.amount_due, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                "currency": "INR",
-                "name": "Greenergy",
-                "description": "Test Transaction",
-                "image": "https://github.com/BellerOphoN697/templates/blob/main/shopery/main/src/images/favicon/android-chrome-512x512.png?raw=true",
-                "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-                "handler": async function (response){
-                    //alert(response.razorpay_payment_id);
-                    console.log(response.razorpay_payment_id)
-                    const res=await fetch(`/pay-id?id=${response.razorpay_payment_id}`,{
-                        method: "POST"
+        console.log(res)
+        if(res){
+            const {newOrderId}=await res.json()
+            const _id=newOrderId
+            try{
+                if(res.status==201){
+                    const resRz=await fetch('/razorpay',{
+                        method:"post",
+                        headers:{
+                            'Content-Type':'application/json'
+                        },
+                        body:JSON.stringify({_id})
                     })
+                    if(resRz){
+                        const {order,RAZORID,name,email,phone}=await resRz.json()
+                        console.log(order)
+    
+                        var options = {
+                            "key": RAZORID, // Enter the Key ID generated from the Dashboard
+                            "amount": order.amount_due, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                            "currency": "INR",
+                            "name": "Greenergy",
+                            "description": "Test Transaction",
+                            "image": "https://github.com/BellerOphoN697/templates/blob/main/shopery/main/src/images/favicon/android-chrome-512x512.png?raw=true",
+                            "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                            "handler": async function (response){
+                                //alert(response.razorpay_payment_id);
+                                console.log(response.razorpay_payment_id)
+                                const res=await fetch(`/pay-id?id=${response.razorpay_payment_id}`,{
+                                    method: "POST"
+                                })
+                                
+                                    const url=await res.json()
+                                    window.location.href=url
+                                
+                                //alert(response.razorpay_order_id);
+                                //alert(response.razorpay_signature)
+                            },
+                            "prefill": {
+                                "name": `${name}`,
+                                "email": `${email}`,
+                                "contact": `${phone}`
+                            },
+                            "notes": {
+                                "address": "Razorpay Corporate Office"
+                            },
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+                        };
+                        console.log(options)
+                        var rzp1 = new Razorpay(options);
+                        rzp1.open();
+                    }
                     
-                        const url=await res.json()
-                        window.location.href=url
-                    
-                    //alert(response.razorpay_order_id);
-                    //alert(response.razorpay_signature)
-                },
-                "prefill": {
-                    "name": `${name}`,
-                    "email": `${email}`,
-                    "contact": `${phone}`
-                },
-                "notes": {
-                    "address": "Razorpay Corporate Office"
-                },
-                "theme": {
-                    "color": "#3399cc"
                 }
-            };
-            console.log(options)
-    
-            var rzp1 = new Razorpay(options);
-            rzp1.open();
-    
-    
+            }
+
+            
+            finally
+            {
+                window.location.href=`order-details?message=Order+has+been+successfully+placed!&_id=${newOrderId}`
+
+            }
         }
-    }
-    else{
-        window.location.href=`checkout-cod?c_id=${c_id}&a_id=${a_id}&payment=${payment}`
-    }
+    
+    
+       
 
   }

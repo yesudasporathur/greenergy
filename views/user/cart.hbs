@@ -288,15 +288,65 @@
 
             <!-- newsletter  -->
             <div class="newsletter-card">
-              <h5 class="newsletter-card-title font-body--xxl-500">
+              <div>
+                <h5 class="newsletter-card-title font-body--xxl-500">
                 Coupon Code
               </h5>
-              <form action="#">
+              <button id="showCouponsBtn" style="font-size: 12px; text-align:center" >Show Coupons</button>
+              </div>
+              <style>
+                /* styles.css */
+                    .popup {
+                        display: none;
+                        position: fixed;
+                        z-index: 1;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        overflow: auto;
+                        background-color: rgba(0,0,0,0.4);
+                    }
+
+                    .popup-content {
+                        background-color: #fefefe;
+                        margin: 10% auto;
+                        padding: 20px;
+                        border: 1px solid #888;
+                        width: 80%;
+                    }
+
+                    .close {
+                        color: #aaa;
+                        float: right;
+                        font-size: 28px;
+                        font-weight: bold;
+                    }
+
+                    .close:hover,
+                    .close:focus {
+                        color: black;
+                        text-decoration: none;
+                        cursor: pointer;
+                    }
+
+              </style>
+              <div id="couponsPopup" class="popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h2>Available Coupons</h2>
+            <ul id="couponList"></ul>
+        </div>
+    </div>
+              <form action="/coupon-apply" method="post" >
                 <div class="newsletter-card__input">
-                  <input type="text" placeholder="Enter Code " />
-                  <button class="button button--lg" type="submit">
+                  <input type="text" name="code" id="code" placeholder="Enter Code " />
+                  <button class="button button--lg" style="z-index: 0;" type="submit">
                     Apply Coupon
                   </button>
+                </div>
+                <div class="text-danger querymsg" id="querymsg">
+                  {{couponmsg}}
                 </div>
               </form>
             </div>
@@ -306,7 +356,7 @@
               <div class="bill-card__content">
                 <div class="bill-card__header">
                   <h2 class="bill-card__header-title font-body--xxl-500">
-                    Order Summery
+                    Order Summary
                   </h2>
                 </div>
                 <div class="bill-card__body">
@@ -315,8 +365,31 @@
                     <!-- Subtotal  -->
                     <div class="bill-card__memo-item subtotal">
                       <p class="font-body--md-400">Subtotal:</p>
-                      <span class="font-body--md-500" id="total">Rs. {{carts.total}}</span>
+                      <span class="font-body--md-500" id="total">Rs. {{carts.subtotal}}</span>
                     </div>
+                    {{#if carts.coupon}}
+                    <!-- Subtotal  -->
+                    <div class="bill-card__memo-item subtotal">
+                      <p class="font-body--md-400">Discount: <span style="color: green;">{{carts.coupon.code}}</span></p>
+                      <span class="font-body--md-500" id="total">- Rs. {{carts.coupon.discount}} 
+                        <a href='coupon-remove/?c_id={{carts.coupon._id}}&cart_id={{carts._id}}' style="color: black;">
+                          <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                        </a>
+                      </span>
+                    </div>
+                    {{/if}}
                     <!-- Shipping  -->
                     <div class="bill-card__memo-item shipping">
                       <p class="font-body--md-400">Shipping:</p>
@@ -350,3 +423,4 @@
     </section>
     <!-- Shopping Cart Section End    -->
     <script src="../user/src/js/cartmanage.js"></script>
+    <script src="../user/src/js/coupon.js"></script>

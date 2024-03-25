@@ -23,8 +23,13 @@ const cartSchema=new Schema({
             type:Number
         }
     }],
+    subtotal: Number,
     total:{
         type:Number,
+    },
+    coupon:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'coupon'
     }    
 },{timestamp: true,versionKey:false})
 
