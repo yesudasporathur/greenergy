@@ -19,17 +19,30 @@
         async function displayCoupons() {
             const coupons = await fetchCoupons();
             couponList.innerHTML = '';
-            coupons.forEach(coupon => {
-                const div = document.createElement('div');
-                div.innerHTML = `
-                    <p><strong>Code:</strong> ${coupon.code}</p>
-                    <p><strong>Discount:</strong> Rs. ${coupon.discount}</p>
-                    <p>${coupon.description}</p>
-                    <a href="coupon-apply/${coupon.code}">Click here to apply<a>
-                `;
-                couponList.appendChild(div);
-            });
-    
+            
+            if(coupons.length!=0){
+                coupons.forEach(coupon => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <p><strong>Code:</strong> ${coupon.code}</p>
+                        <p><strong>Discount:</strong> Rs. ${coupon.discount}</p>
+                        <p>${coupon.description}</p>
+                        <a href="coupon-apply/${coupon.code}">Click here to apply<a>
+                    `;
+                    couponList.appendChild(div);
+                });
+        
+            }
+            else{
+                
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <p><strong style="color:red">No available coupons</strong> </p>
+                        
+                    `;
+                    couponList.appendChild(div);
+        
+            }
             couponsPopup.style.display = 'block';
         }
     

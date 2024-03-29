@@ -25,22 +25,23 @@ router.get('/coupon-block/:_id', setNoCache.admin, requireLogin, couponControlle
 router.get('/coupon-unblock/:_id', setNoCache.admin, requireLogin, couponController.couponUnblock);
 router.get('/coupon-delete/:_id', setNoCache.admin, requireLogin, couponController.couponDelete);
 
-
 router.get('/coupon-add', setNoCache.admin,  requireLogin, couponController.couponAdd)
 router.post('/coupon-add', setNoCache.admin,  requireLogin, couponController.couponAdding)
 router.get('/coupon-edit', setNoCache.admin,  requireLogin, couponController.couponEdit)
 router.post('/coupon-edit', setNoCache.admin,  requireLogin, couponController.couponEditing)
 
 router.get('/logout', requireLogin, userController.admin_logout)
-router.get('/dashboard', setNoCache.admin,  requireLogin, userController.admin_dashboard_get);
+router.get('/dashboard', setNoCache.admin,  requireLogin, userController.adminDashboard);
 router.get('/users', setNoCache.admin,  requireLogin, userController.admin_user_list_get)
 router.get('/user-details', setNoCache.admin,  requireLogin, userController.admin_user_details_get)
 router.post('/user-details', setNoCache.admin,  requireLogin, userController.admin_user_details_post)
-router.get('/products', setNoCache.admin, requireLogin,   productController.products_get)
+router.get('/products', setNoCache.admin, requireLogin,   productController.productsList)
+router.post('/product-filter', setNoCache.admin,  requireLogin, productController.productFilter)
+
 router.get('/product-add', setNoCache.admin, requireLogin,  productController.product_add_get)
 router.get('/product-edit', setNoCache.admin,  requireLogin, productController.product_edit_get)
 router.post('/product-edit', setNoCache.admin,  requireLogin, multer.array('images', 10),productController.product_edit_post)
-router.post('/product-add', setNoCache.admin, requireLogin,  multer.array('images', 10),productController.product_add_post)
+router.post('/product-add', setNoCache.admin, requireLogin,  multer.array('images', 10),productController.ProductAddSave)
 router.get('/product-block/:_id', setNoCache.admin, requireLogin, productController.product_block);
 router.get('/product-unblock/:_id', setNoCache.admin, requireLogin, productController.product_unblock);
 router.get('/category-block/:_id', setNoCache.admin, requireLogin, categoryController.categoryBlock);
@@ -63,7 +64,7 @@ router.get('/cancel-order', setNoCache.admin,  requireLogin, orderController.can
 //router.get('/sales-report', setNoCache.admin,  requireLogin, orderController.salesReport)
 router.post('/order-filter', setNoCache.admin,  requireLogin, orderController.orderFilter)
 
-router.get('/', setNoCache.admin, userController.admin_login_get);
+router.get('/', setNoCache.admin, isLoggedIn, userController.admin_login_get);
 router.post('/', setNoCache.admin,  userController.admin_login_post);
 router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
@@ -72,6 +73,7 @@ router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
 function requireLogin(req, res, next) {
   req.session.admin='65dc11c766e50223004d914e'
+  console.log(req.session)
 
   if (!req.session.admin) {
     return res.redirect('/admin');
@@ -80,6 +82,11 @@ function requireLogin(req, res, next) {
 }
 
 
-
+async function isLoggedIn(req, res, next) {
+  if (req.session.admin) {
+    return res.redirect('/admin/users');
+  }
+  next();
+}
 
 module.exports = router;

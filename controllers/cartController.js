@@ -9,7 +9,7 @@ const Coupon=require('../models/coupon')
 const Razorpay = require('razorpay');
 
 
-const cart_view_get=async(req,res)=>{
+const cartView=async(req,res)=>{
     const couponmsg=req.query.coupon
     const carts=await Cart.findOne({u_id:req.session.user}).populate('items.product').populate('coupon')
     let cartempty=false
@@ -19,7 +19,7 @@ const cart_view_get=async(req,res)=>{
     res.render('user/cart',{carts,couponmsg, cartnum,carttotal,title,cartempty})
 }
 
-const add_to_cart_post = async (req, res) => {
+const addToCartSave = async (req, res) => {
     const p_id = req.query.p_id;
     const u_id = req.session.user;
 
@@ -83,7 +83,7 @@ const add_to_cart_post = async (req, res) => {
 
 
 
-const remove_from_cart_post = async (req, res,next) => {
+const removeFromCartSave = async (req, res,next) => {
     const p_id = req.query.p_id;
     const u_id = req.session.user;
 
@@ -150,7 +150,7 @@ const remove_from_cart_post = async (req, res,next) => {
 };
 
 
-const delete_from_cart_get = async (req, res) => {
+const deleteFromCart = async (req, res) => {
     const p_id = req.query._id;
     const u_id = req.session.user;
     
@@ -284,14 +284,14 @@ const razorPayFn=async (req,res)=>{
         const name=user.first_name+" "+user.last_name
 
         if(cart.total==0){
-            total=1
+            return res.status(202)
         }
         else{
             total=cart.total
         }
         console.log("cart.payref",cart.payref,total)
         var options = {
-        amount: total*100, 
+        amount: total*100,
         currency: "INR",
         receipt: `${cart.payref}`,
         };
@@ -300,8 +300,10 @@ const razorPayFn=async (req,res)=>{
         instance.orders.create(options, async function(err, order) {
             req.session.orderid=_id
             await Order.findOneAndUpdate({_id:_id},{razorder:order.id})
+            const url=`order-details?message=Order+has+been+successfully+placed!&_id=${req.session.orderid}`
+
             console.log("Order Created. proceeding to payment")
-            return res.status(200).json({order: order ,RAZORID:process.env.RAZORID,name:name, email:user.email, phone:user.phone});            
+            return res.status(200).json({order: order ,RAZORID:process.env.RAZORID,name:name, email:user.email, phone:user.phone,url});            
         })
     }
     catch(error){
@@ -317,10 +319,10 @@ const payId=async(req,res)=>{
 }
 
 module.exports={
-    cart_view_get,
-    add_to_cart_post,
-    remove_from_cart_post,
-    delete_from_cart_get,
+    cartView,
+    addToCartSave,
+    removeFromCartSave,
+    deleteFromCart,
     checkout,
     payId,
     checkoutOrdering,

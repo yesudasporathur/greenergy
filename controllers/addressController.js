@@ -3,66 +3,66 @@ const Address=require('../models/address')
 let title="Address"
 
 
-const address_add_get=async(req,res)=>{
+const addressAddLoad=async(req,res)=>{
   const message=req.query.message    
-    res.render('user/address-add', {message,title,address:true})
+    res.render('user/address-add', {message,title,address:true,carttotal,cartnum})
   }
   
-const address_add_post=async(req,res)=>{
-  let defaultVal=false
-
-
-    firstAddress=await Address.findOne({u_id:req.session.user})
-    if(!firstAddress){
-      defaultVal=true
-    }
-    
-    const data=new Address({
-      default: defaultVal,
-      u_id:req.session.user,
-      name:req.body.name,
-      pincode:req.body.pincode,
-      addr1:req.body.addr1,
-      addr2:req.body.addr2,
-      mark: req.body.mark,
-      city:req.body.city,
-      state:req.body.state,
-      country:req.body.country,
-      type:req.body.type,
-      email:req.body.email,
-      phone:req.body.phone,
-    })
+const addressAdd=async(req,res)=>{
+  
     try{
-      await data.save()
-      res.redirect('addresses')
+        let defaultVal=false
+        firstAddress=await Address.findOne({u_id:req.session.user})
+        if(!firstAddress){
+          defaultVal=true
+        }
+        const data=new Address({
+          default: defaultVal,
+          u_id:req.session.user,
+          name:req.body.name,
+          pincode:req.body.pincode,
+          addr1:req.body.addr1,
+          addr2:req.body.addr2,
+          mark: req.body.mark,
+          city:req.body.city,
+          state:req.body.state,
+          country:req.body.country,
+          type:req.body.type,
+          email:req.body.email,
+          phone:req.body.phone,
+        })
+        await data.save()
+        res.redirect('addresses')
     }
-    catch{
+    catch(err){
+      console.log(err)
       res.redirect('address-add?message=Error+occured.+Try+again')
     }
 }
 
 
-  const addresses_get=async(req,res)=>{
+  const addresses=async(req,res)=>{
     const addrs=await Address.find({u_id:req.session.user},{})
-    res.render('user/addresses',{addrs,title,address:true})
+    res.render('user/addresses',{user: req.session.user,addrs,title,address:true,carttotal,cartnum})
     console.log(`addresses_get rendered`)
   }
   
-  const address_edit_get=async(req,res)=>{
+  const addressEditLoad=async(req,res)=>{
     const message=req.query.message
     const _id=req.query._id
     const data=await Address.findOne({_id:_id})
-      res.render('user/address-edit', {message:message,data,title,address:true})
+      res.render('user/address-edit', {user: req.session.user,message:message,data,title,address:true,carttotal,cartnum})
     }
 
-    const address_edit_post=async(req,res)=>{
-      const _id=req.body._id
-      if(req.body.default){
-        await Address.updateMany({},{default:false})
-        await Address.updateOne({_id:_id},{default:true})
-      }
-      const address=await Address.findOne({_id})
+    const addressEdited=async(req,res)=>{
+      
       try{
+        const _id=req.body._id
+        if(req.body.default){
+          await Address.updateMany({},{default:false})
+          await Address.updateOne({_id:_id},{default:true})
+        }
+        const address=await Address.findOne({_id})
         if(address){
         await Address.updateOne({_id:_id},{$set:{
           name:req.body.name,
@@ -84,45 +84,46 @@ const address_add_post=async(req,res)=>{
 
         }
       }
-      catch{
+      catch(err){
+        console.log(err)
         res.redirect(`address-edit?message=Error+occured.+Try+again&_id=${_id}`)
       }
   }
 
-  const address_delete_get=async(req,res)=>{
+  const addressDeleteLoad=async(req,res)=>{
     const message=req.query.message
     const _id=req.query._id
     const data=await Address.findOneAndDelete({_id:_id})
       res.render('user/addresses', {message:message,data,title})
     }
   
-  const address_cart_get=async(req,res)=>{
+  const addressCart=async(req,res)=>{
     const message=req.query.message
-      res.render('user/address-cart', {message,title})
+      res.render('user/address-cart', {message,title,carttotal,cartnum})
     }
     
-  const address_cart_post=async(req,res)=>{
-      
-      const data=new Address({
-        default: false,
-        u_id:req.session.user,
-        name:req.body.name,
-        pincode:req.body.pincode,
-        addr1:req.body.addr1,
-        addr2:req.body.addr2,
-        mark: req.body.mark,
-        city:req.body.city,
-        state:req.body.state,
-        country:req.body.country,
-        type:req.body.type,
-        email:req.body.email,
-        phone:req.body.phone,
-      })
+  const addressCartSave=async(req,res)=>{
       try{
+        const data=new Address({
+          default: false,
+          u_id:req.session.user,
+          name:req.body.name,
+          pincode:req.body.pincode,
+          addr1:req.body.addr1,
+          addr2:req.body.addr2,
+          mark: req.body.mark,
+          city:req.body.city,
+          state:req.body.state,
+          country:req.body.country,
+          type:req.body.type,
+          email:req.body.email,
+          phone:req.body.phone,
+        })
         await data.save()
         res.redirect('checkout')
       }
-      catch{
+      catch(err){
+        console.log(err)
         res.redirect('address-cart?message=Error+occured.+Try+again')
       }
   }
@@ -130,15 +131,15 @@ const address_add_post=async(req,res)=>{
 //------------------------------------- Exports -------------------------------------\\
 module.exports={
     
-    address_add_get,
-    address_add_post,
+  addressAddLoad,
+  addressAdd,
     
-    addresses_get,
-    address_edit_get,
-    address_edit_post,
-    address_delete_get,
+  addresses,
+  addressEditLoad,
+    addressEdited,
+    addressDeleteLoad,
 
-    address_cart_get,
-    address_cart_post
+    addressCart,
+    addressCartSave
       
   }

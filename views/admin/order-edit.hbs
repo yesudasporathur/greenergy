@@ -22,13 +22,21 @@
 
                             <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
                                 <option value="{{order.status}}">{{order.status}}</option>
+                                {{#if order.reqCancel}}
+                                    {{#if order.cancel}}
+                                    {{else}}
+                                        <option value="Cancel Requested">Cancel Requested</option>
+
+                                    {{/if}}
+                                {{/if}}
+                                
                                 {{#if order.cancel}}
                                 
                                     {{#if order.refunded}}
                                     <option value="Refund Complete">Refund Complete</option>
                                     {{else}}
                                     <option value="Cancelled">Cancelled</option>
-                                    <option value="Refund Issued">Refund Issued</option>
+                                    <option value="Refund Processing">Refund Processing</option>
 
                                     {{/if}}
 
@@ -37,7 +45,9 @@
                                     <option value="Delivered">Delivered</option>
                                     {{else}}
                                     <option value="Ordered">Ordered</option>
+                                    <option value="Dispatched">Dispatched</option>
                                     <option  value="In Transit">In Transit</option>
+                                    <option value="Delivered">Delivered</option>
                                     {{/if}}
                                 
                                 {{/if}}
@@ -53,7 +63,7 @@
                     {{#if order.cancel}}
                     {{else}}
                     <div><h4 style="color: red;">Cancel Requested. Approve Cancel?</h4></div>
-                    <a href="/cancel-order?_id={{order._id}}"><button  class="btn btn-primary" >Cancel Order</button></a>
+                    <a href="cancel-order?_id={{order._id}}">Cancel Order</a>
                     {{/if}}
                     {{/if}}
                     <div class="row mb-50 mt-20 order-info-wrap">
@@ -121,7 +131,7 @@
                                                     <div class="left">
                                                         <img src="/images/{{this.product.images.[0]}}" width="40" height="40" class="img-xs" alt="Item">
                                                     </div>
-                                                    <div class="info"> {{this.product.name}} </div>
+                                                    <div class="info"> {{product.name}} </div>
                                                 </a>
                                             </td>
                                             <td> {{this.rate}} </td>

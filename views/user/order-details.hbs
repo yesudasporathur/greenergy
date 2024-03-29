@@ -197,9 +197,15 @@
 
                   {{#unless cancel}}
 
-                  <div class=" button button--outline">
+                      {{#if order.delivered}}
+                        <div class=" button button--outline">
+                            <button id="cancel">Return Products</button>
+                        </div>
+                      {{else}}
+                        <div class=" button button--outline">
                             <button id="cancel">Cancel Order</button>
-                </div>  
+                        </div>
+                      {{/if}}
 
 
                   {{/unless}}
@@ -299,15 +305,20 @@
                         <div class="dashboard__totalpayment-card-header">
                           <div class="dashboard__totalpayment-card-header-item">
                             <h5 class="title">Order id:</h5>
-                            <p class="details order-id">#{{order.payref}}</p>
+                            <p class="details order-id">#{{order.order_id}}</p>
                           </div>
                           <div class="dashboard__totalpayment-card-header-item">
                             <h5 class="title">Payment Method:</h5>
                             <p class="details order-id">{{order.paytype}}
-                            {{#if revise}}
-                            <a style="color: red;">Payment Failed</a>
-                            <a href="#" onclick="revise(`{{order._id}}`)">Click to revise Payment</a>
+                            {{#if cancel}}
+
                             {{else}}
+                                {{#if revise}}
+                                <a style="color: red;">Payment Failed</a>
+                                <a href="#" onclick="revise(`{{order._id}}`)">Click to revise Payment</a>
+                                {{else}}
+                                {{/if}}
+
                             {{/if}}
                           </div>
                         </div>
@@ -340,133 +351,217 @@
 
 
                 {{#if cancel}}
+                  {{#if order.refunded}}
+                            <div class="progress__bar progress__bar-4x">
+                        <div class="progress__bar-border">
+                          <span class="progress__bar-border-active"></span>
+                        </div>
 
-                <div class="progress__bar progress__bar-4x">
-                  <div class="progress__bar-border">
-                    <span class="progress__bar-border-active"></span>
-                  </div>
+
+                        <div class="progress__bar-item active">
+                          <div class="progress__bar-item-ball">
+                            <p
+                              class="
+                                font-body--md-400
+                                count-number count-number-active
+                              "
+                            >
+                              01
+                            </p>
+                            <span class="check-mark">
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                          <h2 class="font-body--md-400">Order received</h2>
+                        </div><div class="progress__bar-item active">
+                          <div class="progress__bar-item-ball">
+                            <p
+                              class="
+                                font-body--md-400
+                                count-number count-number-active
+                              "
+                            >
+                              02
+                            </p>
+                            <span class="check-mark">
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                          <h2 class="font-body--md-400">Return Requested</h2>
+                        </div>
+                        <div class="progress__bar-item active">
+                          <div class="progress__bar-item-ball">
+                            <p class="font-body--md-400 count-number">03</p>
+                          </div>
+                          <h2 class="font-body--md-400">Return Approved</h2>
+                        </div>
+                        <div class="progress__bar-item active">
+                          <div class="progress__bar-item-ball">
+                            <p
+                              class="
+                                font-body--md-400
+                                count-number count-number-active
+                              "
+                            >
+                              04
+                            </p>
+                            <span class="check-mark">
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                          <h2 class="font-body--md-400">Return Completed</h2>
+                        </div>
+                      </div>
+
+                  {{else}}
+                        <div class="progress__bar progress__bar-2x">
+                      <div class="progress__bar-border">
+                        <span class="progress__bar-border-active"></span>
+                      </div>
 
 
-                  <div class="progress__bar-item active">
-                    <div class="progress__bar-item-ball">
-                      <p
-                        class="
-                          font-body--md-400
-                          count-number count-number-active
-                        "
-                      >
-                        01
-                      </p>
-                      <span class="check-mark">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </span>
+                      <div class="progress__bar-item active">
+                        <div class="progress__bar-item-ball">
+                          <p
+                            class="
+                              font-body--md-400
+                              count-number count-number-active
+                            "
+                          >
+                            01
+                          </p>
+                          <span class="check-mark">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <h2 class="font-body--md-400">Order received</h2>
+                      </div><div class="progress__bar-item active">
+                        <div class="progress__bar-item-ball">
+                          <p
+                            class="
+                              font-body--md-400
+                              count-number count-number-active
+                            "
+                          >
+                            02
+                          </p>
+                          <span class="check-mark">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <h2 class="font-body--md-400">Return Requested</h2>
+                      </div>
+                      <div class="progress__bar-item">
+                        <div class="progress__bar-item-ball">
+                          <p class="font-body--md-400 count-number">03</p>
+                        </div>
+                        <h2 class="font-body--md-400">Return Approved</h2>
+                      </div>
+                      <div class="progress__bar-item ">
+                        <div class="progress__bar-item-ball">
+                          <p
+                            class="
+                              font-body--md-400
+                              count-number count-number-active
+                            "
+                          >
+                            04
+                          </p>
+                          <span class="check-mark">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <h2 class="font-body--md-400">Return Completed</h2>
+                      </div>
                     </div>
-                    <h2 class="font-body--md-400">Order received</h2>
-                  </div><div class="progress__bar-item active">
-                    <div class="progress__bar-item-ball">
-                      <p
-                        class="
-                          font-body--md-400
-                          count-number count-number-active
-                        "
-                      >
-                        01
-                      </p>
-                      <span class="check-mark">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <h2 class="font-body--md-400">Return Requested</h2>
-                  </div>
-                  <div class="progress__bar-item active">
-                    <div class="progress__bar-item-ball">
-                      <p
-                        class="
-                          font-body--md-400
-                          count-number count-number-active
-                        "
-                      >
-                        01
-                      </p>
-                      <span class="check-mark">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <h2 class="font-body--md-400">Return Approved</h2>
-                  </div>
-                  <div class="progress__bar-item active">
-                    <div class="progress__bar-item-ball">
-                      <p
-                        class="
-                          font-body--md-400
-                          count-number count-number-active
-                        "
-                      >
-                        01
-                      </p>
-                      <span class="check-mark">
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M16.6663 5.83301L7.49967 14.9997L3.33301 10.833"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <h2 class="font-body--md-400">Return Completed</h2>
-                  </div>
-                </div>
+
+                  {{/if}}
+
+                
                 {{else}}
 
 
@@ -587,11 +682,11 @@
                             "
                           >
                             <a
-                              href="product-details.html"
+                              href="product?id={{this.product._id}}"
                               class="dashboard__product-item"
                             >
-                              <div class="dashboard__product-item-img">
-                                <img
+                              <div class="dashboard__product-item-img" style="width: 140px; height:80px">
+                                <img style="height:100%;width:100%"
                                   src="images/{{this.product.images.[0]}}"
                                   alt="product"
                                 />
@@ -651,12 +746,24 @@
 <script>
   
     document.getElementById("cancel").addEventListener("click", function(event) {
+      const btnText=document.getElementById('cancel').innerText
+      if(btnText=='Cancel Order'){
         if (confirm("Are you sure you want to cancel this order?")) {
             // User clicked "OK", proceed to navigate to the cancel URL
             window.location.href = "order-cancel?_id={{order._id}}";
         } else {
             // User clicked "Cancel", do nothing
         }
+
+      }
+      else{
+        if (confirm("Are you sure you want to return the products?")) {
+            // User clicked "OK", proceed to navigate to the cancel URL
+            window.location.href = "order-cancel?_id={{order._id}}";
+        } else {
+            // User clicked "Cancel", do nothing
+        }
+      }
     });
 
     async function revise(_id){
@@ -701,7 +808,7 @@
                                 "address": "Razorpay Corporate Office"
                             },
                             "theme": {
-                                "color": "#3399cc"
+                                "color": "#00b207"
                             }
                         };
                         console.log(options)

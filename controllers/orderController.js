@@ -5,41 +5,46 @@ const Wallet=require('../models/wallet')
 
 const dateConvert=require('../public/javascripts/dateConvert')
 let title="Orders"
-const pdf = require('html-pdf');
+//const pdf = require('html-pdf');
 const fs = require('fs');
-const express = require('express');
+// const express = require('express');
 const puppeteer = require('puppeteer');
 const handlebars = require('handlebars');
-const { generate } = require("otp-generator");
-const { find } = require("../models/brand");
+// const { generate } = require("otp-generator");
+// const { find } = require("../models/brand");
 
 
-const order_details_get=async(req,res)=>{
-    const _id=req.query._id
-    const message=req.query.message
+const orderDetailsLoad=async(req,res)=>{
+    try{
+        const _id=req.query._id
+        const message=req.query.message
 
-    let cancel=false,revise=false
-    let order=await Order.findById(_id).populate('items.product')
-    if(order.status=="Cancelled"){
-        cancel=true
-        //await Order.findByIdAndUpdate({_id},{cancel:true})
+        let cancel=false,revise=false
+        let order=await Order.findById(_id).populate('items.product')
+        if(order.cancel || order.reqCancel){
+            cancel=true
+            //await Order.findByIdAndUpdate({_id},{cancel:true})
+        }
+        if(order.paytype=="Razorpay" && !order.razpay){
+            revise = true
+        }
+        res.render('user/order-details',{user: req.session.user,revise:revise, order,title,message,cancel:cancel, cartnum, carttotal})
+        console.log("order_details_get")
     }
-    if(order.paytype=="Razorpay" && !order.razpay){
-        revise = true
+    catch(err){
+        console.log(err)
     }
-    res.render('user/order-details',{revise:revise, order,title,message,cancel:cancel, cartnum, carttotal})
-    console.log("order_details_get")
 
 }
 
-const order_list_get=async(req,res)=>{
+const OrderListLoad=async(req,res)=>{
     const order=await Order.find({u_id:req.session.user}).populate('items.product').sort({createdAt:-1})
-    res.render('user/order-list',{order,title, cartnum, carttotal,orders:true})
+    res.render('user/order-list',{order,title, cartnum, user: req.session.user,carttotal,orders:true})
 }
 
-const order_cancel_get=async(req,res)=>{
+const orderCancelLoad=async(req,res)=>{
     const _id = req.query._id
-    await Order.findOneAndUpdate({_id:_id},{status:"Cancelled",reqCancel:true})
+    await Order.findOneAndUpdate({_id:_id},{status:"Cancel Requested",reqCancel:true})
     res.redirect(`order-details?message=Order+has+been+cancelled&_id=${_id}`)
     console.log("order_cancel_get")
     console.log(await Order.findOne({_id:_id}))
@@ -51,10 +56,8 @@ const orderInvoice=async (req, res) => {
             const {_id}=req.body
                 const orderDetails = await Order.findOne
     
-            // Read HTML invoice template
             const htmlTemplate = fs.readFileSync(path.join(__dirname, 'invoice_template.html'), 'utf-8');
     
-            // Generate table rows for items
             let itemsHtml = '';
             for (const item of orderDetails.items) {
                 itemsHtml += `
@@ -67,29 +70,22 @@ const orderInvoice=async (req, res) => {
                 `;
             }
     
-            // Replace placeholders in the template with order details and items HTML
             const renderedHtml = htmlTemplate.replace('{{orderId}}', orderDetails.orderId)
                                              .replace('{{customerName}}', orderDetails.customerName)
                                              .replace('{{items}}', itemsHtml);
     
-            // Launch Puppeteer
             const browser = await puppeteer.launch();
             const page = await browser.newPage();
     
-            // Set content to rendered HTML
             await page.setContent(renderedHtml);
     
-            // Generate PDF
             const pdfBuffer = await page.pdf({ format: 'A4' });
     
-            // Close Puppeteer browser
             await browser.close();
     
-            // Set response headers to trigger browser download
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', 'attachment; filename="invoice.pdf"');
     
-            // Send PDF buffer to the client for download
             res.send(pdfBuffer);
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -119,59 +115,78 @@ const order_edit_post=async(req,res)=>{
     const _id=req.body._id
     const notes=req.body.notes
     const status=req.body.status
-    let orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status})
+    try{
+        switch(status){
+            case 'Dispatched':
+                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, dispatched:true})
+                break;
+            case 'In Transit':
+                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, inTransit:true})
+                break;
+            case 'Delivered':
+                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, delivered:true})
+                break;
+            case 'Cancelled':
+                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, cancelled:true})
+                break;
+            case 'Returned':
+                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, returned:true})
+                break;
+            case 'Refund Started':
+                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, refundStarted:true})
+                break;
+            case 'Refund Complete':
+                if(orderUpdate.delivered){//delivered - online and cod is returned
+                    walletRefund(_id)
+                    orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, refunded:true})
+                }
+                else if(!orderUpdate.delivered && orderUpdate.razpay){ //not delivered - only online payments are refunded
+                    walletRefund(_id)
+                    orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:"Refund Complete", refunded:true})
+                }
+                else{
 
-    if(status=='Refund Complete'){
-        if(orderUpdate.delivered){
-            walletRefund(_id)
-            res.redirect(`order-edit?message=Order+updated&_id=${_id}`)
-
-
+                }
+                break;
+            default:
+                break;
         }
-        else if(!orderUpdate.delivered && orderUpdate.razpay){
-            walletRefund(_id)
-            res.redirect(`order-edit?message=Order+updated&_id=${_id}`)
-
-
-
-        }
-        else{
-
-        }
-        
+        return res.redirect(`order-edit?message=Order+updated&_id=${_id}`)
     }
-    orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, refunded:true})
-    
-    console.log("order_edit_post")
-
+    catch(err){
+        console.log("order_edit_post")
+        res.redirect(`order-edit?message=Unknown+error&_id=${_id}`)
+    }    
 }
 
 async function walletRefund(_id){
+    console.log(111)
     const order = await Order.findOne({_id:_id})
     const walletRefunding=await Wallet.findOne({u_id:order.u_id})
     walletRefunding.balance+=order.total
-    action=[{
+    const newAction={
         credit:true,
         amount:order.total,
         current: walletRefunding.balance,
-        o_id: _id
-    }]
-    walletRefunding.action=action
+        o_id: order.order_id
+    }
+    walletRefunding.action.push(newAction)
     await walletRefunding.save()
     return
 }
 
 const cancelOrder=async(req,res)=>{
     const {_id}=req.query
-    const cancelling=await Order.findByIdAndDelete({_id:_id},{status:"Cancelled", cancel:true})
+    const cancelling=await Order.findByIdAndUpdate({_id:_id},{status:"Cancelled", cancel:true})
+    res.redirect(`order-edit?message=Order+updated&_id=${_id}`)
 
 }
-
 
 const orderList=(req,res)=>{
     res.render('admin/orders',{layout:'admin/layout'})
     console.log("orderList");
 }
+
 const filterFn=async(search,startDate,endDate,page,limit,sort)=>{
     if(!startDate){
         startDate=0
@@ -195,7 +210,6 @@ const filterFn=async(search,startDate,endDate,page,limit,sort)=>{
     const total = overall.reduce((acc, order) => acc + order.total, 0);
     let pages=Math.ceil(count/limit)
     return {overall,orders,pages,page,count,subtotal,discount,total}
-
 }
 
 const orderFilter=async (req,res)=>{
@@ -203,7 +217,6 @@ const orderFilter=async (req,res)=>{
         let {search,startDate,endDate,page,limit,sort}=req.body        
         res.json(await filterFn(search,startDate,endDate,page,limit,sort))
         console.log("orderFilter");
-
     }
     catch{
         res.status(500).json("Error occured")
@@ -284,7 +297,6 @@ const generatePdf = async (req, res) => {
 };
 
 const generateCsv=async(req,res)=>{
-    
     try {
         let { search, startDate, endDate, page, limit, sort } = req.body;
 
@@ -328,10 +340,10 @@ const generateCsv=async(req,res)=>{
 
 
 module.exports={
-    order_details_get,
-    order_list_get,
+    orderDetailsLoad,
+    OrderListLoad,
     orders_get,
-    order_cancel_get,
+    orderCancelLoad,
     order_edit_get,
     order_edit_post,
     orderInvoice,

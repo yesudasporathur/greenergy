@@ -5,7 +5,10 @@ const Schema=mongoose.Schema;
 const productSchema=new Schema({
     sku: Number,
     name: String,
-    sp: Number,
+    sp: {
+        type:Number,
+        set: value => parseFloat(value).toFixed(2)
+    },
     mrp: Number,
     stock: Number,
     discount: Number,

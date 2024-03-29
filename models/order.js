@@ -53,7 +53,11 @@ const orderSchema = new Schema({
     },
     time: { type: Date, default: Date.now },
     status: String,
-    cancel:{
+    dispatched:{
+        type:Boolean,
+        default: false
+    },
+    inTransit:{
         type:Boolean,
         default: false
     },
@@ -61,11 +65,23 @@ const orderSchema = new Schema({
         type:Boolean,
         default: false
     },
-    refunded:{
+    reqCancel:{
         type:Boolean,
         default: false
     },
-    reqCancel:{
+    cancelled:{
+        type:Boolean,
+        default: false
+    },
+    returned:{
+        type:Boolean,
+        default: false
+    },
+    refundStarted:{
+        type:Boolean,
+        default: false
+    },
+    refunded:{
         type:Boolean,
         default: false
     },

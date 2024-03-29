@@ -117,8 +117,9 @@ async function placeOrder(event){
                         },
                         body:JSON.stringify({_id})
                     })
+                    
                     if(resRz){
-                        const {order,RAZORID,name,email,phone}=await resRz.json()
+                        const {order,RAZORID,name,email,phone,url}=await resRz.json()
                         console.log(order)
     
                         var options = {
@@ -151,7 +152,13 @@ async function placeOrder(event){
                                 "address": "Razorpay Corporate Office"
                             },
                             "theme": {
-                                "color": "#3399cc"
+                                "color": "#00b207"
+                            },
+                            "modal": {
+                                "ondismiss": function () {
+                                    // Handle modal close event here, redirects to order details page
+                                    window.location.href=url
+                                }
                             }
                         };
                         console.log(options)
@@ -161,13 +168,12 @@ async function placeOrder(event){
                     
                 }
             }
+            catch(err){
+                console.log(err)
+            }
 
             
-            finally
-            {
-                window.location.href=`order-details?message=Order+has+been+successfully+placed!&_id=${newOrderId}`
-
-            }
+            
         }
     
     

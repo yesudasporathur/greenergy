@@ -15,12 +15,9 @@ const walletSchema=new Schema({
         credit: Boolean,
         amount: Number,
         current:Number,
-        reference: Number,
+        reference: String,
         time: { type: Date, default: Date.now },
-        o_id:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'order'
-        },
+        o_id:String,
     }]
 },{ timestamps: true, versionKey: false })
 module.exports = mongoose.model("wallet", walletSchema);

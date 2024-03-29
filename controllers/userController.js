@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Product=require("../models/product")
 const Order=require("../models/order")
 const Address=require("../models/address")
+const Wallet=require("../models/wallet")
 
 const otpGenerator = require('otp-generator');
 const sendOTP=require('../public/javascripts/sendOTP')
@@ -32,14 +33,14 @@ const home_post=(req,res)=>{
     })
   }
 
-const sign_in_get=(req, res, next) =>{
+const signInLoad=(req, res, next) =>{
   
    res.render('user/sign-in', { user: req.session.user,email:req.session.email,message:'',title: 'Sign-in' });
     console.log("sign_in_get rendered")
     
 
   }
-  const sign_in_post=async(req, res, next) =>{
+  const signInAction=async(req, res, next) =>{
     const { email, password } = req.body;
     req.session.email=email
 
@@ -89,7 +90,7 @@ const sign_in_get=(req, res, next) =>{
 const forgotPassword=(req,res)=>{
   const message=req.query.message
   const email=req.session.email
-  res.render('user/forgot-password',{title, message,email,cartnum,carttotal})
+  res.render('user/forgot-password',{title,carttotal,cartnum, message,email,cartnum,carttotal})
 }
 
 const forgotPasswordForm=async (req,res)=>{
@@ -108,9 +109,12 @@ const forgotPasswordForm=async (req,res)=>{
 const create_account_get=(req, res, next) =>{
     res.render('user/create-account', {user: req.session.user, title: 'Create-Account' ,message:''});
     console.log("Create-Account rendered")
-  }
+}
+
+
 const create_account_post =  async (req, res) =>{
-  var data={first_name,last_name,email,phone,password}=req.body
+  var data={first_name,last_name,email,phone,password,referral}=req.body
+  req.session.referral=referral
   const userExist=await User.exists({email})
   if(userExist){
 
@@ -133,27 +137,35 @@ const create_account_post =  async (req, res) =>{
    //console.log(user)
     //res.render('user/create-account', {user: req.session.user, title: 'Create-Account' });
     
-  }
-const otp_get=(req, res, next)=> {
-  
-  //mail_id= 'yesudas@yopmail.com'
-  if(req.session.forgotPassword){
-    mail_id=req.session.email
-  }
-  else{
-    mail_id=req.session.data.email
-  }
-// Generate a 6-digit OTP
-const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
-sendOTP(otp,mail_id)
-req.session.otp=otp
-//console.log('Generated OTP:', otp);
+}
+
+const otp_get=async (req, res, next)=> {
+  try{
+    //mail_id= 'yesudas@yopmail.com'
+    if(req.session.forgotPassword){
+      mail_id=req.session.email
+    }
+    else{
+      mail_id=req.session.data.email
+    }
+    // Generate a 6-digit OTP
+    const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+    sendOTP(otp,mail_id)
+    req.session.otp=otp
+    //console.log('Generated OTP:', otp);
     res.render('user/otp', { user: req.session.user,title: 'OTP Verification' });
     console.log("OTP Verification rendered")
-      //console.log(req.session.data)
+    //console.log(req.session.data)
+  }
+  catch(err){
+    console.log(err) 
+
+  }
+  
   }
 
 const otp_check=async(req, res, next)=> {
+  
     let otp=req.session.otp
     const userotp = req.body
     let recotp=[]
@@ -169,6 +181,9 @@ const otp_check=async(req, res, next)=> {
       
          const hashedPassword = await crypt.hashPassword(req.session.data.password);
         console.log("password:  ",hashedPassword)
+
+        const referrals=await User.findOne({referral:req.session.referral})
+
       
         await User.create({
           email:req.session.data.email,
@@ -176,9 +191,23 @@ const otp_check=async(req, res, next)=> {
           last_name: req.session.data.last_name,
           phone: req.session.data.phone,
           password: hashedPassword,
+          isRefer: referrals,
           block: 0,
           isAdmin: 0,
-        })      
+        }) 
+        console.log(req.session.referral) 
+        const walletReferral=await Wallet.findOne({u_id:referrals._id})
+        walletReferral.balance+=100
+        const newAction={
+            credit:true,
+            amount:100,
+            current: walletReferral.balance,
+            reference: "New User Referral"
+
+        }
+        walletReferral.action.push(newAction)
+        await walletReferral.save()
+           
 
       
     }
@@ -238,32 +267,29 @@ const page_not_found=(req,res)=>{
   }
   
 
-  const user_logout=(req,res)=>{
-    res.cookie('redirecturl','/')
+const user_logout=(req,res)=>{
+  res.cookie('redirecturl','/')
 
-    console.log("cookie: " + req.cookies.redirecturl);
-  
-    req.session.destroy(err => {
-      if (err) {
-        console.error(err);
-      }
-      res.redirect('/sign-in')
-      console.log("Redirect")
-   });
-  }
+  console.log("cookie: " + req.cookies.redirecturl);
 
+  req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+    }
+    res.redirect('/sign-in')
+    console.log("Redirect")
+  });
+}
 
-const user_dashboard_get=async (req,res)=>{
+const userDashboard=async (req,res)=>{
   const user=await User.find({_id:req.session.user})
   const address=await Address.findOne({u_id:req.session.user,default:true})
   const order=await Order.find({u_id:req.session.user}).populate('items.product').sort({createdAt:-1}).limit(4)
-
   console.log(address)
   res.render('user/user-dashboard',{user,title,cartnum,carttotal,address,order,dashboard:true})
 }
 
-
-const profile_get=async(req,res)=>{
+const profileLoad=async(req,res)=>{
   const user=await User.find({_id:req.session.user})
   console.log(user)
   res.redirect('user-dashboard')
@@ -271,12 +297,12 @@ const profile_get=async(req,res)=>{
 
 }
 
-const settings_get=async(req,res)=>{
+const settingsLoad=async(req,res)=>{
   const message=req.query.message
-  res.render('user/settings',{message:message, cartnum, carttotal, })
+  res.render('user/settings',{user: req.session.user,message:message, cartnum, carttotal, })
 }
 
-const settings_post=async(req,res)=>{
+const settingsSave=async(req,res)=>{
   const _id=req.session.user
   const data = await User.findOne({_id:_id});       
   const val = await crypt.cmpPassword(data.password,req.body.oldpassword)
@@ -369,7 +395,7 @@ const admin_login_post=async(req,res)=>{
 
   }
 
-const admin_dashboard_get=(req,res)=>{
+const adminDashboard=(req,res)=>{
   res.render('admin-dashboard', {title, message: '' ,layout:'admin/layout'});
   console.log("Admin Dashboard rendered")  
   
@@ -421,7 +447,7 @@ const admin_logout=(req,res)=>{
 module.exports={
   admin_login_get,
   admin_login_post,
-  admin_dashboard_get,
+  adminDashboard,
   admin_user_list_get,
   admin_user_details_get,
   admin_user_details_post,
@@ -429,8 +455,8 @@ module.exports={
   admin_logout,
   home_get,
   home_post,
-  sign_in_get,
-  sign_in_post,
+  signInLoad,
+  signInAction,
   create_account_get,
   create_account_post,
   otp_get,
@@ -440,10 +466,10 @@ module.exports={
   search_post,
   page_not_found,
   user_logout,
-  user_dashboard_get,
-  profile_get,
-  settings_get,
-  settings_post,
+  userDashboard,
+  profileLoad,
+  settingsLoad,
+  settingsSave,
   forgotPassword,
   forgotPasswordForm,
   newPassword,

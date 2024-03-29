@@ -15,7 +15,9 @@ function user(req, res, next) {
       'Pragma': 'no-cache',
       'Expires': '0',
   });
-  req.session.redirect='/'
+  if(req.url!='/'){
+    req.session.redirect=req.url
+  }
   next();
 }
 module.exports={
