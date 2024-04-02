@@ -72,7 +72,7 @@ const product_edit_post=async(req,res)=>{
       brand: brand,
       category: category,
     });
-    if(req.body.imgUpdate!= '1'){
+    if(req.body.imgUpdate!== '1'){
 
 
       const images = req.files.map(file => file.filename);

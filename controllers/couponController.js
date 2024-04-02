@@ -26,6 +26,18 @@ const couponAdding=async (req,res)=>{
         return res.redirect('/admin/coupon-add?message=Coupon+already+exists')
     }
     const newDate=convertDateFormat(expiryDate)
+
+    if(discount<100){
+        res.redirect('/admin/coupon-add?message=Discount+should+be+greater+than+Rs.100')
+    }
+
+    const dateNow=new Date.now()
+    if(expiryDate<dateNow){
+        res.redirect('/admin/coupon-add?message=Expiry+Date+should+be+greater+than+today')
+    }
+
+
+    //expiry date should greater than today, discount lessthan 100
     const couponEntry=new Coupon({
         code:code,
         description:description,

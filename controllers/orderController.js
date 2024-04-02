@@ -178,7 +178,7 @@ async function walletRefund(_id){
 
 const cancelOrder=async(req,res)=>{
     const {_id}=req.query
-    const cancelling=await Order.findByIdAndUpdate({_id:_id},{status:"Cancelled", cancel:true})
+    const cancelling=await Order.findByIdAndUpdate({_id:_id},{status:"Cancelled", reqCancel:true})
     res.redirect(`order-edit?message=Order+updated&_id=${_id}`)
 
 }

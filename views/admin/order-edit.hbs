@@ -22,24 +22,30 @@
 
                             <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
                                 <option value="{{order.status}}">{{order.status}}</option>
+                                
+                                
                                 {{#if order.reqCancel}}
-                                    {{#if order.cancel}}
+                                    {{#if order.cancelled}}
+                                        {{#if order.refunded}}
+                                        <option value="Refund Complete">Refund Complete</option>
+                                        {{else}}
+                                            {{#if order.refundStarted}}
+                                            <option value="Refund Complete">Refund Complete</option>
+                                            {{else}}
+                                                {{#if order.returned}}
+                                                <option value="Refund Started">Refund Started</option>
+                                                {{else}}
+                                                <option value="Returned">Returned</option>
+                                                {{/if}}
+                                                {{/if}}
+                                            
+
+                                        {{/if}}
+
                                     {{else}}
                                         <option value="Cancel Requested">Cancel Requested</option>
 
                                     {{/if}}
-                                {{/if}}
-                                
-                                {{#if order.cancel}}
-                                
-                                    {{#if order.refunded}}
-                                    <option value="Refund Complete">Refund Complete</option>
-                                    {{else}}
-                                    <option value="Cancelled">Cancelled</option>
-                                    <option value="Refund Processing">Refund Processing</option>
-
-                                    {{/if}}
-
                                 {{else}}
                                     {{#if order.delivered}}
                                     <option value="Delivered">Delivered</option>
@@ -49,8 +55,10 @@
                                     <option  value="In Transit">In Transit</option>
                                     <option value="Delivered">Delivered</option>
                                     {{/if}}
-                                
+
+
                                 {{/if}}
+                                
                                 
                             </select>
                             <input type="submit" class="btn btn-primary" href="#">
@@ -60,7 +68,7 @@
                 </header> <!-- card-header end// -->
                 <div class="card-body">
                     {{#if order.reqCancel}}
-                    {{#if order.cancel}}
+                    {{#if order.cancelled}}
                     {{else}}
                     <div><h4 style="color: red;">Cancel Requested. Approve Cancel?</h4></div>
                     <a href="cancel-order?_id={{order._id}}">Cancel Order</a>
