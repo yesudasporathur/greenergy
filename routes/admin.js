@@ -16,7 +16,8 @@ const setNoCache=require('../public/javascripts/setNoCache')
 
 //var MongoClient=require('mongodb').MongoClient
 
-
+router.post('/monthly-chart',userController.monthlyChart)
+router.post('/daily-chart',userController.dailyChart)
 
 router.post('/generatepdf',orderController.generatePdf)
 router.post('/generatecsv',orderController.generateCsv)
@@ -42,6 +43,7 @@ router.get('/product-add', setNoCache.admin, requireLogin,  productController.pr
 router.get('/product-edit', setNoCache.admin,  requireLogin, productController.product_edit_get)
 router.post('/product-edit', setNoCache.admin,  requireLogin, multer.array('images', 10),productController.product_edit_post)
 router.post('/product-add', setNoCache.admin, requireLogin,  multer.array('images', 10),productController.ProductAddSave)
+router.post('/remove-image',productController.removeImage)
 router.get('/product-block/:_id', setNoCache.admin, requireLogin, productController.product_block);
 router.get('/product-unblock/:_id', setNoCache.admin, requireLogin, productController.product_unblock);
 router.get('/category-block/:_id', setNoCache.admin, requireLogin, categoryController.categoryBlock);
@@ -65,7 +67,7 @@ router.get('/cancel-order', setNoCache.admin,  requireLogin, orderController.can
 router.post('/order-filter', setNoCache.admin,  requireLogin, orderController.orderFilter)
 
 router.get('/', setNoCache.admin, isLoggedIn, userController.admin_login_get);
-router.post('/', setNoCache.admin,  userController.admin_login_post);
+router.post('/', setNoCache.admin, isLoggedIn, userController.admin_login_post);
 router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
 
@@ -73,18 +75,17 @@ router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
 function requireLogin(req, res, next) {
   req.session.admin='65dc11c766e50223004d914e'
-  console.log(req.session)
-
   if (!req.session.admin) {
-    return res.redirect('/admin');
+    return res.redirect('admin');
   }
   next();
 }
 
 
 async function isLoggedIn(req, res, next) {
+
   if (req.session.admin) {
-    return res.redirect('/admin/users');
+    return res.redirect('dashboard');
   }
   next();
 }

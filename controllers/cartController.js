@@ -62,8 +62,14 @@ const addToCartSave = async (req, res) => {
             existingCartItem.subtotal = existingCartItem.qty * product.sp;
         }
 
-        cart.total = cart.items.reduce((total, item) => total + item.subtotal, 0);
-        cart.subtotal=cart.total
+        cart.subtotal = cart.items.reduce((total, item) => total + item.subtotal, 0);
+        if(cart.subtotal>5000){
+            cart.shipping=0
+        }
+        else{
+            cart.shipping=300
+        }
+        cart.total=cart.subtotal+cart.shipping
         await cart.save();
         console.log("Cart updated: ");
 
@@ -122,8 +128,14 @@ const removeFromCartSave = async (req, res,next) => {
             }
     
             // Recalculate the total
-            cart.total = cart.items.reduce((total, item) => total + item.subtotal, 0);
-            cart.subtotal=cart.total
+            cart.subtotal = cart.items.reduce((total, item) => total + item.subtotal, 0);
+            if(cart.subtotal>5000){
+                cart.shipping=0
+            }
+            else{
+                cart.shipping=300
+            }
+            cart.total=cart.subtotal+cart.shipping
             let coupon=false
             if(cart.coupon){
                 const couponUpdate=await Coupon.findOneAndUpdate({_id:cart.coupon},{used:false})
@@ -173,8 +185,19 @@ const deleteFromCart = async (req, res) => {
         cart.items.splice(itemIndex, 1);
 
         // Recalculate the total
-        cart.total = cart.items.reduce((total, item) => total + item.subtotal, 0);
-        cart.subtotal=cart.total
+        cart.subtotal = cart.items.reduce((total, item) => total + item.subtotal, 0);
+        if(cart.subtotal==0){
+            cart.shipping=0
+        }
+        else{
+            if(cart.subtotal>5000){
+                cart.shipping=0
+            }
+            else{
+                cart.shipping=300
+            }
+        }
+        cart.total=cart.subtotal+cart.shipping
         if(cart.total==0){
             if(cart.coupon){
                 const couponUpdate=await Coupon.findOneAndUpdate({_id:cart.coupon},{used:false})
@@ -316,6 +339,10 @@ const payId=async(req,res)=>{
     await Order.findOneAndUpdate({_id:req.session.orderid},{razpay:req.query.id})
     const url=`order-details?message=Order+has+been+successfully+placed!&_id=${req.session.orderid}`
     res.status(200).json(url)
+}
+
+const shippingCharge=(req,res)=>{
+    //const {pincode,subtotal}
 }
 
 module.exports={

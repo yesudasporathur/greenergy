@@ -345,8 +345,9 @@ const admin_user_details_post=async(req,res)=>{
 }
 
 const admin_login_get=(req,res)=>{
+  console.log("adminLogin")
   if(req.session.admin){
-    res.redirect('/admin/users')
+    res.redirect('/admin/dashboard')
   }
   else
   {
@@ -382,7 +383,7 @@ const admin_login_post=async(req,res)=>{
       }
       const adminData = await User.findOne({email:username})
       req.session.admin = adminData._id;
-      res.redirect(`/admin${req.session.redirect}`); 
+      res.redirect(`/admin`); 
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
       console.log('Logged in as '+req.session.admin)
       // If user is valid, render the home page
@@ -395,11 +396,89 @@ const admin_login_post=async(req,res)=>{
 
   }
 
-const adminDashboard=(req,res)=>{
-  res.render('admin-dashboard', {title, message: '' ,layout:'admin/layout'});
+const adminDashboard=async (req,res)=>{
+  const products=await Product.find().sort({popularity:-1}).limit(10)
+  console.log(products)
+  res.render('admin/dashboard', {products, title, message: '' ,layout:'admin/layout'});
   console.log("Admin Dashboard rendered")  
   
 }
+
+
+
+const monthlyChart = async (req, res) => {
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+  // Construct the date range query
+  const orders = await Order.aggregate([
+      {
+          $match: {
+              createdAt: { $gte: twelveMonthsAgo } // Orders within the last 12 months
+          }
+      },
+      {
+          $group: {
+              _id: { $dateToString: { format: "%m-%Y", date: "$createdAt" } },
+              totalAmount: { $sum: "$total" } // Sum of total amount for each month
+          }
+      },
+      {
+          $sort: { "_id": 1 } // Sort by date in ascending order
+      }
+  ]);
+
+  // Convert string months back to actual dates for proper sorting
+  const sortedOrders = orders.map(order => ({
+      ...order,
+      _id: new Date(order._id.split('-').reverse().join('-') + '-01T00:00:00') // Convert string month to actual date with first day of the month and 00:00:00 time
+  })).sort((a, b) => a._id - b._id);
+
+  // Extracting x-axis (months) and y-axis (total values) data
+  const val = sortedOrders.map(order => order.totalAmount);
+  const xaxis = sortedOrders.map(order => order._id.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })); // Format month as "January 2023"
+
+  return res.status(200).json({ val, xaxis });
+};
+
+
+
+const dailyChart = async (req, res) => {
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  // Construct the date range query
+  const orders = await Order.aggregate([
+      {
+          $match: {
+              createdAt: { $gte: thirtyDaysAgo } // Orders within the last 30 days
+          }
+      },
+      {
+          $group: {
+              _id: { $dateToString: { format: "%d-%m-%Y", date: "$createdAt" } },
+              totalAmount: { $sum: "$total" } // Sum of total amount for each day
+          }
+      },
+      {
+          $sort: { "_id": 1 } // Sort by date in ascending order
+      }
+  ]);
+
+  // Convert string dates back to actual dates for proper sorting
+  const sortedOrders = orders.map(order => ({
+      ...order,
+      _id: new Date(order._id.split('-').reverse().join('-') + 'T00:00:00') // Convert string date to actual date with 00:00:00 time
+  })).sort((a, b) => a._id - b._id);
+
+  // Extracting x-axis (dates) and y-axis (total values) data
+  const val = sortedOrders.map(order => order.totalAmount);
+  const xaxis = sortedOrders.map(order => order._id.toLocaleDateString('en-GB')); // Format date as dd-mm-yyyy
+
+  return res.status(200).json({ val, xaxis });
+};
+
+
 
 const admin_user_list_get=async (req,res)=>{
   
@@ -473,6 +552,9 @@ module.exports={
   forgotPassword,
   forgotPasswordForm,
   newPassword,
-  newPasswordForm
+  newPasswordForm,
+  monthlyChart,
+  dailyChart
+
     
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Image Upload</title>
+</head>
+<body>
+  <input type="file" id="fileInput" multiple>
+  <div id="previewContainer"></div>
+
+  <script>
+    // Function to preview images
+    function previewImages(input) {
+      const previewContainer = document.getElementById('previewContainer');
+      previewContainer.innerHTML = '';
+
+      if (input.files) {
+        const filesArray = Array.from(input.files);
+
+        filesArray.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '200px'; // Set image width for preview
+            previewContainer.appendChild(img);
+          }
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+
+    // Attach event listener to file input
+    document.getElementById('fileInput').addEventListener('change', function() {
+      previewImages(this);
+    });
+  </script>
+</body>
+</html>

@@ -10,6 +10,7 @@ const fs = require('fs');
 // const express = require('express');
 const puppeteer = require('puppeteer');
 const handlebars = require('handlebars');
+const product = require("../models/product");
 // const { generate } = require("otp-generator");
 // const { find } = require("../models/brand");
 
@@ -339,6 +340,97 @@ const generateCsv=async(req,res)=>{
 }
 
 
+const invoicePdf=async (req,res)=>{
+        try {
+            const { _id } = req.body;    
+            const orderDetails=await Order.findById(_id).populate('items.product')
+            const htmlContent = fs.readFileSync('./views/user/invoice-pdf.hbs', 'utf8');
+            const template = handlebars.compile(htmlContent);
+            const {name , addr1,addr2,state,country,city,pincode,order_id}=orderDetails
+            let discount,shipping
+            if(orderDetails.coupondiscount==NaN){
+                discount=orderDetails.coupondiscount
+
+            }
+            else{
+                discount="NA"
+            }
+            if(orderDetails.shipping==NaN){
+                shipping=orderDetails.shipping
+
+            }
+            else{
+                shipping="NA"
+            }
+    
+            
+            let tableContent = `
+                <table class="table border my-5" style="font-size: 10px">
+                    <thead>
+                        <tr class="bg-primary-subtle">
+                            <th scope="col">SKU</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Rate</th>
+                            <th scope="col" style="width:80px">Quantity</th>
+                            <th scope="col">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+    
+            orderDetails.items.forEach((item, index) => {
+                tableContent += `
+                    <tr>
+                    <td>${item.product.sku}</td>
+                    <td>${item.product.name}</td>
+                    <td>${item.rate}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.subtotal}</td>
+                    </tr>
+                `;
+            });
+            tableContent += `
+                    <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total<br>Discounts<br>Shipping<br><span style="color:blue">Grand Total</span></td>
+                    <td>${orderDetails.subtotal}<br>${discount}<br>${shipping}<br><span style="color:blue">${orderDetails.total}</span></td>
+                    </tr>
+                `;    
+            tableContent += `
+                    </tbody>
+                </table>
+            `;
+            const renderedHtml = template( {tableContent,name , addr1,addr2,state,country,city,pincode,order_id} );
+    
+            const browser = await puppeteer.launch();
+            const paged = await browser.newPage();
+    
+            const marginOptions = {
+                top: '1cm',
+                bottom: '1cm',
+                left: '1cm',
+                right: '1cm'
+            };
+    
+            await paged.setContent(renderedHtml);
+            const pdfBuffer = await paged.pdf({
+                format: 'A4',
+                margin: marginOptions
+            });
+    
+            await browser.close();
+    
+            res.setHeader('Content-Disposition', 'inline; filename="Invoice"');
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(pdfBuffer);
+        } catch (error) {
+            console.error("Error generating PDF:", error);
+            res.status(500).json({ error: "Error generating PDF" });
+        }
+}
+
 module.exports={
     orderDetailsLoad,
     OrderListLoad,
@@ -351,5 +443,6 @@ module.exports={
     orderList,
     generatePdf,
     generateCsv,
-    cancelOrder
+    cancelOrder,
+    invoicePdf
 }

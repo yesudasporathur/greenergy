@@ -28,9 +28,10 @@ const product_edit_get=async(req,res)=>{
     const products = await Product.find({ _id: _id }).populate(['brand', 'category']);
     const brands=await Brand.find({delete: false})
     const categories=await Category.find({delete: false})
+    req.session.images=products[0].images
 
 
-    console.log("Product details loaded:\n"+products)
+    // console.log("Product details loaded:\n"+products)
     res.render('admin/product-edit',{message:message,products,categories,brands,title, layout: 'admin/layout'})
   }
   catch(err){
@@ -71,14 +72,32 @@ const product_edit_post=async(req,res)=>{
       brand: brand,
       category: category,
     });
-    console.log(update)
-    if(req.body.imgUpdate=== '1'){
-      const images = req.files.map(file =>   file.filename );
+    if(req.body.imgUpdate!= '1'){
+
+
+      const images = req.files.map(file => file.filename);
+      if (!req.session.images) {
+        req.session.images = [];
+      }
+      images.forEach(image => {
+        req.session.images.push(image);
+      });
+      const uniqueSet = new Set();
+      req.session.images = req.session.images.filter(image => {
+        if (uniqueSet.has(image)) {
+          return false;
+        } else {
+          uniqueSet.add(image);
+          return true;
+        }
+      });
+      console.log(req.session.images);
+
       await Product.findByIdAndUpdate({_id:_id},{
         images: []
       });
       await Product.findByIdAndUpdate({_id:_id},{
-        images: images
+        images: req.session.images
       });
     }
     if(req.body.softdel){
@@ -312,6 +331,21 @@ const filter=async (req,res)=>{
   }
 }
 
+const removeImage=(req,res)=>{
+  const {filename}=req.body
+  console.log(filename)
+  console.log(req.session.images); 
+
+  if (Array.isArray(req.session.images)) {
+    const index = req.session.images.indexOf(filename);
+    if (index !== -1) {
+      req.session.images.splice(index, 1); 
+    }
+  }
+  console.log(req.session.images); 
+  res.send("Success")
+
+}
 
 
 module.exports={
@@ -327,6 +361,7 @@ module.exports={
   clearSearch,
   availability,
   filter,
-  productFilter
+  productFilter,
+  removeImage
     
 }

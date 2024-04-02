@@ -119,15 +119,19 @@
                                 
                                 <div class="col-md-9">
                                     <div class="mb-4">
-                                        <label class="form-check">
-                                            <input type="checkbox" name="imgUpdate"  class="form-check-input" value="1" >
+                                        <label class="form-check" style="display: none;">
+                                            <input type="checkbox" name="imgUpdate"  class="form-check-input" value="1">
                                             <span class="form-check-label">Update Images</span>
                                         </label>
                                         <label class="form-label">Images</label>
                                         <p class="error-message" style="color: red;" id="imagesError"></p> 
                                         <input class="form-control" type="file" name="images" id="images" accept="image/*" multiple>
                                         {{#each this.images}}
-                                            <img src="/images/{{this}}" alt="image" style="max-width: 200px;">
+                                            <div class=" align-items-center m-4" id="{{this}}">
+                                                <img src="/images/{{this}}" alt="image" style="max-width: 200px;" class="mr-2">
+                                                <br>
+                                                <button type="button" class="btn btn-sm btn-danger remove-image" data-filename="{{this}}">Remove</button>
+                                            </div>
                                         {{/each}}
                                     </div>
                                 </div> <!-- col.// -->
@@ -144,4 +148,20 @@
 
         </section> <!-- content-main end// -->
  {{/each}}
+
+ <script>
+    $(document).on('click', '.remove-image', function() {
+    const filename = $(this).data('filename');
+    data={}
+    data.filename=filename
+    fetch('/admin/remove-image',{
+            method:"POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+    document.getElementById(`${filename}`).style.display='none'
+});
+ </script>
         <script src="/assets/js/productval.js"></script>

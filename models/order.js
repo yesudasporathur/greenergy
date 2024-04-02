@@ -44,6 +44,7 @@ const orderSchema = new Schema({
     paytype: String,
     payref: Number,
     notes:String,
+    shipping: Number,
     razpay:String,
     razorder:String,
     couponcode:String,

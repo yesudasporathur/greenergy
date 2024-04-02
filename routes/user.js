@@ -17,6 +17,7 @@ const setNoCache=require('../public/javascripts/setNoCache');
 const Cart = require('../models/cart');
 const { template } = require('handlebars');
 
+router.post('/invoice-pdf',setNoCache.user,requireLogin,setNoCache.user,isBlock,userPreload,orderController.invoicePdf)
 router.get('/shop', setNoCache.user,requireLogin,setNoCache.user,isBlock,userPreload,productController.shopLoad);
 router.post('/filter',setNoCache.user, requireLogin,setNoCache.user,isBlock,userPreload,productController.filter);
 router.post('/coupon-apply',setNoCache.user, requireLogin,setNoCache.user,isBlock,userPreload,couponController.couponApply);

@@ -24,6 +24,7 @@ const cartSchema=new Schema({
         }
     }],
     subtotal: Number,
+    shipping: Number,
     total:{
         type:Number,
     },
