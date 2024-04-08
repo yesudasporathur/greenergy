@@ -12,7 +12,6 @@ const hbs = require('hbs');
 // const fs = require('fs');
 const app = express();
 
-
 const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
@@ -22,9 +21,9 @@ mongoose.connect(process.env.MONGODB_URI);
 
 
 app.set('views', path.join(__dirname, 'views'));
-// hbs.registerHelper('dateFormat', require( '../greenergy/public/javascripts/dateConvert'));
-// hbs.registerHelper('timeFormat', require( '../greenergy/public/javascripts/timeConvert'));
-//hbs.registerPartial('navbar',require('./views/user/partials/navbar'))
+hbs.registerHelper('dateFormat', require( '../greenergy/public/javascripts/dateConvert'));
+hbs.registerHelper('timeFormat', require( '../greenergy/public/javascripts/timeConvert'));
+hbs.registerPartial('navbar',require('./views/user/partials/navbar'))
 
 app.set('view engine', 'hbs');
 
