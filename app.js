@@ -11,7 +11,7 @@ const hbs = require('hbs');
 // const puppeteer = require('puppeteer');
 // const fs = require('fs');
 const app = express();
-
+console.log(process.env.MONGODB_URI)
 const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
