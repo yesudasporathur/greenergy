@@ -16,7 +16,7 @@ const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
 
-mongoose.connect(`${process.env.MONGODB_URI}`);
+mongoose.connect("mongodb+srv://yesudasporathur:wwA08LEahp0hYbC8@greenergy-db.mr0blml.mongodb.net");
 
 
 app.set('views', path.join(__dirname, 'views'));
