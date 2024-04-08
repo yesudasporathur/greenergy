@@ -11,12 +11,12 @@ const hbs = require('hbs');
 // const puppeteer = require('puppeteer');
 // const fs = require('fs');
 const app = express();
-console.log(process.env.MONGODB_URI)
+
 const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
 
-mongoose.connect("mongodb+srv://yesudasporathur:wwA08LEahp0hYbC8@greenergy-db.mr0blml.mongodb.net");
+mongoose.connect(`${process.env.MONGODB_URI}`);
 
 
 app.set('views', path.join(__dirname, 'views'));
