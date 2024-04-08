@@ -195,18 +195,22 @@ const otp_check=async(req, res, next)=> {
           block: 0,
           isAdmin: 0,
         }) 
-        console.log(req.session.referral) 
-        const walletReferral=await Wallet.findOne({u_id:referrals._id})
-        walletReferral.balance+=100
-        const newAction={
-            credit:true,
-            amount:100,
-            current: walletReferral.balance,
-            reference: "New User Referral"
+        console.log(req.session.referral)
+        if(referrals){
+          const walletReferral=await Wallet.findOne({u_id:referrals._id})
+          walletReferral.balance+=100
+          const newAction={
+              credit:true,
+              amount:100,
+              current: walletReferral.balance,
+              reference: "New User Referral"
+
+          }
+          walletReferral.action.push(newAction)
+          await walletReferral.save()
 
         }
-        walletReferral.action.push(newAction)
-        await walletReferral.save()
+        
            
 
       
