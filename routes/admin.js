@@ -75,7 +75,7 @@ router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
 
 function requireLogin(req, res, next) {
-  req.session.admin='65dc11c766e50223004d914e'
+ //req.session.admin='65dc11c766e50223004d914e'
   if (!req.session.admin) {
     return res.redirect('admin');
   }
