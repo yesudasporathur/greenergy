@@ -115,7 +115,7 @@
                                         </label>
                                         <label class="form-label">Images</label>
                                         <p class="error-message" style="color: red;" id="imagesError"></p>
-                                        <input class="form-control" type="file" name="images" id="images" accept="image/*" multiple>
+                                        <input class="form-control" type="file" name="images" id="images" onmouseleave="previewImages()" accept="image/*" multiple>
                                         <div id="image-preview-container"></div>
                                     </div>
                                 </div> <!-- col.// -->
@@ -131,24 +131,45 @@
 
         <script src="../admin/assets/js/productval.js"></script>
         <script>
-            function previewImages(event) {
-            var files = event.target.files;
-            var previewContainer = document.getElementById('image-preview-container');
-            previewContainer.innerHTML = ''; // Clear previous previews
+    function previewImages() {
+        var files = document.getElementById('images').files;
+        var previewContainer = document.getElementById('image-preview-container');
+        previewContainer.innerHTML = ''; // Clear previous previews
 
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                var reader = new FileReader();
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            fetch('/image-add',{
+                method:'post',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:file
+            })
+            console.log("fetched")
+            var reader = new FileReader();
 
-                reader.onload = function(e) {
-                    var img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.classList.add('preview-image');
-                    previewContainer.appendChild(img);
-                };
+            reader.onload = function(e) {
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('preview-image');
+                
+                var removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'mt-2', 'remove-button');
+                removeButton.addEventListener('click', function() {
+                    this.parentNode.remove(); // Remove the parent node (the image and the remove button)
+                });
 
-                reader.readAsDataURL(file);
-            }
+                var previewWrapper = document.createElement('div');
+                previewWrapper.classList.add('preview-wrapper');
+                previewWrapper.appendChild(img);
+                previewWrapper.appendChild(removeButton);
+
+                previewContainer.appendChild(previewWrapper);
+            };
+
+            reader.readAsDataURL(file);
         }
+    }
+</script>
 
-        </script>

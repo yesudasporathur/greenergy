@@ -1,17 +1,16 @@
 require('dotenv').config();
 const express = require('express');
-const app = express();
-const exphbs  = require('express-handlebars');
 const session = require('express-session');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const mongoose = require("mongoose");
+const hbs = require('hbs');
 //const logger = require('morgan');
 //const createError = require('http-errors');
-const mongoose = require("mongoose");
-var hbs = require('hbs');
 // const puppeteer = require('puppeteer');
 // const fs = require('fs');
+const app = express();
 
 const PORT=process.env.CONNECTION
 const userRouter = require('./routes/user');
@@ -24,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI);
 app.set('views', path.join(__dirname, 'views'));
 hbs.registerHelper('dateFormat', require( '../greenergy/public/javascripts/dateConvert'));
 hbs.registerHelper('timeFormat', require( '../greenergy/public/javascripts/timeConvert'));
+hbs.registerPartial('navbar',require('./views/user/partials/navbar'))
 
 app.set('view engine', 'hbs');
 

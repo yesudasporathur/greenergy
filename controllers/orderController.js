@@ -43,6 +43,16 @@ const OrderListLoad=async(req,res)=>{
     res.render('user/order-list',{order,title, cartnum, user: req.session.user,carttotal,orders:true})
 }
 
+const orderListPagin=async (req,res)=>{
+    const {page,limit}=req.body
+    let skip=(page-1)*limit
+    const count=await Order.countDocuments({u_id:req.session.user}).populate('items.product')
+    const orders=await Order.find({u_id:req.session.user}).populate('items.product').sort({createdAt:-1}).skip(skip).limit(limit);
+    const pages=Math.floor(count/limit)
+    console.log(orders)
+    res.status(200).json({orders,pages})
+}
+
 const orderCancelLoad=async(req,res)=>{
     const _id = req.query._id
     await Order.findOneAndUpdate({_id:_id},{status:"Cancel Requested",reqCancel:true})
@@ -444,5 +454,6 @@ module.exports={
     generatePdf,
     generateCsv,
     cancelOrder,
-    invoicePdf
+    invoicePdf,
+    orderListPagin
 }

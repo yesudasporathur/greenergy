@@ -299,7 +299,7 @@ const profileLoad=async(req,res)=>{
 
 const settingsLoad=async(req,res)=>{
   const message=req.query.message
-  res.render('user/settings',{user: req.session.user,message:message, cartnum, carttotal, })
+  res.render('user/settings',{user: req.session.user,message:message, cartnum, carttotal, settin:true })
 }
 
 const settingsSave=async(req,res)=>{
@@ -398,8 +398,62 @@ const admin_login_post=async(req,res)=>{
 
 const adminDashboard=async (req,res)=>{
   const products=await Product.find().sort({popularity:-1}).limit(10)
-  console.log(products)
-  res.render('admin/dashboard', {products, title, message: '' ,layout:'admin/layout'});
+  const categories=await Product.aggregate([
+    {
+        $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category'
+        }
+    },
+    {
+        $unwind: '$category'
+    },
+    {
+        $group: {
+            _id: '$category._id',
+            name: { $first: '$category.name' },
+            popularity: { $sum: '$popularity' } 
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            name: 1,
+            popularity: 1
+        }
+    }
+]).sort({popularity:-1}).limit(5)
+const brands=await Product.aggregate([
+  {
+      $lookup: {
+          from: 'brands',
+          localField: 'brand',
+          foreignField: '_id',
+          as: 'brand'
+      }
+  },
+  {
+      $unwind: '$brand'
+  },
+  {
+      $group: {
+          _id: '$brand._id',
+          name: { $first: '$brand.name' },
+          popularity: { $sum: '$popularity' } 
+      }
+  },
+  {
+      $project: {
+          _id: 0,
+          name: 1,
+          popularity: 1
+      }
+  }
+]).sort({popularity:-1}).limit(5)
+  console.log(categories)
+  res.render('admin/dashboard', {products,categories,brands,title, message: '' ,layout:'admin/layout'});
   console.log("Admin Dashboard rendered")  
   
 }

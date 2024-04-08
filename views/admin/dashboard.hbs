@@ -1,4 +1,12 @@
-
+<style>
+    th, td {
+        padding: 10px;
+        
+    }
+    th{
+        text-align: center;
+    }
+</style>
         <section class="content-main">
             <div class="content-header">
                 <div>
@@ -6,7 +14,7 @@
                     {{!-- <p>Whole data about your business here</p> --}}
                 </div>
                 <div>
-                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
+                    <a href="orders" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
                 </div>
             </div>
             {{!-- <div class="row">
@@ -76,8 +84,56 @@
                             </select>
                             </span>
                             
-                            <canvas id="myChart" height="120px"></canvas>
+                            <canvas id="myChart" height="80px"></canvas>
                         </article>
+                    </div>
+                    
+                    <div class="row card-body" style="display: flex; justify-content:space-evenly">
+                        <div class="card mb-4 col-xl-6 col-lg-12" style="height: 320px;">
+                        <article class="card-body">
+                            <h5 class="card-title">Top Selling Brands</h5>
+                            <table style="width:100%">
+                                
+                                <thead>
+                                    <th>Brands</th>
+                                    <th>Orders</th>
+                                </thead>
+                                <tbody>
+                                    {{#each brands}}
+                                    <tr onclick="window.location.href="/pro"">
+                                        <td style="text-align: center;">{{name}}</td>
+                                        <td style="text-align: center;">{{popularity}}</td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                            {{!-- <canvas id="myChart2" height="217"></canvas> --}}
+
+                        </article>
+                        </div>
+                        <div class="card mb-4 col-xl-5 col-lg-12" style="margin-left:10px" >
+                            <article class="card-body">
+                                <h5 class="card-title">Top Selling Categories</h5>
+                            <table style="width:100%">
+                                    
+                                    <thead>
+                                        <th>Categories</th>
+                                        <th>Orders</th>
+                                    </thead>
+                                    <tbody>
+                                        {{#each categories}}
+                                        <tr onclick="window.location.href="/pro"">
+                                            <td style="text-align: center;">{{name}}</td>
+                                            <td style="text-align: center;">{{popularity}}</td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                                {{!-- <canvas id="myChart2" height="217"></canvas> --}}
+
+                            </article>
+                        </div>
+
                     </div>
                     {{!-- <div class="row">
                         <div class="col-lg-5">

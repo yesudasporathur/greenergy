@@ -42,7 +42,8 @@ router.post('/product-filter', setNoCache.admin,  requireLogin, productControlle
 router.get('/product-add', setNoCache.admin, requireLogin,  productController.product_add_get)
 router.get('/product-edit', setNoCache.admin,  requireLogin, productController.product_edit_get)
 router.post('/product-edit', setNoCache.admin,  requireLogin, multer.array('images', 10),productController.product_edit_post)
-router.post('/product-add', setNoCache.admin, requireLogin,  multer.array('images', 10),productController.ProductAddSave)
+router.post('/product-add', setNoCache.admin, requireLogin,productController.ProductAddSave)
+router.post('/image-add',  multer.array('images', 10))
 router.post('/remove-image',productController.removeImage)
 router.get('/product-block/:_id', setNoCache.admin, requireLogin, productController.product_block);
 router.get('/product-unblock/:_id', setNoCache.admin, requireLogin, productController.product_unblock);
@@ -89,5 +90,7 @@ async function isLoggedIn(req, res, next) {
   }
   next();
 }
+
+
 
 module.exports = router;
