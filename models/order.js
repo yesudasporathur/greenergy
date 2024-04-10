@@ -74,10 +74,6 @@ const orderSchema = new Schema({
         type:Boolean,
         default: false
     },
-    returned:{
-        type:Boolean,
-        default: false
-    },
     refundStarted:{
         type:Boolean,
         default: false

@@ -159,7 +159,7 @@ const product_unblock=async (req,res)=>{
 const ProductAddSave=async (req,res, next) => {
   try{
     const {sku,name,description,brand,mrp,sp,stock,category}=req.body
-    const images = req.files.map(file=>file.filename)
+    const images = req.session.images
     const discount=Math.ceil(100-(sp/mrp)*100)
     const products=new Product({
       sku: sku,
@@ -190,6 +190,7 @@ const ProductAddSave=async (req,res, next) => {
       }
       
     }
+    req.session.images=[]
   }
   catch(err){
     console.log("Product adding failed",err)
@@ -331,6 +332,12 @@ const filter=async (req,res)=>{
   }
 }
 
+const addImage=(req,res)=>{
+  const images=req.session.images
+  res.status(200).json({images})
+}
+
+
 const removeImage=(req,res)=>{
   const {filename}=req.body
   console.log(filename)
@@ -343,7 +350,8 @@ const removeImage=(req,res)=>{
     }
   }
   console.log(req.session.images); 
-  res.send("Success")
+  const images=req.session.images
+  res.json({images})
 
 }
 
@@ -362,6 +370,7 @@ module.exports={
   availability,
   filter,
   productFilter,
-  removeImage
+  removeImage,
+  addImage
     
 }

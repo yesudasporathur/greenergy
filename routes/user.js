@@ -71,13 +71,13 @@ router.post('/wishlist-add',setNoCache.user,requireLogin,userPreload,wishlistCon
 router.get('/wishlist-remove',setNoCache.user,requireLogin,userPreload,wishlistController.wishlistRemove)
 router.get('/wallet',setNoCache.user,requireLogin,setNoCache.user,isBlock,userPreload,walletController.walletLoad)
 router.post('/wallet-paging',setNoCache.user,requireLogin,setNoCache.user,isBlock,userPreload,walletController.walletPagin)
-router.get('/logout', setNoCache.user,requireLogin, setNoCache.user, userPreload,userController.user_logout,()=>{console.log("cookie"+req.cookies.redirecturl)})
+router.get('/logout', setNoCache.user,requireLogin, setNoCache.user, userPreload,userController.user_logout,()=>{})
 router.get('/',  setNoCache.user, userPreload,userController.home_get);
 router.post('/',  setNoCache.user, userPreload,userController.home_post)
 router.get('/*', setNoCache.user, userPreload,userController.page_not_found)
 
 async function requireLogin(req, res, next) {
-  //req.session.user='65dc11c766e50223004d914e'
+  req.session.user='65dc11c766e50223004d914e'
     if (!req.session.user) {
       return res.redirect('/sign-in');
     }
@@ -95,7 +95,6 @@ async function isBlock(req,res,next){
   const userdata=await User.findOne({_id: req.session.user})
 
   if(userdata.block==true){
-    console.log("blocked")
     return res.redirect('/logout');
   }
   next()

@@ -48,12 +48,22 @@
                                     {{/if}}
                                 {{else}}
                                     {{#if order.delivered}}
-                                    <option value="Delivered">Delivered</option>
+
                                     {{else}}
-                                    <option value="Ordered">Ordered</option>
-                                    <option value="Dispatched">Dispatched</option>
-                                    <option  value="In Transit">In Transit</option>
-                                    <option value="Delivered">Delivered</option>
+                                        {{#if order.inTransit}}
+                                            <option value="Delivered">Delivered</option>
+
+                                        {{else}}
+                                            {{#if order.dispatched}}
+                                            <option  value="In Transit">In Transit</option>
+                                            {{else}}
+                                                <option value="Ordered">Ordered</option>
+                                                <option value="Dispatched">Dispatched</option>
+
+                                            {{/if}}
+
+                                        {{/if}}
+                                    
                                     {{/if}}
 
 

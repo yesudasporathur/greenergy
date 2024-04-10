@@ -113,6 +113,7 @@ const create_account_get=(req, res, next) =>{
 
 
 const create_account_post =  async (req, res) =>{
+  console.log("create account")
   var data={first_name,last_name,email,phone,password,referral}=req.body
   req.session.referral=referral
   const userExist=await User.exists({email})

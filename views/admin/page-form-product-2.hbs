@@ -115,7 +115,7 @@
                                         </label>
                                         <label class="form-label">Images</label>
                                         <p class="error-message" style="color: red;" id="imagesError"></p>
-                                        <input class="form-control" type="file" name="images" id="images" onmouseleave="previewImages()" accept="image/*" multiple>
+                                        <input class="form-control" type="file" name="images" id="images" onchange="previewImages()" accept="image/*" multiple>
                                         <div id="image-preview-container"></div>
                                     </div>
                                 </div> <!-- col.// -->
@@ -130,46 +130,88 @@
         </section> <!-- content-main end// -->
 
         <script src="../admin/assets/js/productval.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        const imageInputs = document.querySelectorAll('input[type="file"]');
+        imageInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.onload = function() {
+                        const cropper = new Cropper(image, {
+                            aspectRatio: 1 / 1,
+                            viewMode: 2,
+                            zoomable: false,
+                        });
+                        const container = input.parentElement.querySelector('#image-preview-container');
+                        container.appendChild(cropper.getCroppedCanvas());
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
         <script>
-    function previewImages() {
-        var files = document.getElementById('images').files;
-        var previewContainer = document.getElementById('image-preview-container');
-        previewContainer.innerHTML = ''; // Clear previous previews
-
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            fetch('/image-add',{
-                method:'post',
-                headers:{
+            function removeImage(filename){
+                let data={}
+                data.filename=filename
+                fetch('/admin/remove-image', {
+                method: 'POST',
+                headers: {
                     'Content-Type':'application/json'
                 },
-                body:file
+                body: JSON.stringify(data)
             })
-            console.log("fetched")
-            var reader = new FileReader();
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                updateImages(data.images)
+            })
+            .catch(error => console.error('Error:', error));
 
-            reader.onload = function(e) {
-                var img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('preview-image');
-                
-                var removeButton = document.createElement('button');
-                removeButton.textContent = 'Remove';
-                removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'mt-2', 'remove-button');
-                removeButton.addEventListener('click', function() {
-                    this.parentNode.remove(); // Remove the parent node (the image and the remove button)
-                });
 
-                var previewWrapper = document.createElement('div');
-                previewWrapper.classList.add('preview-wrapper');
-                previewWrapper.appendChild(img);
-                previewWrapper.appendChild(removeButton);
+            }
+        function previewImages() {
+            var files = document.getElementById('images').files;
+            var formData = new FormData();
 
-                previewContainer.appendChild(previewWrapper);
-            };
+            for (var i = 0; i < files.length; i++) {
+                formData.append('images', files[i]);
+            }
 
-            reader.readAsDataURL(file);
+
+            fetch('/admin/image-add', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                updateImages(data.images)
+            })
+            .catch(error => console.error('Error:', error));
         }
-    }
+        function updateImages(data){
+            let container = '';
+                for (let i in data) {
+                    let previewWrapper = `
+                        <div class="preview-wrapper">
+                            <img src="/images/${data[i]}" class="preview-image">
+                            <button class="btn btn-sm btn-danger mt-2 remove-button" onclick="removeImage('${data[i]}')">Remove</button>
+                        </div>
+                    `;
+                    container += previewWrapper;
+                }
+
+                var previewContainer = document.getElementById('image-preview-container');
+                previewContainer.innerHTML = container; // Use innerHTML to set the HTML content
+        }
+
+        
 </script>
 

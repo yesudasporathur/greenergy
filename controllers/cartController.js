@@ -11,7 +11,11 @@ const Razorpay = require('razorpay');
 
 const cartView=async(req,res)=>{
     const couponmsg=req.query.coupon
-    const carts=await Cart.findOne({u_id:req.session.user}).populate('items.product').populate('coupon')
+    let carts=await Cart.findOne({u_id:req.session.user}).populate('items.product').populate('coupon')
+    if (!carts) {
+        carts = new Cart({ u_id: req.session.user });
+        await carts.save();
+    }
     let cartempty=false
     if(carts.items.length==0){
         cartempty=true
@@ -28,7 +32,6 @@ const addToCartSave = async (req, res) => {
 
         if (!cart) {
             cart = await Cart.create({ u_id: u_id });
-            console.log("New Cart created: ");
         }
         
         const product = await Product.findById(p_id);
@@ -51,7 +54,6 @@ const addToCartSave = async (req, res) => {
             });
         } else {
             if (product.stock <= existingCartItem.qty || !(product.stock!=0)) {
-                console.log("Stock out");
                 return res.status(400).send("Product stock limited");
             }
             if (existingCartItem.qty==5){
@@ -71,7 +73,6 @@ const addToCartSave = async (req, res) => {
         }
         cart.total=cart.subtotal+cart.shipping
         await cart.save();
-        console.log("Cart updated: ");
 
 
 
@@ -148,7 +149,6 @@ const removeFromCartSave = async (req, res,next) => {
     
             // Save the updated cart
             await cart.save();
-            console.log("Item quantity decreased in cart: ");
             res.status(200).json({ message: "Product removed from cart successfully", cartnum: cart.items.length, quantity: cart.items[itemIndex].qty ,subtotal:cart.items[itemIndex].subtotal,total:cart.total});
     
 
@@ -213,7 +213,6 @@ const deleteFromCart = async (req, res) => {
         // Save the updated cart
         await cart.save();
 
-        console.log("Item deleted from cart: ");
         res.redirect('/cart'); // Redirect to cart page after successful deletion
 
     } catch (error) {
@@ -283,11 +282,10 @@ const checkoutOrdering=async (req,res)=>{
         const cartDel=await Cart.findOneAndUpdate({_id:c_id},{items:[],total:0,coupon:null})
         if(payment=='Razorpay'){
             res.status(201).json({newOrderId: newOrder._id})
-            console.log("Redirected to Razorpay")
         }
         else{
-            res.status(200).json({newOrderId: newOrder._id})
-            console.log("Cash on delivery complete")
+            const url=`order-details?message=Order+has+been+successfully+placed!&_id=${req.session.orderid}`
+            res.status(200).json({newOrderId: newOrder._id,url:url})
         }
     }
     catch(error){
@@ -312,7 +310,6 @@ const razorPayFn=async (req,res)=>{
         else{
             total=cart.total
         }
-        console.log("cart.payref",cart.payref,total)
         var options = {
         amount: total*100,
         currency: "INR",
@@ -324,8 +321,6 @@ const razorPayFn=async (req,res)=>{
             req.session.orderid=_id
             await Order.findOneAndUpdate({_id:_id},{razorder:order.id})
             const url=`order-details?message=Order+has+been+successfully+placed!&_id=${req.session.orderid}`
-
-            console.log("Order Created. proceeding to payment")
             return res.status(200).json({order: order ,RAZORID:process.env.RAZORID,name:name, email:user.email, phone:user.phone,url});            
         })
     }
@@ -335,7 +330,6 @@ const razorPayFn=async (req,res)=>{
 }
 
 const payId=async(req,res)=>{
-    console.log(111)
     await Order.findOneAndUpdate({_id:req.session.orderid},{razpay:req.query.id})
     const url=`order-details?message=Order+has+been+successfully+placed!&_id=${req.session.orderid}`
     res.status(200).json(url)

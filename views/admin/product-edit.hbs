@@ -148,7 +148,30 @@
 
         </section> <!-- content-main end// -->
  {{/each}}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        const imageInputs = document.querySelectorAll('input[type="file"]');
+        imageInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const image = new Image();
+                    image.src = e.target.result;
+                    image.onload = function() {
+                        const cropper = new Cropper(image, {
+                            aspectRatio: 1 / 1,
+                            viewMode: 2,
+                            zoomable: false,
+                        });
+                        const container = input.parentElement.querySelector('#image-preview-container');
+                        container.appendChild(cropper.getCroppedCanvas());
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
  <script>
     $(document).on('click', '.remove-image', function() {
     const filename = $(this).data('filename');

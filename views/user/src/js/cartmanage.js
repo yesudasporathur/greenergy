@@ -167,6 +167,14 @@ async function placeOrder(event){
                     }
                     
                 }
+                else if(res.status==200){
+                    console.log(await res.json())
+                    const url=await res.json()
+                    window.location.href=url
+                }
+                else{
+
+                }
             }
             catch(err){
                 console.log(err)

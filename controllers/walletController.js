@@ -6,16 +6,22 @@ const walletLoad=(req,res)=>{
 }
 
 const walletPagin=async (req,res)=>{
-    const {page,limit}=req.body
-    let skip=(page-1)*limit
-    const wallet=await Wallet.findOne({u_id:req.session.user}).sort({createdAt:-1}).skip(skip).limit(limit);
-    wallet.action.sort((a, b) => b.time - a.time);
-    if(!wallet){
-        walletAdd(req.session.user)
-    }
-    const pages=Math.floor(count/limit)
+    try{
+        const {page,limit}=req.body
+        let skip=(page-1)*limit
+        const wallet=await Wallet.findOne({u_id:req.session.user}).sort({createdAt:-1}).skip(skip).limit(limit);
+        wallet.action.sort((a, b) => b.time - a.time);
+        if(!wallet){
+            walletAdd(req.session.user)
+        }
+        const pages=Math.floor(count/limit)
 
-    res.status(200).json({wallet})
+        res.status(200).json({wallet})
+    }
+    catch{
+        
+    }
+
 }
 
 const walletAdd=async (u_id)=>{
