@@ -18,15 +18,11 @@ const adminRouter=require('./routes/admin')
 
 mongoose.connect(`${process.env.MONGODB_URI}`);
 
-
 app.set('views', path.join(__dirname, 'views'));
 hbs.registerHelper('dateFormat', require( '../greenergy/public/javascripts/dateConvert'));
 hbs.registerHelper('timeFormat', require( '../greenergy/public/javascripts/timeConvert'));
 hbs.registerPartial('navbar',require('./views/user/partials/navbar'))
-
 app.set('view engine', 'hbs');
-
-
 
 //app.use(logger('dev'));
 app.use(cookieParser());
