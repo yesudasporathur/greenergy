@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var brandController=require('../controllers/brandController')
-var userController=require('../controllers/userController')
+const express = require('express');
+const router = express.Router();
+const brandController=require('../controllers/brandController')
+const userController=require('../controllers/userController')
 const productController=require('../controllers/productController')
 const categoryController=require('../controllers/categoryController')
 const orderController=require('../controllers/orderController')
