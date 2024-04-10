@@ -11,7 +11,6 @@ function convertDateFormat(dateString) {
 const couponList=async (req,res)=>{
     const coupons=await Coupon.find()
     res.render('admin/coupons',{title,layout:'admin/layout',coupons})
-    console.log("couponList")
 }
 
 const couponFilterFn=async(search,page,limit)=>{
@@ -31,7 +30,6 @@ const couponFilterFn=async(search,page,limit)=>{
     const overall=await Coupon.find(findFn)
     const coupons=await Coupon.find(findFn).sort(sorting).skip(skip).limit(limit);
     let pages=Math.ceil(count/limit)
-    console.log(overall)
     return {overall,coupons,pages,page,count}
 }
 
@@ -51,7 +49,6 @@ const couponFilter=async (req,res)=>{
 const couponAdd=(req,res)=>{
     const message=req.query.message
     res.render('admin/coupon-add',{message,title,layout:'admin/layout'})
-    console.log("couponAdd")
 }
 const couponAdding=async (req,res)=>{
     const {code,description, maxAmount, minAmount, discount, expiryDate}=req.body
@@ -82,7 +79,6 @@ const couponAdding=async (req,res)=>{
     })
     await couponEntry.save()
     res.redirect('/admin/coupons')
-    console.log("couponAdding")
 
 }
 
@@ -90,20 +86,17 @@ const couponBlock=async (req,res)=>{
     const _id=req.params
     const blocking=await Coupon.findOneAndUpdate({_id},{status:false})
     res.redirect('/admin/coupons')
-    console.log("couponBlock")
 }
 const couponUnblock=async (req,res)=>{
     const _id=req.params
     const blocking=await Coupon.findOneAndUpdate({_id},{status:true})
     res.redirect('/admin/coupons')
-    console.log("couponUnblock")
 }
 
 const couponDelete=async (req,res)=>{
     const _id=req.params
     const blocking=await Coupon.findOneAndDelete({_id})
     res.redirect('/admin/coupons')
-    console.log("couponDelete")
 }
 
 
@@ -130,7 +123,6 @@ const couponApply=async (req,res)=>{
     }
     
 
-    console.log("couponApply")
     res.redirect(`/cart?coupon=${message}`)
 }
 
@@ -158,7 +150,6 @@ const couponApplyAvail=async (req,res)=>{
 
     
 
-    console.log("couponApplyAvail")
     res.redirect(`/cart?coupon=${message}`)
 }
 
@@ -167,7 +158,6 @@ const couponRemove=async (req,res)=>{
     const { c_id,cart_id}=req.query
     const usedChange=await Coupon.findByIdAndUpdate({_id:c_id},{used:false})
     const discount=usedChange.discount
-    console.log(discount)
     const cartChange=await Cart.findByIdAndUpdate({_id:cart_id},{
         coupon:null,
         $inc: {total:discount}
@@ -179,7 +169,6 @@ const couponEdit=async (req,res)=>{
     const _id=req.query
     const coupon=await Coupon.findById(_id)
     res.render('admin/coupon-edit',{layout:'admin/layout',coupon})
-    console.log("couponEdit")
 }
 
 const couponEditing=async(req,res)=>{
@@ -194,7 +183,6 @@ const couponEditing=async(req,res)=>{
         expiryDate:newDate
     })
     res.redirect('/admin/coupons')
-    console.log("couponAdding")
 
 }
 
@@ -208,12 +196,10 @@ const coupons=async (req, res) => {
     
     const unixTimestamp = Date.now(); 
     const dateNow = convertUnixToISOString(unixTimestamp);
-    console.log(dateNow);
     
     
     const coupons = await Coupon.find({maxAmount:{$gte:total},expiryDate:{$gte:dateNow},minAmount:{$lte:total},status:true, used:false})
 
-    console.log(coupons)
   
     res.json(coupons);
   }
