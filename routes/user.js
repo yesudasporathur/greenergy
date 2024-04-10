@@ -10,7 +10,7 @@ const walletController=require('../controllers/walletController.js')
 const couponController=require('../controllers/couponController.js')
 
 
-var MongoClient=require('mongodb').MongoClient
+//var MongoClient=require('mongodb').MongoClient
 const User = require("../models/user");
 
 const setNoCache=require('../public/javascripts/setNoCache');

@@ -6,8 +6,8 @@ const productController=require('../controllers/productController')
 const categoryController=require('../controllers/categoryController')
 const orderController=require('../controllers/orderController')
 const couponController=require('../controllers/couponController')
-const puppeteer = require('puppeteer');
-const fs = require('fs');
+//const puppeteer = require('puppeteer');
+//const fs = require('fs');
 
 
 

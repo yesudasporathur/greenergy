@@ -76,11 +76,13 @@ async function submitForm(pagin) {
                 }
                 
                 data+=`<div class="cards-md__favs-list">
+                    <!----
                     <span class="action-btn">
                         <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.9996 16.5451C-6.66672 7.3333 4.99993 -2.6667 9.9996 3.65668C14.9999 -2.6667 26.6666 7.3333 9.9996 16.5451Z" stroke="currentColor" stroke-width="1.5"></path>
                         </svg>
                     </span>
+                    
                     <span class="action-btn" data-bs-toggle="modal" data-bs-target="#productView">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -99,6 +101,7 @@ async function submitForm(pagin) {
                             ></path>
                         </svg>
                     </span>
+                    --->
                 </div>
             </div>
             <div class="cards-md__info d-flex justify-content-between align-items-center">

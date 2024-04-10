@@ -22,15 +22,15 @@ const home_get=(req,res)=>{
   console.log("Login rendered")
 }
 const home_post=(req,res)=>{
-    MongoClient.connect(process.env.MONGODB_URI,function(err,client){
-      if(err){
-        console.log('error')
-      }
-      else
-      {
-        console.log("connected")
-      }
-    })
+    // MongoClient.connect(process.env.MONGODB_URI,function(err,client){
+    //   if(err){
+    //     console.log('error')
+    //   }
+    //   else
+    //   {
+    //     console.log("connected")
+    //   }
+    // })
   }
 
 const signInLoad=(req, res, next) =>{
