@@ -1,11 +1,11 @@
-var express = require('express');
-var router = express.Router();
-var userController=require('../controllers/userController')
-var addressController=require('../controllers/addressController')
-var productController=require('../controllers/productController')
-var cartController=require('../controllers/cartController')
-var orderController=require('../controllers/orderController')
-var wishlistController=require('../controllers/wishlistController.js')
+const express = require('express');
+const router = express.Router();
+const userController=require('../controllers/userController')
+const addressController=require('../controllers/addressController')
+const productController=require('../controllers/productController')
+const cartController=require('../controllers/cartController')
+const orderController=require('../controllers/orderController')
+const wishlistController=require('../controllers/wishlistController.js')
 const walletController=require('../controllers/walletController.js')
 const couponController=require('../controllers/couponController.js')
 
