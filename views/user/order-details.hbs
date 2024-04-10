@@ -190,7 +190,7 @@
 
                                               {{else}}
                                                         {{#if order.cancelled}}
-                                                          <div class="progress__bar progress__bar-5x">
+                                                          <div class="progress__bar progress__bar-2x">
                                                         {{else}}
                                                           <div class="progress__bar progress__bar-1x">
                                                         {{/if}}
@@ -239,7 +239,12 @@
                                         <h2 class="font-body--md-400">Order received</h2>
                                         {{/if}}
                                       </div>
+                                      {{#if order.cancelled}}
                                       <div class="progress__bar-item active">
+
+                                      {{else}}
+                                      <div class="progress__bar-item ">
+                                      {{/if}}
                                         <div class="progress__bar-item-ball">
                                           <p
                                             class="
@@ -273,13 +278,25 @@
                                         <h2 class="font-body--md-400">Cancelled</h2>
                                         {{/if}}
                                       </div>
+                                      {{#if order.refundStarted}}
                                       <div class="progress__bar-item active">
+
+                                      {{else}}
+                                      <div class="progress__bar-item ">
+                                      {{/if}}
                                         <div class="progress__bar-item-ball">
                                           <p class="font-body--md-400 count-number">03</p>
                                         </div>
                                         <h2 class="font-body--md-400">Refund Started</h2>
                                       </div>
+                                      
+                                      {{#if order.refunded}}
                                       <div class="progress__bar-item active">
+
+                                      {{else}}
+                                      <div class="progress__bar-item ">
+                                      {{/if}}
+
                                         <div class="progress__bar-item-ball">
                                           <p
                                             class="
@@ -323,12 +340,12 @@
                                 {{#if order.delivered}}
                                         <div class="progress__bar progress__bar-4x">
                                 {{else}}
-                                        {{#if order.intransit}}
+                                        {{#if order.inTransit}}
                                                 <div class="progress__bar progress__bar-3x">
 
                                         {{else}}
                                                   {{#if order.dispatched}}
-                                                    <div class="progress__bar progress__bar-5x">
+                                                    <div class="progress__bar progress__bar-2x">
                                                   {{else}}
                                                     <div class="progress__bar progress__bar-1x">
                                                   {{/if}}

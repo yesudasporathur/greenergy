@@ -19,7 +19,6 @@ let title="Greenergy"
 const home_get=(req,res)=>{
   res.redirect('/sign-in')
   //res.render('user/home-03', { title: 'Greenergy' });
-  console.log("Login rendered")
 }
 const home_post=(req,res)=>{
     // MongoClient.connect(process.env.MONGODB_URI,function(err,client){
@@ -36,7 +35,6 @@ const home_post=(req,res)=>{
 const signInLoad=(req, res, next) =>{
   
    res.render('user/sign-in', { user: req.session.user,email:req.session.email,message:'',title: 'Sign-in' });
-    console.log("sign_in_get rendered")
     
 
   }
@@ -68,10 +66,8 @@ const signInLoad=(req, res, next) =>{
         }
         else{
           let userData=await User.findOne({email:email})
-          console.log(`logged in ${userData._id}`)
           req.session.user=userData._id
           res.redirect(`${req.session.redirect}`);
-          console.log(`redirected to `+req.session.redirect)
         }
 
         
@@ -108,25 +104,21 @@ const forgotPasswordForm=async (req,res)=>{
 
 const create_account_get=(req, res, next) =>{
     res.render('user/create-account', {user: req.session.user, title: 'Create-Account' ,message:''});
-    console.log("Create-Account rendered")
 }
 
 
 const create_account_post =  async (req, res) =>{
-  console.log("create account")
   var data={first_name,last_name,email,phone,password,referral}=req.body
   req.session.referral=referral
   const userExist=await User.exists({email})
   if(userExist){
 
     res.render('user/sign-in', {user: req.session.user,title, message: 'Email already registered. Please Login' });
-    console.log("User exist")
     
   }
   else if(req.body.password===req.body.confirmpassword){
     req.session.data=data
     //const user=await User.create({data})
-    console.log("Create-Account done")
     res.redirect('/otp')
 
    }
@@ -155,7 +147,6 @@ const otp_get=async (req, res, next)=> {
     req.session.otp=otp
     //console.log('Generated OTP:', otp);
     res.render('user/otp', { user: req.session.user,title: 'OTP Verification' });
-    console.log("OTP Verification rendered")
     //console.log(req.session.data)
   }
   catch(err){
@@ -181,7 +172,6 @@ const otp_check=async(req, res, next)=> {
       res.redirect('/otp-success');
       
          const hashedPassword = await crypt.hashPassword(req.session.data.password);
-        console.log("password:  ",hashedPassword)
 
         const referrals=await User.findOne({referral:req.session.referral})
 
@@ -196,7 +186,6 @@ const otp_check=async(req, res, next)=> {
           block: 0,
           isAdmin: 0,
         }) 
-        console.log(req.session.referral)
         if(referrals){
           const walletReferral=await Wallet.findOne({u_id:referrals._id})
           walletReferral.balance+=100
@@ -225,7 +214,6 @@ const otp_check=async(req, res, next)=> {
 
 
 const otp_resend=(req,res,next)=>{
-  console.log("OTP Resent");
 
   
 }
@@ -253,7 +241,6 @@ const newPasswordForm=async (req,res)=>{
   const email=req.session.email
   const hashedPassword = await crypt.hashPassword(password);
   const reset=await User.findOneAndUpdate({email:email},{password:hashedPassword})
-  console.log(reset)
 
   res.render('user/otp-success', { title,message: 'Your password has been reset. Please proceed to login.' });
   req.session.forgotPassword=false
@@ -263,7 +250,6 @@ const newPasswordForm=async (req,res)=>{
 const search_post=async(req, res, next)=> {
     req.session.search=req.body.key
     const results = await Product.find({ name: { $regex: req.session.search } });
-    console.log("key is" + req.session.search)
     res.redirect('shop', cartnum, carttotal, title)
   }
 
@@ -275,14 +261,12 @@ const page_not_found=(req,res)=>{
 const user_logout=(req,res)=>{
   res.cookie('redirecturl','/')
 
-  console.log("cookie: " + req.cookies.redirecturl);
 
   req.session.destroy(err => {
     if (err) {
       console.error(err);
     }
     res.redirect('/sign-in')
-    console.log("Redirect")
   });
 }
 
@@ -290,13 +274,11 @@ const userDashboard=async (req,res)=>{
   const user=await User.find({_id:req.session.user})
   const address=await Address.findOne({u_id:req.session.user,default:true})
   const order=await Order.find({u_id:req.session.user}).populate('items.product').sort({createdAt:-1}).limit(4)
-  console.log(address)
   res.render('user/user-dashboard',{user,title,cartnum,carttotal,address,order,dashboard:true})
 }
 
 const profileLoad=async(req,res)=>{
   const user=await User.find({_id:req.session.user})
-  console.log(user)
   res.redirect('user-dashboard')
   //res.render('user/profile',{user,title,user_dashboard:true, my_account:true, layout: 'layout'})
 
@@ -315,16 +297,13 @@ const settingsSave=async(req,res)=>{
     try{
       const hashedPassword = await crypt.hashPassword(req.body.newpassword);
     await User.findOneAndUpdate({_id:_id},{password:hashedPassword})
-    console.log("password changed")
     res.redirect('/settings?message=Password+successfully+changed')
     }
     catch(error){
-      console.log(error+"\nredirecting with error msg")
       res.redirect('/settings?message=Some+error+has+occurred')
     }
   }
   else{
-    console.log("passwords not matching")
     res.redirect('/settings?message=Old+password+does+not+match')
   }
 }
@@ -339,7 +318,6 @@ const admin_user_details_post=async(req,res)=>{
   if(req.session.admin==email && block==true){
   const id=req.query.id
   const users = await User.find({_id:id});
-  console.log("Invalid operation")
   res.render('user-details',{users,title,message:"Invalid operation", layout:'admin/layout'})
   }
   else{
@@ -350,14 +328,12 @@ const admin_user_details_post=async(req,res)=>{
 }
 
 const admin_login_get=(req,res)=>{
-  console.log("adminLogin")
   if(req.session.admin){
     res.redirect('/admin/dashboard')
   }
   else
   {
     res.render('admin/admin-login', { title, message: '' ,layout:false});
-    console.log('Admin Login rendered')
   };
 }
 const admin_login_post=async(req,res)=>{
@@ -390,7 +366,6 @@ const admin_login_post=async(req,res)=>{
       req.session.admin = adminData._id;
       res.redirect(`/admin`); 
       //res.render('userlist', { message: '',userdetails,findmessage:'',updatemessage:'',userexist });
-      console.log('Logged in as '+req.session.admin)
       // If user is valid, render the home page
       // Assuming you have a home template
   } catch (error) {
@@ -457,9 +432,7 @@ const brands=await Product.aggregate([
       }
   }
 ]).sort({popularity:-1}).limit(5)
-  console.log(categories)
   res.render('admin/dashboard', {products,categories,brands,title, message: '' ,layout:'admin/layout'});
-  console.log("Admin Dashboard rendered")  
   
 }
 
@@ -555,7 +528,6 @@ const admin_user_list_get=async (req,res)=>{
 const admin_user_details_get=async(req,res)=>{
   const id=req.query.id
   const users = await User.find({_id:id});
-  console.log("user_details_get loaded")
   res.render('admin/user-details',{title,users, layout:'admin/layout'})
 }
 
@@ -572,7 +544,6 @@ const admin_logout=(req,res)=>{
       console.error(err);
     }
     res.redirect('/admin/')
-    console.log("Redirected to Admin Login")
  });
 }
 

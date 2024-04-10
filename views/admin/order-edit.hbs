@@ -27,7 +27,8 @@
                                 {{#if order.reqCancel}}
                                     {{#if order.cancelled}}
                                         {{#if order.refunded}}
-                                        <option value="Refund Complete">Refund Complete</option>
+
+                                        
                                         {{else}}
                                             {{#if order.refundStarted}}
                                             <option value="Refund Complete">Refund Complete</option>
@@ -43,7 +44,7 @@
                                         {{/if}}
 
                                     {{else}}
-                                        <option value="Cancel Requested">Cancel Requested</option>
+                                        {{!-- <option value="Cancel Requested">Cancel Requested</option> --}}
 
                                     {{/if}}
                                 {{else}}
@@ -57,7 +58,6 @@
                                             {{#if order.dispatched}}
                                             <option  value="In Transit">In Transit</option>
                                             {{else}}
-                                                <option value="Ordered">Ordered</option>
                                                 <option value="Dispatched">Dispatched</option>
 
                                             {{/if}}

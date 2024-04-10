@@ -30,6 +30,7 @@ router.get('/coupon-add', setNoCache.admin,  requireLogin, couponController.coup
 router.post('/coupon-add', setNoCache.admin,  requireLogin, couponController.couponAdding)
 router.get('/coupon-edit', setNoCache.admin,  requireLogin, couponController.couponEdit)
 router.post('/coupon-edit', setNoCache.admin,  requireLogin, couponController.couponEditing)
+router.post('/coupon-filter',couponController.couponFilter)
 
 router.get('/logout', requireLogin, userController.admin_logout)
 router.get('/dashboard', setNoCache.admin,  requireLogin, userController.adminDashboard);
@@ -75,7 +76,7 @@ router.get('/*', setNoCache.admin, userController.admin_page_not_found)
 
 
 function requireLogin(req, res, next) {
- //req.session.admin='65dc11c766e50223004d914e'
+ req.session.admin='65dc11c766e50223004d914e'
   if (!req.session.admin) {
     return res.redirect('admin');
   }

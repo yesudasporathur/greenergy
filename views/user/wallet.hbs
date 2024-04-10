@@ -278,7 +278,7 @@
 
   async function submitForm(page) {
     let data = {}; // Assuming you intended to set the page as 10 here, not 1
-    data.limit=10
+    data.limit=5
     data.page=page
     const res=await fetch('/wallet-paging', {
         method: 'post',
@@ -288,9 +288,11 @@
         body: JSON.stringify(data) // Send data directly, without wrapping it
     });
     if(res.status==200){
-    const {wallet,pages}=await res.json()
+    const {wallet,pages,action}=await res.json()
+    console.log(wallet)
     document.getElementById('pagin').innerHTML=userPagination(page,pages)
-    document.getElementById('tableBody').innerHTML=walletLoad(wallet,data.limit)
+    document.getElementById('tableBody').innerHTML=walletLoad(action)
+    document.getElementById('incltotal').innerText=`Rs. ${action[0].current}`
     }
  
 }
@@ -310,7 +312,7 @@
                     </a>
                 </li>
                 `;
-    for(i=1;i<=pages+4;i++){
+    for(i=1;i<=pages+5;i++){
             if(i==page){
                 data+=`<li class="page-item pagination-item"><a class="page-link pagination-link active" onclick="submitForm(${i})">${i}</a></li>
                 `
@@ -333,29 +335,30 @@
 }
 
 
-    function walletLoad(wallet,limit){
-      console.log(wallet)
+    function walletLoad(wallet){
       let tableBody=''
-      for(i=0;i<10;i++){
-        tableBody=`
+      for(i=0;i<wallet.length;i++){
+        tableBody+=`
         <tr>
                       
                       <!-- Price  -->
                       <td class="cart-table-item  align-bottom">
-                        Rs. {{this.amount}}
+                        Rs. ${wallet[i].amount}
                       </td>
-                      <td class="cart-table-item order-date align-middle">
-                        {{#if this.type}}
-                        Debit
-                        {{else}}
-                        Credit
-                        {{/if}}
+                      <td class="cart-table-item order-date align-middle">`
+      if(wallet[i].credit){
+        tableBody+=`Credit`
+      }
+      else{
+        tableBody+=`Debit`
+      }
+      tableBody+=`
                       </td>
                       <td class="cart-table-item  align-bottom">
-                        {{dateFormat this.time}}
+                        ${dateConvert(wallet[i].time)}
                       </td>
                       <td class="cart-table-item  align-bottom">
-                        {{this.current}}
+                        ${wallet[i].current}
                       </td>
 
                       <!-- quantity 
@@ -418,4 +421,11 @@
       }
       return tableBody
     }
+
+    function dateConvert(str) {
+    var date = new Date(str),
+      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+      day = ("0" + date.getDate()).slice(-2);
+    return [day,mnth,date.getFullYear(),  ].join("/");
+  }
   </script>

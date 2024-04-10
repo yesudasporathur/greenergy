@@ -12,6 +12,9 @@
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row align-items-center">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            <input type="text" placeholder="Search..." id="search" name="search" onchange="filter()" class="form-control">
+                        </div>
                         <div  class=" text-danger">
                         <h4 class=" text-danger">{{message}}</h4>
                         </div>
@@ -60,7 +63,7 @@
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tableBody">
                 {{#each coupons}}
 
                                     <tr onclick="window.location.href = 'coupon-edit?_id={{this._id}}';"> 
@@ -70,22 +73,22 @@
                                     <td>Rs. {{this.minAmount}}</td>
                                     <td>{{dateFormat this.expiryDate}}</td>
                                     {{#if used}}
-                                    <td><span id="{{this._id}}" class="badge rounded-pill alert-danger">Expired</span></td>
-                                    <td>
-                                        <a  id="btn{{this._id}}" href="coupon-delete/{{this._id}}" class="btn btn-md rounded font-sm">Delete Forever</a>
-                                    </td>
+                                            <td><span id="{{this._id}}" class="badge rounded-pill alert-danger">Expired</span></td>
+                                            <td>
+                                                <a  id="btn{{this._id}}" href="coupon-delete/{{this._id}}" class="btn btn-md rounded font-sm">Delete Forever</a>
+                                            </td>
                                     {{else}}
-                                    {{#if status}}
-                                    <td><span id="{{this._id}}" class="badge rounded-pill alert-success">Active</span></td>
-                                    <td>
-                                        <a  id="btn{{this._id}}" href="coupon-block/{{this._id}}" class="btn btn-md rounded font-sm">Disable</a>
-                                    </td>
-                                    {{else}}
-                                    <td><span id="{{this._id}}"  class="badge rounded-pill alert-warning">Inactive</span></td>
-                                    <td>
-                                        <a  id="btn{{this._id}}" href="coupon-unblock/{{this._id}}" class="btn btn-md rounded font-sm">Enable</a>
-                                    </td>                        
-                                    {{/if}}
+                                            {{#if status}}
+                                            <td><span id="{{this._id}}" class="badge rounded-pill alert-success">Active</span></td>
+                                            <td>
+                                                <a  id="btn{{this._id}}" href="coupon-block/{{this._id}}" class="btn btn-md rounded font-sm">Disable</a>
+                                            </td>
+                                            {{else}}
+                                            <td><span id="{{this._id}}"  class="badge rounded-pill alert-warning">Inactive</span></td>
+                                            <td>
+                                                <a  id="btn{{this._id}}" href="coupon-unblock/{{this._id}}" class="btn btn-md rounded font-sm">Enable</a>
+                                            </td>                        
+                                            {{/if}}
                                     {{/if}}
                                     
                                 </tr>
@@ -95,21 +98,137 @@
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
 
-                <!--
             <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    <ul class="pagination justify-content-start" id="page">
+                        
                     </ul>
                 </nav>
             </div>
-            -->
-        </section> <!-- content-main end// -->
+        </section> 
+        
+<script>
+    document.addEventListener("DOMContentLoaded",filter(1))
+
+
+    async function filter(page){
+    let data={}
+    data.page=page
+    data.search=document.getElementById('search').value
+    data.limit=5
+    console.log(page)
+    
+    const res=await fetch('/admin/coupon-filter',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    if(res.status==200){
+
+        let {overall,coupons,pages,page,count} = await res.json();
+        if(!page){
+            page=1
+        }
+        console.log(coupons,count,page,pages);
+        updateOrderTiles(coupons,count,page,pages);
+        
+    }
+    else{
+        throw new Error
+    }
+
+
+
+}
+
+
+function generateOrder(order){
+    const createdAtDate = new Date(order.expiryDate);
+    const day = String(createdAtDate.getDate()).padStart(2, '0');
+    const month = String(createdAtDate.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const year = createdAtDate.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
+    let details= `                <tr onclick="window.location.href = 'order-edit?_id=${order._id}';">
+                                <td>${order.code}</td>
+                                <td><b>${order.discount}</b></td>
+                                <td>Rs. ${order.maxAmount}</td>
+                                <td>Rs. ${order.minAmount}</td>
+                                <td>${formattedDate}</td>
+                                `
+        if(order.used){
+            details+=`<td><span id="{{this._id}}" class="badge rounded-pill alert-danger">Expired</span></td>
+                                            <td>
+                                                <a  id="btn${order._id}" href="coupon-delete/${order._id}" class="btn btn-md rounded font-sm">Delete Forever</a>
+                                            </td>`
+        }
+        else{
+
+            if(order.status)
+            {
+                details+=`<td><span id="{{this._id}}" class="badge rounded-pill alert-success">Active</span></td>
+                                            <td>
+                                                <a  id="btn${order._id}" href="coupon-block/${order._id}" class="btn btn-md rounded font-sm">Disable</a>
+                                            </td>`
+            }
+            else{
+                details+=`<td><span id="{{this._id}}"  class="badge rounded-pill alert-warning">Inactive</span></td>
+                                            <td>
+                                                <a  id="btn${order._id}" href="coupon-unblock/${order._id}" class="btn btn-md rounded font-sm">Enable</a>
+                                            </td>   `
+            }
+
+
+        }
+
+        details+=`
+                                            
+                            </tr>`
+        return details
+}
+
+function orderPagination(page,pages){
+    let data=`<li class="page-item"><a class="page-link"  onclick="filter(1)"><i class="material-icons md-chevron_left"></i></a></li>`
+    for(i=1;i<=pages;i++){
+        if(i==page){
+            data+=`<li class="page-item active"><a class="page-link" onclick="filter(${i})">${i}</a></li>`
+        }
+        else{
+            data+= `<li class="page-item"><a class="page-link"  onclick="filter(${i})">${i}</a></li>`
+        }
+    }
+    data+=`<li class="page-item"><a class="page-link"  onclick="filter(${pages})"><i class="material-icons md-chevron_right"></i></a></li>`
+            // <li class="page-item"><a class="page-link"  onchange="filter()">03</a></li>
+            // <li class="page-item"><a class="page-link dot"  onchange="filter()">...</a></li>
+            // <li class="page-item"><a class="page-link"  onchange="filter()">16</a></li>
+            // <li class="page-item"><a class="page-link"  onchange="filter()"><i class="material-icons md-chevron_right"></i></a></li>`
+    return data
+}
+
+function updateOrderTiles(coupons,count,page,pages) {
+    const orderContainer = document.getElementById('tableBody');
+    const paginationContainer = document.getElementById('page');
+
+    //document.getElementById('founded').innerText=count
+    // Clear previous content
+    orderContainer.innerHTML = '';
+    // Generate and append HTML markup for each product
+    coupons.forEach(order => {
+        const orderTileHTML = generateOrder(order);
+        orderContainer.insertAdjacentHTML('beforeend', orderTileHTML);
+    });
+    paginationContainer.innerHTML=''
+    if(pages!=0){
+        paginationContainer.insertAdjacentHTML('beforeend', orderPagination(page,pages));
+    }
+
+}
+
+
+
+</script>
+        <!-- content-main end// -->
 <!--
         <script>
             const badgeElement = document.getElementById(productId);
@@ -154,3 +273,4 @@
         </script>
 
         -->
+

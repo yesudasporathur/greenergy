@@ -14,6 +14,40 @@ const couponList=async (req,res)=>{
     console.log("couponList")
 }
 
+const couponFilterFn=async(search,page,limit)=>{
+    
+    if(!page){
+        page=1
+    }
+    let skip=(page-1)*limit
+    let sort=''
+    switch(sort){
+        default: sorting={code:1}
+    }
+
+    let findFn={code: { $regex: new RegExp(search, 'i') }};
+    
+    const count=await Coupon.countDocuments(findFn)
+    const overall=await Coupon.find(findFn)
+    const coupons=await Coupon.find(findFn).sort(sorting).skip(skip).limit(limit);
+    let pages=Math.ceil(count/limit)
+    console.log(overall)
+    return {overall,coupons,pages,page,count}
+}
+
+const couponFilter=async (req,res)=>{
+    try{
+        let {search,page,limit}=req.body        
+        
+        res.json(await couponFilterFn(search,page,limit))
+
+    }
+    catch{
+        res.status(500).json("Error occured")
+    }
+
+}
+
 const couponAdd=(req,res)=>{
     const message=req.query.message
     res.render('admin/coupon-add',{message,title,layout:'admin/layout'})
@@ -196,5 +230,6 @@ module.exports={
     coupons,
     couponApplyAvail,
     couponEdit,
-    couponEditing
+    couponEditing,
+    couponFilter
 }

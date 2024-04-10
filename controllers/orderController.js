@@ -56,15 +56,15 @@ const orderListPagin=async (req,res)=>{
 
 const orderCancelLoad=async(req,res)=>{
     const _id = req.query._id
-    await Order.findOneAndUpdate({_id:_id},{status:"Cancel Requested",reqCancel:true})
+    const order=await Order.findOneAndUpdate({_id:_id},{status:"Cancel Requested",reqCancel:true})
+    console.log(!order.delivered)
     if(!order.delivered)
     {
-        console.log("order delivered false")
-        await Order.findOneAndUpdate({_id:_id},{ cancelled:true, refundStarted:true})
+        const order=await Order.findOneAndUpdate({_id:_id},{ cancelled:true, refundStarted:true})
         if(order.razpay){
             walletRefund(_id)
         }
-        await Order.findOneAndUpdate({_id:_id},{status:"Refunded", refunded:true})
+        await Order.findOneAndUpdate({_id:_id},{status:"Refund Complete", refunded:true})
     }
     res.redirect(`order-details?message=Order+has+been+cancelled&_id=${_id}`)
     console.log("order_cancel_get")
@@ -151,9 +151,6 @@ const order_edit_post=async(req,res)=>{
                 orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, cancelled:true})
                 break;
             case 'Returned':
-                orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, returned:true})
-                break;
-            case 'Refund Started':
                 orderUpdate=await Order.findOneAndUpdate({_id:_id},{notes:notes, status:status, refundStarted:true})
                 break;
             case 'Refund Complete':
