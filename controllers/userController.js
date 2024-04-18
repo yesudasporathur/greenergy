@@ -506,6 +506,7 @@ const dailyChart = async (req, res) => {
   // Extracting x-axis (dates) and y-axis (total values) data
   const val = sortedOrders.map(order => order.totalAmount);
   const xaxis = sortedOrders.map(order => order._id.toLocaleDateString('en-GB')); // Format date as dd-mm-yyyy
+  console.log(orders)
 
   return res.status(200).json({ val, xaxis });
 };
