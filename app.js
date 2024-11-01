@@ -12,7 +12,7 @@ const hbs = require('hbs');
 // const fs = require('fs');
 const app = express();
 //change
-const PORT=process.env.CONNECTION
+const PORT=process.env.PORT
 const userRouter = require('./routes/user');
 const adminRouter=require('./routes/admin')
 
@@ -43,6 +43,7 @@ app.use(session({
 
 app.use('/admin',adminRouter);
 app.use('/', userRouter);
+
 
 app.listen(PORT,()=>{
   console.log(`Server running in http://localhost:${PORT}`)
