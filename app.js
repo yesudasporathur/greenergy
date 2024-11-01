@@ -45,7 +45,7 @@ app.use('/admin',adminRouter);
 app.use('/', userRouter);
 
 app.listen(PORT,()=>{
-  //console.log(`Server running in http://localhost:${PORT}`)
+  console.log(`Server running in http://localhost:${PORT}`)
 })
 
 module.exports = app;
