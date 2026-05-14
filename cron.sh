@@ -1,4 +1,3 @@
 #!/bin/bash
-cd greenergy
 git pull
-pm2 restart all
+pm2 start app.js --name greenergy
