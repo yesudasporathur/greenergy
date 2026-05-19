@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const hbs = require('hbs');
 //const logger = require('morgan');
 //const createError = require('http-errors');
-// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 // const fs = require('fs');
 const app = express();
 //change
@@ -45,7 +45,7 @@ app.use('/admin',adminRouter);
 app.use('/', userRouter);
 
 
-app.listen(PORT,()=>{
+app.listen(PORT,(err)=>{
   console.log(`Server running in http://localhost:${PORT}`)
 })
 
